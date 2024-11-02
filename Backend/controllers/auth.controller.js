@@ -1,27 +1,20 @@
 import User from "../models/User.model.js";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 import { generateTokenAndSetCookie } from "../utils/generateToken.js";
 
-
 export const Register = async (req, res) => {
-  const {
-    fullName,
-    email,
-    role,
-    password,
-    contactNumber,
-  } = req.body;
+  const { fullName, email, role, password, contactNumber } = req.body;
 
   try {
     // Trim input fields
-    const trimmedFullName = fullName.trim(); 
+    const trimmedFullName = fullName.trim();
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format." });
     }
-    
+
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -35,9 +28,15 @@ export const Register = async (req, res) => {
     }
 
     // Validate password length and complexity
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
-      return res.status(400).json({ message: "Password must be at least 8 characters long and contain uppercase, lowercase, and special character." });
+      return res
+        .status(400)
+        .json({
+          message:
+            "Password must be at least 8 characters long and contain uppercase, lowercase, and special character.",
+        });
     }
 
     // Generate salt
@@ -55,8 +54,7 @@ export const Register = async (req, res) => {
     });
 
     await user.save();
-    res.status(200).json({message: 'Registered successfully.'});
-    
+    res.status(200).json({ message: "Registered successfully." });
   } catch (error) {
     console.log(`Error in register: ${error}`);
     res.status(500).json({ message: "Something went wrong." });
@@ -79,21 +77,29 @@ export const Login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials." });
     }
 
-    const {password: pass, ...others} = user._doc;
+    const { password: pass, ...others } = user._doc;
 
-    if(others.role === 'patient') {
-      const {specialization, ...patientDetails} = others;
+    if (others.role === "patient") {
+      const { specialization, ...patientDetails } = others;
       generateTokenAndSetCookie(patientDetails._id, res);
       res.status(200).json(patientDetails);
     } else {
-      const {medicalHistory, ...doctorDetails} = others;
+      const { medicalHistory, ...doctorDetails } = others;
       generateTokenAndSetCookie(doctorDetails._id, res);
       res.status(200).json(doctorDetails);
     }
-
-  }
-  catch (error) {
+  } catch (error) {
     console.log(`Error in login: ${error}`);
     res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+export const Logout = (req, res) => {
+  try {
+    res.cookie("jwt", "", { maxAge: 0 });
+    res.status(200).json({ message: "Logged Out succussfully." });
+  } catch (error) {
+    console.log("Error in logout controller", error.message);
+    res.status(500).json({ error: "Internal server error." });
   }
 };
