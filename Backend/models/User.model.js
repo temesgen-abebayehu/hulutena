@@ -14,23 +14,22 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    gender: {
-        type: String,
-        enum: ['male', 'female'],
-        required: true
-    },
     role: { 
         type: String, 
         enum: ['doctor', 'patient'], 
         required: true 
     },
-    address: {
-        type: String,
-        required: true,
-    },
     contactNumber: {
         type: String,
         unique: true,
+        require: true,
+    },
+    address: {
+        type: String,
+    },
+    gender: {
+        type: String,
+        enum: ['male', 'female'],
     },
     dateOfBirth: {
         type: Date,

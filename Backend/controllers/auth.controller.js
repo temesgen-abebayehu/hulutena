@@ -1,4 +1,5 @@
 import User from "../models/User.model.js";
+import bcrypt from 'bcryptjs';
 
 
 export const Register = async (req, res) => {
@@ -7,14 +8,12 @@ export const Register = async (req, res) => {
     email,
     role,
     password,
-    address,
-    gender,
+    contactNumber,
   } = req.body;
 
   try {
     // Trim input fields
-    const trimmedFullName = fullName.trim();
-    const trimmedAddress = address.trim();  
+    const trimmedFullName = fullName.trim(); 
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -28,19 +27,30 @@ export const Register = async (req, res) => {
       return res.status(400).json({ message: "The data already exists." });
     }
 
+    // Validate contact number format
+    const contactNumberRegex = /^(09\d{8}|07\d{8}|251(9|7)\d{8})$/;
+    if (!contactNumberRegex.test(contactNumber)) {
+      return res.status(400).json({ message: "Invalid Phone number format!" });
+    }
+
     // Validate password length and complexity
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
       return res.status(400).json({ message: "Password must be at least 8 characters long and contain uppercase, lowercase, and special character." });
     }
 
+    // Generate salt
+    const salt = await bcrypt.genSalt(10);
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const user = new User({
       fullName: trimmedFullName,
       email,
       role,
-      password,
-      address: trimmedAddress,
-      gender,
+      password: hashedPassword,
+      contactNumber,
     });
 
     await user.save();
