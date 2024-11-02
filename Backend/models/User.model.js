@@ -36,11 +36,15 @@ const userSchema = new mongoose.Schema({
     },
     medicalHistory: {
         type: [String],
-        default: []
+        default: [],
+    },
+    profileImage:{
+        type: String,
+        default: 'https://i.pinimg.com/474x/76/f3/f3/76f3f3007969fd3b6db21c744e1ef289.jpg'
     },
     specialization: {
         type: [String],
-        default: []
+        default: [],
     },
     isVerified: {
         type: Boolean,

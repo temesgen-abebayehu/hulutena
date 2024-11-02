@@ -1,5 +1,6 @@
 import User from "../models/User.model.js";
 import bcrypt from 'bcryptjs';
+import { generateTokenAndSetCookie } from "../utils/generateToken.js";
 
 
 export const Register = async (req, res) => {
@@ -58,6 +59,41 @@ export const Register = async (req, res) => {
     
   } catch (error) {
     console.log(`Error in register: ${error}`);
+    res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+export const Login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not exist!" });
+    }
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials." });
+    }
+
+    const {password: pass, ...others} = user._doc;
+
+    if(others.role === 'patient') {
+      const {specialization, ...patientDetails} = others;
+      generateTokenAndSetCookie(patientDetails._id, res);
+      res.status(200).json(patientDetails);
+    } else {
+      const {medicalHistory, ...doctorDetails} = others;
+      generateTokenAndSetCookie(doctorDetails._id, res);
+      res.status(200).json(doctorDetails);
+    }
+
+  }
+  catch (error) {
+    console.log(`Error in login: ${error}`);
     res.status(500).json({ message: "Something went wrong." });
   }
 };
