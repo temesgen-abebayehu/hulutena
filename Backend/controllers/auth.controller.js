@@ -1,7 +1,7 @@
 import User from "../models/User.model.js";
 
 
-export const register = async (req, res) => {
+export const Register = async (req, res) => {
   const {
     fullName,
     email,
