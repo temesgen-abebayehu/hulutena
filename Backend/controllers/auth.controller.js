@@ -3,19 +3,16 @@ import Patient from "../models/patient.model.js";
 
 export const registerPatient = async (req, res) => {
   const {
-    firstName,
-    lastName,
-    dateOfBirth,
+    fullName,
     gender,
-    contactNumber,
+    password,
     email,
     address,
   } = req.body;
 
   try {
     // Trim input fields
-    const trimmedFirstName = firstName.trim();
-    const trimmedLastName = lastName.trim();
+    const trimmedFullName = fullName.trim();
     const trimmedAddress = address.trim();
 
     // Validate email format
@@ -24,21 +21,23 @@ export const registerPatient = async (req, res) => {
       return res.status(400).json({ message: "Invalid email format." });
     }
 
-    // Validate contact number format (example: 10 digits)
-    const contactNumberRegex = /^\d{10}$/;
-    if (!contactNumberRegex.test(contactNumber)) {
-      return res
-        .status(400)
-        .json({ message: "Invalid contact number format." });
+    // Check if patient already exists
+    const existingDoctor = await Patient.findOne({ email });
+    if (existingDoctor) {
+      return res.status(400).json({ message: "The data already exists." });
     }
 
-    // Proceed with registration logic (e.g., save to database)
+    // Validate password length and complexity
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ message: "Password must be at least 8 characters long and contain uppercase, lowercase, and special character." });
+    }
+
+    // Proceed with registration logic 
     const newPatient = new Patient({
-      firstName: trimmedFirstName,
-      lastName: trimmedLastName,
-      dateOfBirth,
+      fullName: trimmedFullName,
       gender,
-      contactNumber,
+      password,
       email,
       address: trimmedAddress,
     });
@@ -47,7 +46,8 @@ export const registerPatient = async (req, res) => {
     
     res.status(201).json({ message: "Patient registered successfully." });
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong." });
+    console.log(`The error in patirnt registration route: ${error}`);
+    res.status(500).json({ message: "Something went wrong." });    
   }
 };
 
