@@ -3,12 +3,7 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const doctorSchema = new Schema({
-    firstName: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    lastName: {
+    fullName: {
         type: String,
         required: true,
         trim: true
@@ -25,12 +20,24 @@ const doctorSchema = new Schema({
     },
     phoneNumber: {
         type: String,
-        required: true,
         unique: true
     },
-    specialization: {
+    gender: {
         type: String,
-        required: true
+        required: true,
+        enum: ['male', 'female']
+    },
+    address: {
+        type: String,
+        required: true,
+        trim: true 
+    },
+    dateOfBirth: {
+        type: Date,        
+    },
+    specialization: {
+        type: Array,
+        default: []
     },
     isVerified: {
         type: Boolean,
@@ -50,4 +57,4 @@ const doctorSchema = new Schema({
 
 const Doctor = mongoose.model('Doctor', doctorSchema);
 
-module.exports = Doctor;
+export default Doctor;
