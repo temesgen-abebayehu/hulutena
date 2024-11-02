@@ -1,18 +1,9 @@
 import mongoose from "mongoose";
 
-const patientSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     fullName: {
         type: String,
         required: true,
-    },
-    gender: {
-        type: String,
-        enum: ['male', 'female'],
-        required: true
-    },
-    contactNumber: {
-        type: String,
-        unique: true,
     },
     email: {
         type: String,
@@ -23,14 +14,32 @@ const patientSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    gender: {
+        type: String,
+        enum: ['male', 'female'],
+        required: true
+    },
+    role: { 
+        type: String, 
+        enum: ['doctor', 'patient'], 
+        required: true 
+    },
     address: {
         type: String,
         required: true,
+    },
+    contactNumber: {
+        type: String,
+        unique: true,
     },
     dateOfBirth: {
         type: Date,
     },
     medicalHistory: {
+        type: [String],
+        default: []
+    },
+    specialization: {
         type: [String],
         default: []
     },
@@ -50,6 +59,6 @@ const patientSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const Patient = mongoose.model('Patient', patientSchema);
+const User = mongoose.model('User', userSchema);
 
-export default Patient;
+export default User;

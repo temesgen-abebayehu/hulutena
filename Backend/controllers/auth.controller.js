@@ -1,29 +1,30 @@
-import Doctor from "../models/Doctor.model.js";
-import Patient from "../models/patient.model.js";
+import User from "../models/User.model.js";
 
-export const registerPatient = async (req, res) => {
+
+export const register = async (req, res) => {
   const {
     fullName,
-    gender,
-    password,
     email,
+    role,
+    password,
     address,
+    gender,
   } = req.body;
 
   try {
     // Trim input fields
     const trimmedFullName = fullName.trim();
-    const trimmedAddress = address.trim();
+    const trimmedAddress = address.trim();  
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format." });
     }
-
-    // Check if patient already exists
-    const existingDoctor = await Patient.findOne({ email });
-    if (existingDoctor) {
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return res.status(400).json({ message: "The data already exists." });
     }
 
@@ -33,73 +34,20 @@ export const registerPatient = async (req, res) => {
       return res.status(400).json({ message: "Password must be at least 8 characters long and contain uppercase, lowercase, and special character." });
     }
 
-    // Proceed with registration logic 
-    const newPatient = new Patient({
+    const user = new User({
       fullName: trimmedFullName,
-      gender,
+      email,
+      role,
       password,
-      email,
       address: trimmedAddress,
+      gender,
     });
 
-    await newPatient.save();
-    
-    res.status(201).json({ message: "Patient registered successfully." });
-  } catch (error) {
-    console.log(`The error in patirnt registration route: ${error}`);
-    res.status(500).json({ message: "Something went wrong." });    
-  }
-};
-
-export const registerDoctor = async (req, res) => {
-  const {
-    fullName,
-    email,
-    password,
-    address,
-    gender,
-  } = req.body;
-
-  try {
-    // Trim input fields
-    const trimmedFullName = fullName.trim();
-    const trimmedAddress = address.trim();
-    const trimmedPassword = password.trim();   
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "Invalid email format." });
-    }
-
-    // Convert gender to lowercase
-    const lowerCaseGender = gender.toLowerCase();
-
-    // Check if doctor already exists
-    const existingDoctor = await Doctor.findOne({ email });
-    if (existingDoctor) {
-      return res.status(400).json({ message: "The data already exists." });
-    }
-
-    // Validate password length and complexity
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
-      return res.status(400).json({ message: "Password must be at least 8 characters long and contain uppercase, lowercase, and special character." });
-    }
-
-    const doctor = new Doctor({
-      fullName: trimmedFullName,
-      email,
-      password: trimmedPassword,
-      address: trimmedAddress,
-      gender: lowerCaseGender,
-    });
-
-    await doctor.save();
-    res.status(200).json({message: 'Doctor registered successfully.'});
+    await user.save();
+    res.status(200).json({message: 'Registered successfully.'});
     
   } catch (error) {
+    console.log(`Error in register: ${error}`);
     res.status(500).json({ message: "Something went wrong." });
-    console.log(error);
   }
 };
