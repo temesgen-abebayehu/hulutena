@@ -5,8 +5,8 @@ import { getUser, updateUser } from '../controllers/user.controller.js';
 
 const router = express.Router();
 
-router.get('/profile/:id',protectRoute, getUser);
-router.put('/profile/:id',protectRoute, updateUser);
+router.get('/:id',protectRoute, getUser);
+router.put('/:id',protectRoute, updateUser);
 
 
 export default router;
