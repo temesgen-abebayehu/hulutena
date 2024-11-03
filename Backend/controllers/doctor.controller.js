@@ -9,3 +9,13 @@ export const getDoctors = async (req, res) => {
         res.status(404).json({ message: error.message });
     }
 };
+
+export const getDoctor = async (req, res) => {
+    try {
+        const doctor = await User.findById(req.params.id).select('-password -medicalHistory');
+        res.status(200).json(doctor);
+    } catch (error) {
+        console.log(`Error in getDoctor: ${error.message}`);
+        res.status(404).json({ message: error.message });
+    }
+};

@@ -20,7 +20,7 @@ connectDB();
 
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
-app.use('/api/doctors', doctorRouter);
+app.use('/api/doctor', doctorRouter);
 
 app.listen(PORT, () => {
     console.log(`server on at http://localhost:${PORT}`);
