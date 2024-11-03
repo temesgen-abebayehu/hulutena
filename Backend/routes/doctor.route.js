@@ -1,10 +1,12 @@
 import express from 'express';
-import { getDoctor, getDoctors } from '../controllers/doctor.controller.js';
+import { getDoctor, getDoctors, searchDoctor } from '../controllers/doctor.controller.js';
 
 const router = express.Router();
 
-router.get('/', getDoctors);
+
+router.get('/search', searchDoctor);
 router.get('/:id', getDoctor);
+router.get('/', getDoctors);
 
 
 export default router;

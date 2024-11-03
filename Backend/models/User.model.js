@@ -46,6 +46,36 @@ const userSchema = new mongoose.Schema({
         type: [String],
         default: [],
     },
+    rating: {
+        type: [Number],
+        min: 0,
+        max: 5,
+        default: 0,
+    },
+    avarageRating: {
+        type: Number,
+        default: 0,
+    },
+    experience: {
+        type: Number,
+        default: 0,
+    },
+    onlineStatus: {
+        type: Boolean,
+        default: false,
+    },
+    numberOfAppointments: {
+        type: Number,
+        default: 0,
+    },
+    numberOfServices: {
+        type: Number,
+        default: 0,
+    },
+    language: {
+        type: [String],
+        default: ['አማረኛ', 'amharic'],
+    },
     isVerified: {
         type: Boolean,
         default: false
