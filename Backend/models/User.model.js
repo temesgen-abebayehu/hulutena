@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     },
     role: { 
         type: String, 
-        enum: ['doctor', 'patient'], 
+        enum: ['doctor', 'patient, admin'], 
         required: true 
     },
     contactNumber: {
@@ -79,6 +79,11 @@ const userSchema = new mongoose.Schema({
     isVerified: {
         type: Boolean,
         default: false
+    },
+    verificationStatus: {
+        type: String, 
+        enum: ["pending", "approved", "rejected"], 
+        default: "pending" 
     },
     mfaEnabled: {
         type: Boolean,
