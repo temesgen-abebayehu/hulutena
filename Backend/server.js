@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 
 import connectDB from './config/db.js';
 import authRouter from './routes/auth.route.js';
+import adminRouter from './routes/admin.route.js';
 import userRouter from './routes/user.route.js';
 import doctorRouter from './routes/doctor.route.js';
 import appointmentRouter from './routes/appointment.route.js';
@@ -21,6 +22,7 @@ const PORT = 3000;
 connectDB();
 
 app.use('/api/auth', authRouter);
+app.use('/api/admin', adminRouter);
 app.use('/api/users', userRouter);
 app.use('/api/doctors', doctorRouter);
 app.use('/api/appointments', appointmentRouter);
