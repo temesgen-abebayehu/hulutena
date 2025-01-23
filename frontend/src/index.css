@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.home-page{
+    background-image: url('https://www.healthysimulation.com/wp-content/uploads/2022/06/bcsn-healthcare-simulation-resources-942x628.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.bars{
+    position: static;
+    display: flex;
+    flex-direction: column;
+    margin-left: 0;    
+}
