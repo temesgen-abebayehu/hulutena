@@ -52,13 +52,14 @@ function HomePage() {
         </div>
       </div>
       {/* testimony */}
-      <div className="flex flex-col gap-y-10 bg-cyan-100 p-8">
+      <div className="flex flex-col gap-y-10 bg-cyan-100 p-8 md:px-20 lg">
         <h1 className="text-xl font-bold">What Our Users Say!</h1>
         <p className="font-medium">
           Discover how HuluTena has positively impacted the lives of our users
           through their testimonials.
         </p>
-        <div className="w-72 space-y-2">
+        <div className="w-80 md:w-1/2 space-y-2 rounded-lg p-4 bg-slate-200">
+          <img src="/patient3.jpg" alt="pateint 3" />
           <h1 className="text-xl font-semibold">
             A Lifesaver in Times of Need
           </h1>
@@ -68,7 +69,8 @@ function HomePage() {
             doctor was incredibly understanding.
           </p>
         </div>
-        <div className="right w-72 space-y-2">
+        <div className="w-72 md:w-1/2 space-y-2 rounded-lg p-4 ml-auto bg-slate-200">          
+          <img src="/patient1.jpg" alt="pateint 1" />
           <h1 className="text-xl font-semibold">
             Understanding Healthcare Better
           </h1>
@@ -78,7 +80,8 @@ function HomePage() {
             useful for me.
           </p>
         </div>
-        <div className="left w-72 space-y-2">
+        <div className="w-72 md:w-1/2 space-y-2 rounded-lg p-4 bg-slate-200">
+          <img src="/patient2.jpg" alt="pateint 2" />
           <h1 className="text-xl font-semibold">Breaking Language Barriers</h1>
           <p>
             As a non-native speaker, finding a doctor who spoke my language was
