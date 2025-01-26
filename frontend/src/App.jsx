@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import Resourses from "./pages/Resourses";
 import Community from "./pages/Community";
 import Services from "./pages/Services";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/resources" element={<Resourses />} />
       <Route path="/community" element={<Community />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/" element={<HomePage />} />
     </Routes>
     <Footer />
