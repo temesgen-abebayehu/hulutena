@@ -52,44 +52,39 @@ function HomePage() {
         </div>
       </div>
       {/* testimony */}
-      <div className="flex flex-col gap-y-10 bg-cyan-100 p-8 md:px-20 lg">
-        <h1 className="text-xl font-bold">What Our Users Say!</h1>
-        <p className="font-medium">
-          Discover how HuluTena has positively impacted the lives of our users
-          through their testimonials.
-        </p>
-        <div className="w-80 md:w-1/2 space-y-2 rounded-lg p-4 bg-slate-200">
-          <img src="/patient3.jpg" alt="pateint 3" />
-          <h1 className="text-xl font-semibold">
-            A Lifesaver in Times of Need
-          </h1>
-          <p>
-            I was able to connect with a doctor during a critical time when I
-            needed medical advice urgently. The process was smooth, and the
-            doctor was incredibly understanding.
-          </p>
-        </div>
-        <div className="w-72 md:w-1/2 space-y-2 rounded-lg p-4 ml-auto bg-slate-200">          
-          <img src="/patient1.jpg" alt="pateint 1" />
-          <h1 className="text-xl font-semibold">
-            Understanding Healthcare Better
-          </h1>
-          <p>
-            HuluTena's accessible health information helped me grasp my health
-            conditions better. The audio and video formats were particularly
-            useful for me.
-          </p>
-        </div>
-        <div className="w-72 md:w-1/2 space-y-2 rounded-lg p-4 bg-slate-200">
-          <img src="/patient2.jpg" alt="pateint 2" />
-          <h1 className="text-xl font-semibold">Breaking Language Barriers</h1>
-          <p>
-            As a non-native speaker, finding a doctor who spoke my language was
-            a challenge until I found HuluTena. The platform made it easy for me
-            to get the help I needed.
-          </p>
-        </div>
-      </div>
+      <div className="flex flex-col gap-y-12 bg-cyan-50 p-8 md:px-20 lg:px-32">
+  <h1 className="text-2xl font-extrabold text-center text-gray-800 mb-4">What Our Users Say!</h1>
+  <p className="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-8">
+    Discover how HuluTena has positively impacted the lives of our users through their heartfelt testimonials.
+  </p>
+
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="flex flex-col items-center space-y-4 rounded-lg p-6 bg-white shadow-lg">
+      <img className="w-24 h-24 rounded-full object-cover" src="/patient3.jpg" alt="Patient testimonial 1" />
+      <h2 className="text-xl font-semibold text-gray-800 text-center">A Lifesaver in Times of Need</h2>
+      <p className="text-gray-600 text-center">
+        I was able to connect with a doctor during a critical time when I needed medical advice urgently. The process was smooth, and the doctor was incredibly understanding.
+      </p>
+    </div>
+
+    <div className="flex flex-col items-center space-y-4 rounded-lg p-6 bg-white shadow-lg">
+      <img className="w-24 h-24 rounded-full object-cover" src="/patient1.jpg" alt="Patient testimonial 2" />
+      <h2 className="text-xl font-semibold text-gray-800 text-center">Understanding Healthcare Better</h2>
+      <p className="text-gray-600 text-center">
+        HuluTena's accessible health information helped me grasp my health conditions better. The audio and video formats were particularly useful for me.
+      </p>
+    </div>
+
+    <div className="flex flex-col items-center space-y-4 rounded-lg p-6 bg-white shadow-lg">
+      <img className="w-24 h-24 rounded-full object-cover" src="/patient2.jpg" alt="Patient testimonial 3" />
+      <h2 className="text-xl font-semibold text-gray-800 text-center">Breaking Language Barriers</h2>
+      <p className="text-gray-600 text-center">
+        As a non-native speaker, finding a doctor who spoke my language was a challenge until I found HuluTena. The platform made it easy for me to get the help I needed.
+      </p>
+    </div>
+  </div>
+</div>
+
       <div className="space-y-8  p-8">
         <h1 className="text-2xl font-bold text-slate-700">Join the HuluTena Community</h1>
         <p className="font-medium">
