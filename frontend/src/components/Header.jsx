@@ -18,19 +18,19 @@ function Header() {
           <a className="hover:underline hover:text-slate-700" href="/">
             Home
           </a>
-          <a className="hover:underline hover:text-slate-700" href="/">
+          <a className="hover:underline hover:text-slate-700" href="/services">
             Services
           </a>
-          <a className="hover:underline hover:text-slate-700" href="/">
+          <a className="hover:underline hover:text-slate-700" href="/resourses">
             Resourses
           </a>
-          <a className="hover:underline hover:text-slate-700" href="/">
+          <a className="hover:underline hover:text-slate-700" href="/community">
             Community
           </a>
-          <a className="hover:underline hover:text-slate-700" href="/">
+          <a className="hover:underline hover:text-slate-700" href="/about">
             About Us
           </a>
-          <a className="hover:underline hover:text-slate-700" href="/">
+          <a className="hover:underline hover:text-slate-700" href="#contact">
             Contact Us
           </a>
         </div>
