@@ -9,6 +9,7 @@ import Resourses from "./pages/Resourses";
 import Community from "./pages/Community";
 import Services from "./pages/Services";
 import Profile from "./pages/Profile";
+import WrittenPost from "./pages/WrittenPost";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/resourses" element={<Resourses />} />
+      <Route path="/resourses/:id" element={<WrittenPost />} />
       <Route path="/community" element={<Community />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/" element={<HomePage />} />
