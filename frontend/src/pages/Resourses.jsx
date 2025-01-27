@@ -166,7 +166,7 @@ function Resources() {
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filteredAudio.map((audio) => (
+              {filteredAudio.slice(0, 8).map((audio) => (
                 <div key={audio.id} className="flex flex-col items-center p-6 bg-white shadow-lg rounded-lg">
                   <div className="w-24 h-24 mb-4">
                     <img className="w-full h-full object-contain" src={audio.img} alt="Audio Icon" />
@@ -189,7 +189,7 @@ function Resources() {
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filteredVideo.map((video) => (
+              {filteredVideo.slice(0, 8).map((video) => (
                 <iframe
                   key={video.id}
                   width="100%"
@@ -214,7 +214,7 @@ function Resources() {
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredWritten.map((written) => (
+              {filteredWritten.slice(0, 8).map((written) => (
                 <div key={written.id} className="flex flex-col items-start p-6 bg-white shadow-lg rounded-lg">
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">{written.title}</h3>
                   <p className="text-gray-600 mb-4">{written.description}</p>
