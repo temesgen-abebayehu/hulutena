@@ -218,7 +218,7 @@ function Resources() {
                 <div key={written.id} className="flex flex-col items-start p-6 bg-white shadow-lg rounded-lg">
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">{written.title}</h3>
                   <p className="text-gray-600 mb-4">{written.description}</p>
-                  <a href="#" className="text-blue-600 hover:underline hover:text-blue-800">
+                  <a href={`/resourses/${written.id}`} className="text-blue-600 hover:underline hover:text-blue-800">
                     Read more...
                   </a>
                 </div>
