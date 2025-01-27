@@ -1,5 +1,12 @@
 import React from "react";
-import { FaCalendarCheck, FaLanguage, FaInfoCircle } from "react-icons/fa";
+import {
+  FaCalendarCheck,
+  FaLanguage,
+  FaInfoCircle,
+  FaBook,
+  FaHeadphones,
+  FaVideo,
+} from "react-icons/fa";
 
 function HomePage() {
   return (
@@ -51,42 +58,129 @@ function HomePage() {
           </p>
         </div>
       </div>
+      {/* resource */}
+      <div className="flex flex-col items-center p-12 bg-gray-50 min-h-screen">
+        <h1 className="text-4xl font-extrabold text-gray-800 text-center mb-8">
+          Healthcare Resources
+        </h1>
+        <p className="text-lg text-gray-600 text-center max-w-3xl mb-12">
+          Explore our comprehensive library of healthcare resources, including
+          audio guides, videos, and written materials, designed to empower you
+          with knowledge and support your well-being.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
+          {/* Audio Resources */}
+          <div className="flex flex-col items-center p-6 bg-white shadow-lg rounded-lg">
+            <FaHeadphones className="text-4xl text-blue-500 mb-4" />
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+              Audio Resources
+            </h2>
+            <p className="text-gray-600 text-center mb-4">
+              Listen to expert advice, health tips, and guided exercises to
+              enhance your well-being.
+            </p>
+            <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+              Explore Audio
+            </button>
+          </div>
+
+          {/* Video Resources */}
+          <div className="flex flex-col items-center p-6 bg-white shadow-lg rounded-lg">
+            <FaVideo className="text-4xl text-green-500 mb-4" />
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+              Video Resources
+            </h2>
+            <p className="text-gray-600 text-center mb-4">
+              Watch informative videos and tutorials from healthcare
+              professionals.
+            </p>
+            <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+              Explore Videos
+            </button>
+          </div>
+
+          {/* Written Resources */}
+          <div className="flex flex-col items-center p-6 bg-white shadow-lg rounded-lg">
+            <FaBook className="text-4xl text-yellow-500 mb-4" />
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+              Written Resources
+            </h2>
+            <p className="text-gray-600 text-center mb-4">
+              Access detailed articles, guides, and eBooks on a variety of
+              health topics.
+            </p>
+            <button className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition">
+              Explore Articles
+            </button>
+          </div>
+        </div>
+      </div>
       {/* testimony */}
       <div className="flex flex-col gap-y-12 bg-cyan-50 p-8 md:px-20 lg:px-32">
-  <h1 className="text-2xl font-extrabold text-center text-gray-800 mb-4">What Our Users Say!</h1>
-  <p className="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-8">
-    Discover how HuluTena has positively impacted the lives of our users through their heartfelt testimonials.
-  </p>
+        <h1 className="text-2xl font-extrabold text-center text-gray-800 mb-4">
+          What Our Users Say!
+        </h1>
+        <p className="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-8">
+          Discover how HuluTena has positively impacted the lives of our users
+          through their heartfelt testimonials.
+        </p>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    <div className="flex flex-col items-center space-y-4 rounded-lg p-6 bg-white shadow-lg">
-      <img className="w-24 h-24 rounded-full object-cover" src="/patient3.jpg" alt="Patient testimonial 1" />
-      <h2 className="text-xl font-semibold text-gray-800 text-center">A Lifesaver in Times of Need</h2>
-      <p className="text-gray-600 text-center">
-        I was able to connect with a doctor during a critical time when I needed medical advice urgently. The process was smooth, and the doctor was incredibly understanding.
-      </p>
-    </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex flex-col items-center space-y-4 rounded-lg p-6 bg-white shadow-lg">
+            <img
+              className="w-24 h-24 rounded-full object-cover"
+              src="/patient3.jpg"
+              alt="Patient testimonial 1"
+            />
+            <h2 className="text-xl font-semibold text-gray-800 text-center">
+              A Lifesaver in Times of Need
+            </h2>
+            <p className="text-gray-600 text-center">
+              I was able to connect with a doctor during a critical time when I
+              needed medical advice urgently. The process was smooth, and the
+              doctor was incredibly understanding.
+            </p>
+          </div>
 
-    <div className="flex flex-col items-center space-y-4 rounded-lg p-6 bg-white shadow-lg">
-      <img className="w-24 h-24 rounded-full object-cover" src="/patient1.jpg" alt="Patient testimonial 2" />
-      <h2 className="text-xl font-semibold text-gray-800 text-center">Understanding Healthcare Better</h2>
-      <p className="text-gray-600 text-center">
-        HuluTena's accessible health information helped me grasp my health conditions better. The audio and video formats were particularly useful for me.
-      </p>
-    </div>
+          <div className="flex flex-col items-center space-y-4 rounded-lg p-6 bg-white shadow-lg">
+            <img
+              className="w-24 h-24 rounded-full object-cover"
+              src="/patient1.jpg"
+              alt="Patient testimonial 2"
+            />
+            <h2 className="text-xl font-semibold text-gray-800 text-center">
+              Understanding Healthcare Better
+            </h2>
+            <p className="text-gray-600 text-center">
+              HuluTena's accessible health information helped me grasp my health
+              conditions better. The audio and video formats were particularly
+              useful for me.
+            </p>
+          </div>
 
-    <div className="flex flex-col items-center space-y-4 rounded-lg p-6 bg-white shadow-lg">
-      <img className="w-24 h-24 rounded-full object-cover" src="/patient2.jpg" alt="Patient testimonial 3" />
-      <h2 className="text-xl font-semibold text-gray-800 text-center">Breaking Language Barriers</h2>
-      <p className="text-gray-600 text-center">
-        As a non-native speaker, finding a doctor who spoke my language was a challenge until I found HuluTena. The platform made it easy for me to get the help I needed.
-      </p>
-    </div>
-  </div>
-</div>
+          <div className="flex flex-col items-center space-y-4 rounded-lg p-6 bg-white shadow-lg">
+            <img
+              className="w-24 h-24 rounded-full object-cover"
+              src="/patient2.jpg"
+              alt="Patient testimonial 3"
+            />
+            <h2 className="text-xl font-semibold text-gray-800 text-center">
+              Breaking Language Barriers
+            </h2>
+            <p className="text-gray-600 text-center">
+              As a non-native speaker, finding a doctor who spoke my language
+              was a challenge until I found HuluTena. The platform made it easy
+              for me to get the help I needed.
+            </p>
+          </div>
+        </div>
+      </div>
 
       <div className="space-y-8  p-8">
-        <h1 className="text-2xl font-bold text-slate-700">Join the HuluTena Community</h1>
+        <h1 className="text-2xl font-bold text-slate-700">
+          Join the HuluTena Community
+        </h1>
         <p className="font-medium">
           Take the first step towards easier healthcare access by downloading
           the HuluTena app today.
@@ -100,7 +194,12 @@ function HomePage() {
               access today and enjoy the convenience of scheduling appointments
               at your fingertips.
             </p>
-            <a href="#" className="text-blue-800 font-medium hover:underline hover:text-blue-600">Download App</a>
+            <a
+              href="#"
+              className="text-blue-800 font-medium hover:underline hover:text-blue-600"
+            >
+              Download App
+            </a>
           </div>
           <div className="p-4 w-full md:w-80 bg-slate-200 space-y-2 border-4 border-gray-400">
             <h1 className="text-xl font-semibold">Explore Our Features</h1>
@@ -110,17 +209,29 @@ function HomePage() {
               information in various formats, you'll find everything you need to
               manage your health effectively
             </p>
-            <a href="#" className="text-blue-800 font-medium hover:underline hover:text-blue-600">See updates</a>
+            <a
+              href="#"
+              className="text-blue-800 font-medium hover:underline hover:text-blue-600"
+            >
+              See updates
+            </a>
           </div>
           <div className="p-4 w-full md:w-80 bg-slate-200 space-y-2 border-4 border-gray-400">
-            <h1 className="text-xl font-semibold">Connect with Professionals</h1>
+            <h1 className="text-xl font-semibold">
+              Connect with Professionals
+            </h1>
             <p>
               Our platform connects you with trusted healthcare professionals
               who are ready to assist you. Whether it's a quick consultation or
               ongoing care, you'll find the right support tailored to your
               needs.
             </p>
-            <a href="#" className="text-blue-800 font-medium hover:underline hover:text-blue-600">Join Community</a>
+            <a
+              href="#"
+              className="text-blue-800 font-medium hover:underline hover:text-blue-600"
+            >
+              Join Community
+            </a>
           </div>
         </div>
       </div>
