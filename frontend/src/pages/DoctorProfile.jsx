@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaArrowLeft, FaComments, FaStar } from "react-icons/fa";
+import { FaArrowLeft, FaComments, FaStar, FaCheckCircle } from "react-icons/fa";
 
 function Profile() {
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -38,8 +38,8 @@ function Profile() {
                         />
                     </div>
                     <div className="mt-4 md:mt-0 text-center md:text-left">
-                        <h2 className="text-2xl font-semibold text-blue-900">
-                            {doctor.name}
+                        <h2 className="flex flex-row items-center gap-2 text-2xl font-semibold text-blue-900">
+                            {doctor.name} <FaCheckCircle color="green" size={16} />
                         </h2>
                         <p className="text-lg text-gray-700">{doctor.specialty}</p>
                         <div className="flex flex-row items-center gap-2 mt-2 font-semibold">
