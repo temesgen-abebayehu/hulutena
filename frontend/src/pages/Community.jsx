@@ -204,7 +204,7 @@ function CommunityDiscussion() {
         </button>
       </div>
 
-      {/* New Discussion Form */}
+      {/* Discussion Form */}
       <div className="bg-white p-6 shadow-lg rounded-lg mb-12">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">Start a Discussion</h2>
         <input
@@ -226,6 +226,7 @@ function CommunityDiscussion() {
           <option value="Nutrition">Nutrition</option>
           <option value="Physical Health">Physical Health</option>
           <option value="Wellness Tips">Wellness Tips</option>
+          <option value="General">General</option>
         </select>
         <textarea
           name="content"
