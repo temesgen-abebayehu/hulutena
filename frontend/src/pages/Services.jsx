@@ -100,7 +100,7 @@ function Services() {
         {filteredDoctors.map((doctor) => (
           <div
             key={doctor.id}
-            className="flex flex-col items-center p-6 border rounded-lg bg-white shadow-md transition-transform transform hover:scale-105"
+            className="flex flex-col items-center p-6 border rounded-lg bg-white shadow-md"
           >
             <img
               className="h-40 w-40 rounded-full object-cover mb-4"

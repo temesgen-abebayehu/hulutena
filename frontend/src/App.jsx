@@ -11,6 +11,7 @@ import Services from "./pages/Services";
 import DoctorProfile from "./pages/DoctorProfile";
 import WrittenPost from "./pages/WrittenPost";
 import ContactPage from "./pages/ContactPage";
+import Appointment from "./pages/Appointment";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
       <Route path="/resourses/:id" element={<WrittenPost />} />
       <Route path="/community" element={<Community />} />
       <Route path="/doctor-profile/:id" element={<DoctorProfile />} />
+      <Route path="/appoitment/:id" element={<Appointment />} />
       <Route path="/" element={<HomePage />} />
     </Routes>
     <Footer />
