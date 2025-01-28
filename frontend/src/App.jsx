@@ -8,7 +8,7 @@ import Footer from "./components/Footer";
 import Resourses from "./pages/Resourses";
 import Community from "./pages/Community";
 import Services from "./pages/Services";
-import Profile from "./pages/Profile";
+import DoctorProfile from "./pages/DoctorProfile";
 import WrittenPost from "./pages/WrittenPost";
 
 function App() {
@@ -23,7 +23,7 @@ function App() {
       <Route path="/resourses" element={<Resourses />} />
       <Route path="/resourses/:id" element={<WrittenPost />} />
       <Route path="/community" element={<Community />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/doctor-profile/:id" element={<DoctorProfile />} />
       <Route path="/" element={<HomePage />} />
     </Routes>
     <Footer />
