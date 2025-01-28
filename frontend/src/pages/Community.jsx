@@ -10,13 +10,13 @@ function CommunityDiscussion() {
       title: "How to manage stress effectively?",
       category: "Mental Health",
       content: "I’ve been feeling overwhelmed lately. Can anyone share tips for managing stress?",
-      author: "John Doe",
+      author: "Abebe Kebede",
       likes: 12,
       comments: [
         {
           id: 1,
           comment: "Take deep breaths and meditate daily.",
-          author: "Alice Brown",
+          author: "Almaze mola",
           likes: 3,
         },
       ],
@@ -281,26 +281,26 @@ function CommunityDiscussion() {
               ) : (
                 <>
                   <h3 className="text-xl font-semibold text-blue-800 mb-2">{thread.title}</h3>
-                  <div className="flex gap-2">
-                    <button
-                      className="text-green-600 hover:text-green-800"
-                      onClick={() => handleEditThread(thread.id)}
-                    >
-                      <FaEdit />
-                    </button>
+                  <div className="flex flex-col gap-2">                    
                     <button
                       className="text-red-600 hover:text-red-800"
                       onClick={() => handleDeleteThread(thread.id)}
                     >
                       <FaTrash />
                     </button>
+                    <button
+                      className="text-green-600 hover:text-green-800"
+                      onClick={() => handleEditThread(thread.id)}
+                    >
+                      <FaEdit size={20}/>
+                    </button>
                   </div>
                 </>
               )}
             </div>
-            <div className="flex flex-row gap-x-12 mb-4">
-              <p className="text-gray-600 text-sm font-bold mb-4">
-                {thread.category} | {thread.createdAt} | By {thread.author}
+            <div className="flex flex-col items-start mb-4">
+              <p className="text-gray-600 text-sm font-semibold mb-2">
+                {thread.category} | {thread.createdAt} | By <a className="font-bold" href="#">{thread.author}</a>
               </p>
               <button
                 onClick={() => handleLikeThread(thread.id)}
@@ -361,7 +361,7 @@ function CommunityDiscussion() {
                         <FaTrash color="red"/>
                       </button>
                       <button onClick={() => handleEditComment(thread.id, comment.id)}>
-                        <FaEdit color="green" size={20}/>
+                        <FaEdit color="green" />
                       </button>
                     </div>
                   </div>
