@@ -12,13 +12,13 @@ function HomePage() {
   return (
     <div>
       {/* home first page */}
-      <div className="home-page">
-        <h1 className="p-4  font-extrabold text-3xl text-blue-500">
+      <div className="home-page text-slate-50">
+        <h1 className="p-4  font-extrabold text-4xl md:text-5xl lg:text-6xl">
           እንኳን ወደ ሁሉጤና በሰላም መጡ!
         </h1>
-        <h1 className="p-4  font-extrabold text-3xl">ሁሌም ለእርስዎ ጤና</h1>
-        <h1 className="p-4 font-extrabold text-3xl">እንተጋለን!</h1>
-        <button className="bg-blue-800 p-2 rounded-lg font-bold text-xl">
+        <h1 className="p-4  font-extrabold text-3xl md:text-4xl lg:text-5xl">ሁሌም ለእርስዎ ጤና</h1>
+        <h1 className="p-4 font-extrabold text-3xl md:text-4xl lg:text-5xl">እንተጋለን!</h1>
+        <button className="bg-blue-800 p-2 rounded-lg font-bold text-2xl md:text-3xl">
           ቀጠሮ ያስይዙ
         </button>
       </div>
@@ -60,7 +60,7 @@ function HomePage() {
       </div>
       {/* resource */}
       <div className="flex flex-col items-center p-12 bg-gray-50 min-h-screen">
-        <h1 className="text-4xl font-extrabold text-gray-800 text-center mb-8">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800 text-center mb-8">
           Healthcare Resources
         </h1>
         <p className="text-lg text-gray-600 text-center max-w-3xl mb-12">
@@ -118,7 +118,7 @@ function HomePage() {
       </div>
       {/* testimony */}
       <div className="flex flex-col gap-y-12 bg-cyan-50 p-8 md:px-20 lg:px-32">
-        <h1 className="text-2xl font-extrabold text-center text-gray-800 mb-4">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-center text-gray-800 mb-4">
           What Our Users Say!
         </h1>
         <p className="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-8">
@@ -178,7 +178,7 @@ function HomePage() {
       </div>
 
       <div className="space-y-8  p-8">
-        <h1 className="text-2xl font-bold text-slate-700">
+        <h1 className="text-3xl md:text-4xl font-bold text-slate-700">
           Join the HuluTena Community
         </h1>
         <p className="font-medium">
@@ -213,7 +213,7 @@ function HomePage() {
               href="#"
               className="text-blue-800 font-medium hover:underline hover:text-blue-600"
             >
-              See updates
+              See Resources
             </a>
           </div>
           <div className="p-4 w-full md:w-80 bg-slate-200 space-y-2 border-4 border-gray-400">
@@ -230,7 +230,7 @@ function HomePage() {
               href="#"
               className="text-blue-800 font-medium hover:underline hover:text-blue-600"
             >
-              Join Community
+              Make an Appointment
             </a>
           </div>
         </div>
