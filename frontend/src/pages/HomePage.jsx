@@ -18,9 +18,9 @@ function HomePage() {
         </h1>
         <h1 className="p-4  font-extrabold text-3xl md:text-4xl lg:text-5xl">ሁሌም ለእርስዎ ጤና</h1>
         <h1 className="p-4 font-extrabold text-3xl md:text-4xl lg:text-5xl">እንተጋለን!</h1>
-        <button className="bg-blue-800 p-2 rounded-lg font-bold text-2xl md:text-3xl">
+        <a href="/services" className="bg-blue-800 p-2 rounded-lg font-bold text-2xl md:text-3xl">
           ቀጠሮ ያስይዙ
-        </button>
+        </a>
       </div>
       {/* our service */}
       <div className="flex flex-row flex-wrap justify-center gap-x-20 gap-y-2  p-8">
@@ -80,9 +80,11 @@ function HomePage() {
               Listen to expert advice, health tips, and guided exercises to
               enhance your well-being.
             </p>
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+            <a href="resourses"
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"              
+            >
               Explore Audio
-            </button>
+            </a>
           </div>
 
           {/* Video Resources */}
@@ -95,9 +97,9 @@ function HomePage() {
               Watch informative videos and tutorials from healthcare
               professionals.
             </p>
-            <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+            <a  href="resourses" className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
               Explore Videos
-            </button>
+            </a>
           </div>
 
           {/* Written Resources */}
@@ -110,9 +112,9 @@ function HomePage() {
               Access detailed articles, guides, and eBooks on a variety of
               health topics.
             </p>
-            <button className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition">
+            <a  href="resourses" className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition">
               Explore Articles
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -210,7 +212,7 @@ function HomePage() {
               manage your health effectively
             </p>
             <a
-              href="#"
+               href="resourses"
               className="text-blue-800 font-medium hover:underline hover:text-blue-600"
             >
               See Resources
@@ -227,7 +229,7 @@ function HomePage() {
               needs.
             </p>
             <a
-              href="#"
+              href="/services"
               className="text-blue-800 font-medium hover:underline hover:text-blue-600"
             >
               Make an Appointment
