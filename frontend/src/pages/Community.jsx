@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaSearch, FaThumbsUp, FaCommentAlt } from "react-icons/fa";
+import { FaSearch, FaThumbsUp } from "react-icons/fa";
 
 function CommunityDiscussion() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,36 +12,21 @@ function CommunityDiscussion() {
       content: "I’ve been feeling overwhelmed lately. Can anyone share tips for managing stress?",
       author: "John Doe",
       likes: 12,
-      comments: 5,
+      comments: [
+        {
+          id: 1,
+          comment: "Take deep breaths and meditate daily.",
+          author: "Alice Brown",
+          likes: 3,
+        },
+      ],
       createdAt: "2 days ago",
     },
-    {
-      id: 2,
-      title: "Best diet for improving heart health?",
-      category: "Nutrition",
-      content: "What are some recommended foods to keep my heart healthy?",
-      author: "Jane Smith",
-      likes: 8,
-      comments: 3,
-      createdAt: "1 week ago",
-    },
-    {
-      id: 3,
-      title: "Effective exercises for lower back pain",
-      category: "Physical Health",
-      content: "I’ve been experiencing lower back pain. Can someone suggest some exercises?",
-      author: "Alex Green",
-      likes: 15,
-      comments: 6,
-      createdAt: "3 days ago",
-    },
   ]);
-
-  const [newThread, setNewThread] = useState({
-    title: "",
-    category: "",
-    content: "",
-  });
+  const [newThread, setNewThread] = useState({ title: "", category: "", content: "" });
+  const [commentText, setCommentText] = useState("");
+  const [commentsLimit, setCommentsLimit] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSearch = (e) => setSearchQuery(e.target.value);
 
@@ -51,18 +36,77 @@ function CommunityDiscussion() {
   };
 
   const handleCreateThread = () => {
-    if (newThread.title && newThread.category && newThread.content) {
-      const newThreadData = {
-        id: threads.length + 1,
-        ...newThread,
-        author: "Anonymous",
-        likes: 0,
-        comments: 0,
-        createdAt: "Just now",
-      };
-      setThreads([newThreadData, ...threads]);
-      setNewThread({ title: "", category: "", content: "" });
+    if (!newThread.title || !newThread.category || !newThread.content) {
+      setErrorMessage("All fields are required to create a discussion!");
+      return;
     }
+
+    const newThreadData = {
+      id: threads.length + 1,
+      ...newThread,
+      author: "Anonymous",
+      likes: 0,
+      comments: [],
+      createdAt: "Just now",
+    };
+
+    setThreads([newThreadData, ...threads]);
+    setNewThread({ title: "", category: "", content: "" });
+    setErrorMessage("");
+  };
+
+  const handleLikeThread = (id) => {
+    setThreads(
+      threads.map((thread) =>
+        thread.id === id ? { ...thread, likes: thread.likes + 1 } : thread
+      )
+    );
+  };
+
+  const handleComment = (threadId) => {
+    if (!commentText.trim()) {
+      setErrorMessage("Comment cannot be empty!");
+      return;
+    }
+
+    setThreads(
+      threads.map((thread) =>
+        thread.id === threadId
+          ? {
+              ...thread,
+              comments: [
+                ...thread.comments,
+                {
+                  id: thread.comments.length + 1,
+                  comment: commentText,
+                  author: "Anonymous",
+                  likes: 0,
+                },
+              ],
+            }
+          : thread
+      )
+    );
+
+    setCommentText("");
+    setErrorMessage("");
+  };
+
+  const handleLikeComment = (threadId, commentId) => {
+    setThreads(
+      threads.map((thread) =>
+        thread.id === threadId
+          ? {
+              ...thread,
+              comments: thread.comments.map((comment) =>
+                comment.id === commentId
+                  ? { ...comment, likes: comment.likes + 1 }
+                  : comment
+              ),
+            }
+          : thread
+      )
+    );
   };
 
   const filteredThreads = threads.filter(
@@ -90,7 +134,7 @@ function CommunityDiscussion() {
           onChange={handleSearch}
           className="w-full max-w-xl p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
         />
-        <button className="bg-blue-500 text-white p-3 rounded-lg shadow-md ml-2">
+        <button className="bg-blue-500 text-white p-3 rounded-lg shadow-md ml-2 hover:bg-blue-600">
           <FaSearch />
         </button>
       </div>
@@ -132,58 +176,92 @@ function CommunityDiscussion() {
         >
           Post Discussion
         </button>
+        {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
       </div>
 
       {/* Discussion Threads */}
       <div>
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">Discussions</h2>
-        {filteredThreads.length > 0 ? (
-          filteredThreads.slice(0,8).map((thread) => (
-            <div
-              key={thread.id}
-              className="bg-white p-6 shadow-lg rounded-lg mb-6"
-            >
-              <h3 className="text-xl font-semibold text-blue-800 mb-2">
-                {thread.title}
-              </h3>
-              <p className="text-gray-600 text-sm mb-4">
+        {filteredThreads.slice(0, limit).map((thread) => (
+          <div key={thread.id} className="bg-white p-6 shadow-lg rounded-lg mb-6">
+            <h3 className="text-xl font-semibold text-blue-800 mb-2">{thread.title}</h3>
+            <div className="flex flex-row gap-x-12 mb-4">
+              <p className="text-gray-600 text-sm font-bold mb-4">
                 {thread.category} | {thread.createdAt} | By {thread.author}
               </p>
-              <p className="text-gray-700 mb-4">{thread.content}</p>
-              <div className="flex justify-between items-center text-gray-500">
-                <div className="flex items-center space-x-4">
-                  <button className="flex items-center hover:text-blue-600">
-                    <FaThumbsUp className="mr-2" />
-                    {thread.likes} Likes
+              <button
+                onClick={() => handleLikeThread(thread.id)}
+                className="flex items-center text-blue-800 hover:text-blue-500"
+              >
+                <FaThumbsUp className="mr-2" />
+                {thread.likes} Likes
+              </button>
+            </div>
+            <p className="text-gray-700 mb-4">{thread.content}</p>
+            <div className="flex items-center ml-16">
+              <div className="w-full">
+                {thread.comments.slice(0, commentsLimit[thread.id] || 3).map((comment) => (
+                  <div
+                    key={comment.id}
+                    className="border-t pt-4 mt-4 text-gray-700 flex items-center justify-between"
+                  >
+                    <div>
+                      <p>{comment.comment}</p>
+                      <p className="text-sm text-gray-500">By {comment.author}</p>
+                    </div>
+                    <button
+                      onClick={() => handleLikeComment(thread.id, comment.id)}
+                      className="flex text-blue-800 hover:text-blue-500"
+                    >
+                      <FaThumbsUp className="mr-2" />
+                      {comment.likes} Likes
+                    </button>
+                  </div>
+                ))}
+                {thread.comments.length > 3 && thread.comments.length > (commentsLimit[thread.id] || 3) && (
+                  <button
+                    onClick={() => setCommentsLimit({ ...commentsLimit, [thread.id]: thread.comments.length })}
+                    className="text-blue-600 hover:underline hover:text-blue-800 mt-2"
+                  >
+                    See More Comments...
                   </button>
-                  <button className="flex items-center hover:text-blue-600">
-                    <FaCommentAlt className="mr-2" />
-                    {thread.comments} Comments
+                )}
+                {(commentsLimit[thread.id] || 3) > 3 && (
+                  <button
+                    onClick={() => setCommentsLimit({ ...commentsLimit, [thread.id]: 3 })}
+                    className="text-blue-600 hover:underline hover:text-blue-800 mt-2"
+                  >
+                    Close
+                  </button>
+                )}
+                <div className="mt-4">
+                  <input
+                    type="text"
+                    placeholder="Add a comment..."
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+                  />
+                  <button
+                    onClick={() => handleComment(thread.id)}
+                    className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-700 mt-2"
+                  >
+                    Add Comment
                   </button>
                 </div>
-                <a
-                  href="#"
-                  className="text-blue-600 hover:underline hover:text-blue-800"
-                >
-                  View Discussion
-                </a>
-              </div>              
-            </div>            
-          ))
-        ) : (
-          <p className="text-gray-600">No discussions found.</p>
+              </div>
+            </div>
+          </div>
+        ))}
+        {filteredThreads.length > limit && (
+          <button
+            onClick={() => setLimit(limit + 8)}
+            className="text-blue-600 hover:underline hover:text-blue-800"
+          >
+            See More Discussions...
+          </button>
         )}
       </div>
-      {filteredThreads.length > limit ? (
-        <button
-          onClick={() => setLimit(limit + 8)}
-          className=" text-blue-600 hover:underline hover:text-blue-800"
-        >
-          see More discussion...
-        </button>
-      ) : (
-        ""
-      )}
     </div>
   );
 }
