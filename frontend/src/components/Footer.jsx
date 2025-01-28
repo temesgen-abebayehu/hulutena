@@ -11,7 +11,7 @@ import {
 
 function Footer() {
   return (
-    <footer className="bg-gray-300 text-black">
+    <footer className="bg-cyan-100 text-black">
       <div className="p-4">
         <div className="flex flex-row flex-wrap justify-center gap-x-40  p-8">
           <div>
@@ -76,7 +76,7 @@ function Footer() {
         </div>
       </div>
       <p className="text-center p-4 text-black font-semibold">
-        &copy; 2021 All rights reserved
+        &copy; 2021 <span className="text-blue-600">HuluTena</span>, All rights reserved
       </p>
     </footer>
   );

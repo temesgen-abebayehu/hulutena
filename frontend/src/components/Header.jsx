@@ -76,19 +76,3 @@ function Header() {
 }
 
 export default Header;
-
-// {isMenuOpen && (
-//     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
-//         <div className="bg-white w-64 h-full p-4 shadow-lg">
-//             <button onClick={showBars} className="text-right mb-4 text-2xl font-bold">X</button>
-//             <nav className="flex flex-col space-y-4">
-//                 <a className="hover:underline hover:text-slate-700" href="/">Home</a>
-//                 <a className="hover:underline hover:text-slate-700" href="/">Services</a>
-//                 <a className="hover:underline hover:text-slate-700" href="/">Resourses</a>
-//                 <a className="hover:underline hover:text-slate-700" href="/">Community</a>
-//                 <a className="hover:underline hover:text-slate-700" href="/">About Us</a>
-//                 <a className="hover:underline hover:text-slate-700" href="/">Contact Us</a>
-//             </nav>
-//         </div>
-//     </div>
-// )}
