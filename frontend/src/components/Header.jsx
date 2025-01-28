@@ -34,9 +34,9 @@ function Header() {
             Contact Us
           </a>
         </div>
-        <button className="bg-blue-700 p-1.5 rounded-md text-white text-sm">
+        <a href="/login" className="bg-blue-700 p-1.5 rounded-md text-white text-sm">
           Login/Register
-        </button>
+        </a>
         <button onClick={showBars}>
           <FaBars className="text-2xl lg:hidden" />
         </button>
