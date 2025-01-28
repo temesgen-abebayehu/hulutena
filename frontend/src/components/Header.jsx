@@ -30,7 +30,7 @@ function Header() {
           <a className="hover:underline hover:text-slate-700" href="/about">
             About Us
           </a>
-          <a className="hover:underline hover:text-slate-700" href="#contact">
+          <a className="hover:underline hover:text-slate-700" href="/contact">
             Contact Us
           </a>
         </div>
@@ -65,7 +65,7 @@ function Header() {
             <a className="hover:underline hover:text-slate-700" href="/about">
               About Us
             </a>
-            <a className="hover:underline hover:text-slate-700" href="#contact">
+            <a className="hover:underline hover:text-slate-700" href="/contact">
               Contact Us
             </a>
           </div>

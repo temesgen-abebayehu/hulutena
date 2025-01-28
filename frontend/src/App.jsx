@@ -10,6 +10,7 @@ import Community from "./pages/Community";
 import Services from "./pages/Services";
 import DoctorProfile from "./pages/DoctorProfile";
 import WrittenPost from "./pages/WrittenPost";
+import ContactPage from "./pages/ContactPage";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
     <Routes>
       <Route path="/services" element={<Services />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/contact" element={<ContactPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/resourses" element={<Resourses />} />
