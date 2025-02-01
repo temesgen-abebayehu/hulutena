@@ -11,6 +11,7 @@ import DoctorProfile from "./pages/DoctorProfile";
 import WrittenPost from "./pages/WrittenPost";
 import ContactPage from "./pages/ContactPage";
 import Appointment from "./pages/Appointment";
+import AppointmentForm from "./pages/AppointmentForm";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Header />
     <Routes>
       <Route path="/appointment" element={<Appointment />} />
+      <Route path="/appointment/:id" element={<AppointmentForm />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/login" element={<LoginPage />} />
