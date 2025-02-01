@@ -229,7 +229,7 @@ function HomePage() {
               needs.
             </p>
             <a
-              href="/services"
+              href="/appointment"
               className="text-blue-800 font-medium hover:underline hover:text-blue-600"
             >
               Make an Appointment

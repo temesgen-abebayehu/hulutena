@@ -38,8 +38,8 @@ function Footer() {
             <a className="hover:underline hover:text-blue-900" href="/">
               Home
             </a>
-            <a className="hover:underline hover:text-blue-900" href="/services">
-              Services
+            <a className="hover:underline hover:text-blue-900" href="/appointment">
+              Appointment
             </a>
             <a className="hover:underline hover:text-blue-900" href="/resourses">
               Resourses

@@ -7,7 +7,6 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Resourses from "./pages/Resourses";
 import Community from "./pages/Community";
-import Services from "./pages/Services";
 import DoctorProfile from "./pages/DoctorProfile";
 import WrittenPost from "./pages/WrittenPost";
 import ContactPage from "./pages/ContactPage";
@@ -18,7 +17,7 @@ function App() {
     <div>
       <Header />
     <Routes>
-      <Route path="/services" element={<Services />} />
+      <Route path="/appointment" element={<Appointment />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/login" element={<LoginPage />} />
@@ -27,7 +26,6 @@ function App() {
       <Route path="/resourses/:id" element={<WrittenPost />} />
       <Route path="/community" element={<Community />} />
       <Route path="/doctor-profile/:id" element={<DoctorProfile />} />
-      <Route path="/appoitment/:id" element={<Appointment />} />
       <Route path="/" element={<HomePage />} />
     </Routes>
     <Footer />
