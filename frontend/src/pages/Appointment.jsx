@@ -178,4 +178,4 @@ function Appointment() {
   );
 }
 
-export default Services;
+export default Appointment;
