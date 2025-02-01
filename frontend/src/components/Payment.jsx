@@ -1,9 +1,16 @@
 import React, { useState } from "react";
-import { FaArrowLeft, FaCheckCircle, FaUpload, FaMoneyCheckAlt, FaCopy } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaCheckCircle,
+  FaUpload,
+  FaMoneyCheckAlt,
+  FaCopy,
+} from "react-icons/fa";
 
 function Payment({ appointmentDetails, onPaymentComplete }) {
   const [selectedBank, setSelectedBank] = useState("CBE");
   const [paymentReceipt, setPaymentReceipt] = useState(null);
+  const [paymentConfirmation, setPaymentConfirmation] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [isPaymentCompleted, setIsPaymentCompleted] = useState(false);
 
@@ -33,18 +40,17 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
     e.preventDefault();
 
     if (!paymentReceipt) {
-      setConfirmationMessage("Please upload the payment receipt to complete the payment.");
+      setConfirmationMessage(
+        "Please upload the payment receipt to complete the payment."
+      );
       return;
     }
 
     // Simulate payment completion
     setIsPaymentCompleted(true);
+    setPaymentConfirmation(true);
     setConfirmationMessage("Payment completed successfully. Thank you!");
 
-    // Automatically go back to the AppointmentForm after 3 seconds
-    setTimeout(() => {
-      onPaymentComplete();
-    }, 3000);
   };
 
   const copyAccountNumber = () => {
@@ -77,9 +83,12 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
         {/* Display Appointment Details */}
         {appointmentDetails && (
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <h2 className="text-lg font-semibold text-gray-700 mb-2">Appointment Details</h2>
+            <h2 className="text-lg font-semibold text-gray-700 mb-2">
+              Appointment Details
+            </h2>
             <p className="text-gray-600">
-              <strong>Date:</strong> {appointmentDetails.selectedDate?.toDateString()}
+              <strong>Date:</strong>{" "}
+              {appointmentDetails.selectedDate?.toDateString()}
             </p>
             <p className="text-gray-600">
               <strong>Time:</strong> {appointmentDetails.selectedTime}
@@ -92,7 +101,10 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
 
         {/* Payment Options */}
         <div className="mb-4">
-          <label htmlFor="bank" className="block text-gray-700 font-medium mb-2">
+          <label
+            htmlFor="bank"
+            className="block text-gray-700 font-medium mb-2"
+          >
             Select Payment Option
           </label>
           <select
@@ -116,7 +128,9 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
             Receiver {selectedBank} Account Number:
           </p>
           <div className="flex items-center justify-between p-2 border border-gray-300 rounded-lg">
-            <p className="font-semibold text-gray-800">{selectedAccount?.accountNumber}</p>
+            <p className="font-semibold text-gray-800">
+              {selectedAccount?.accountNumber}
+            </p>
             <button
               onClick={copyAccountNumber}
               className="text-blue-600 hover:text-blue-800"
@@ -129,7 +143,8 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
         {/* File Upload */}
         <div className="mb-4">
           <p className="text-gray-700 mb-2">
-            After you have made the payment, please attach the payment receipt here:
+            After you have made the payment, please attach the payment receipt
+            here:
           </p>
           <div className="flex items-center justify-center w-full p-4 border-2 border-dashed border-gray-300 rounded-lg">
             <label className="cursor-pointer flex items-center">
@@ -163,7 +178,8 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
         {confirmationMessage && (
           <div
             className={`mt-4 p-4 rounded-md flex items-center ${
-              confirmationMessage.includes("successfully") || confirmationMessage.includes("copied")
+              confirmationMessage.includes("successfully") ||
+              confirmationMessage.includes("copied")
                 ? "bg-green-100 text-green-800"
                 : "bg-red-100 text-red-800"
             }`}
@@ -173,11 +189,24 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
           </div>
         )}
 
-        {/* Appointment Accomplishment Message */}
-        {isPaymentCompleted && (
-          <div className="mt-4 p-4 bg-green-100 text-green-800 rounded-lg">
-            <p>Your appointment has been successfully scheduled!</p>
-            <p>You will receive a confirmation email shortly.</p>
+        {paymentConfirmation && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-xl font-bold">Appointment Scheduled!</h2>
+              <div className="flex items-center justify-center mt-4">
+                <FaCheckCircle className="text-green-500 text-6xl mt-4" />
+                <p className="font-bold">
+                  Your appointment has been successfully scheduled!
+                </p>
+              </div>
+              <p>You will receive a confirmation email shortly.</p>
+              <button
+                className="mt-4 bg-green-500 text-white px-4 py-2 rounded"
+                onClick={() => setPaymentConfirmation(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
         )}
       </div>
