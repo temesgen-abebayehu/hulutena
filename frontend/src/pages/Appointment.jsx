@@ -9,7 +9,7 @@ import {
   FaLanguage,
 } from "react-icons/fa";
 
-function Services() {
+function Appointment() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCriteria, setFilterCriteria] = useState("");
 
