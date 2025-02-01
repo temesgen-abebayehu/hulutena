@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaCalendarAlt, FaUser, FaPhone, FaEnvelope, FaVideo, FaClinicMedical } from "react-icons/fa";
+import { FaCalendarAlt, FaUser, FaPhone, FaEnvelope, FaVideo, FaClinicMedical, FaArrowLeft } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Payment from "../components/Payment";
@@ -48,6 +48,13 @@ function AppointmentForm() {
           />
         ) : (
           <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-lg p-6">
+            <button
+              onClick={() => window.history.back()}
+              className="flex flex-row items-center text-blue-600 hover:text-blue-800 mb-4 gap-2"
+            >
+              <FaArrowLeft />
+              <p>Back to Appointment list</p>
+            </button>
             <h2 className="text-2xl font-bold mb-6 text-center flex items-center justify-center">
               <FaCalendarAlt className="mr-2" />
               Book an Appointment

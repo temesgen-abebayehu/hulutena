@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaCheckCircle,
   FaLocationArrow,
@@ -44,6 +45,11 @@ function Services() {
       imgSrc: "/doctor3.jpg",
     },
   ];
+  const navigate = useNavigate();
+
+  const handleBookAppointment = (doctorId) => {
+    navigate(`/appointment/${doctorId}`);
+  }
 
   const filteredDoctors = doctors.filter((doctor) => {
     return (
@@ -105,7 +111,8 @@ function Services() {
         </div>
       </div>
 
-      <div className="flex flex-row flex-wrap gap-5">
+      {filteredDoctors.length > 0 && (
+        <div className="flex flex-row flex-wrap gap-5">
         {filteredDoctors.map((doctor) => (
           <div
             key={doctor.id}
@@ -151,12 +158,15 @@ function Services() {
                 </a>
               </div>
             </div>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+            <button 
+              onClick={() => handleBookAppointment(doctor.id)}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
               Book Appointment
             </button>
           </div>
         ))}
       </div>
+      )}
 
       {filteredDoctors.length === 0 && (
         <p className="text-gray-600 text-center mt-8">
