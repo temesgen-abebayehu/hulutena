@@ -18,7 +18,7 @@ function HomePage() {
         </h1>
         <h1 className="p-4  font-extrabold text-3xl md:text-4xl lg:text-5xl">ሁሌም ለእርስዎ ጤና</h1>
         <h1 className="p-4 font-extrabold text-3xl md:text-4xl lg:text-5xl">እንተጋለን!</h1>
-        <a href="/services" className="bg-blue-800 p-2 rounded-lg font-bold text-2xl md:text-3xl">
+        <a href="/appointment" className="bg-blue-800 p-2 rounded-lg font-bold text-2xl md:text-3xl">
           ቀጠሮ ያስይዙ
         </a>
       </div>

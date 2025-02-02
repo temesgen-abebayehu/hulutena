@@ -25,7 +25,7 @@ function Resources() {
       id: 3,
       title: "Good Night Audio",
       description: "Relax and drift off to sleep with this guided night audio.",
-      src: "/audio/Waltz Primordial.mp3",
+      src: "/audio/Waltz Primordial .mp3",
       img: "/audioicon.jpg",
       type: "audio",
     },
@@ -68,7 +68,7 @@ function Resources() {
     {
       id: 10,
       title: "Post Title 3",
-      description: "Overview of the third post.",
+      description: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
       type: "written",
     },
   ];
@@ -217,7 +217,7 @@ function Resources() {
               {filteredWritten.slice(0, 8).map((written) => (
                 <div key={written.id} className="flex flex-col items-start p-6 bg-white shadow-lg rounded-lg">
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">{written.title}</h3>
-                  <p className="text-gray-600 mb-4">{written.description}</p>
+                  <p className="text-gray-600 mb-4">{written.description.substring(0, 200)}{written.description.length > 200 ? "..." : ""}</p>
                   <a href={`/resourses/${written.id}`} className="text-blue-600 hover:underline hover:text-blue-800">
                     Read more...
                   </a>
