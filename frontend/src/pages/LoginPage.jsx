@@ -1,13 +1,54 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { loginUser } from "../services/authService";
+import { FaGoogle, FaFacebook } from "react-icons/fa"; // For social icons
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
 
-  const handleLogin = (e) => {
+  // Validate form inputs
+  const validateForm = () => {
+    if (!email || !password) {
+      setError("All fields are required.");
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("Please enter a valid email address.");
+      return false;
+    }
+    return true;
+  };
+
+  // Handle login submission
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Add login logic here (e.g., API call)
-    console.log("Logging in with:", { email, password });
+    setError(null);
+    setMessage(null);
+    setLoading(true);
+
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await loginUser({ email, password });
+      setMessage("Login successful! Redirecting...");
+      setEmail("");
+      setPassword("");
+      setError(null);
+      // Simulate redirect after 2 seconds
+      setTimeout(() => {
+        window.location.href = "/dashboard"; // Redirect to dashboard or home page
+      }, 2000);
+    } catch (error) {
+      setError(error.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -15,11 +56,27 @@ function LoginPage() {
       {/* Login Card */}
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
         <h1 className="text-3xl font-bold text-blue-800 text-center mb-6">
-          Login to Your Account
+          Welcome Back! Login to Your Account
         </h1>
         <p className="text-gray-600 text-center mb-6">
           Access your healthcare resources and stay connected.
         </p>
+
+        {/* Display Error Message */}
+        {error && (
+          <div className="bg-red-100 text-red-600 p-3 rounded-lg mb-4 text-center">
+            {error}
+          </div>
+        )}
+
+        {/* Display Success Message */}
+        {message && (
+          <div className="bg-green-100 text-green-600 p-3 rounded-lg mb-4 text-center">
+            {message}
+          </div>
+        )}
+
+        {/* Login Form */}
         <form onSubmit={handleLogin}>
           {/* Email Input */}
           <div className="mb-4">
@@ -35,7 +92,7 @@ function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+              className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -54,7 +111,7 @@ function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+              className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -62,7 +119,7 @@ function LoginPage() {
           {/* Forgot Password */}
           <div className="flex justify-end mb-4">
             <a
-              href="#"
+              href="/forgot-password"
               className="text-blue-600 hover:underline text-sm"
             >
               Forgot Password?
@@ -72,9 +129,34 @@ function LoginPage() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg shadow-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Login
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <svg
+                  className="animate-spin h-5 w-5 mr-3 text-white"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Logging in...
+              </span>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
 
@@ -87,20 +169,12 @@ function LoginPage() {
 
         {/* Social Login */}
         <div className="flex justify-center space-x-4">
-          <button className="flex items-center justify-center w-1/2 py-2 border rounded-lg shadow-sm text-gray-700 hover:bg-gray-100">
-            <img
-              src="/google.svg"
-              alt="Google"
-              className="w-5 h-5 mr-2"
-            />
+          <button className="flex items-center justify-center w-1/2 py-2 border rounded-lg shadow-sm text-gray-700 hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <FaGoogle className="w-5 h-5 mr-2 text-red-600" />
             Google
           </button>
-          <button className="flex items-center justify-center w-1/2 py-2 border rounded-lg shadow-sm text-gray-700 hover:bg-gray-100">
-            <img
-              src="/facebook.svg"
-              alt="Facebook"
-              className="w-5 h-5 mr-2"
-            />
+          <button className="flex items-center justify-center w-1/2 py-2 border rounded-lg shadow-sm text-gray-700 hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <FaFacebook className="w-5 h-5 mr-2 text-blue-600" />
             Facebook
           </button>
         </div>
