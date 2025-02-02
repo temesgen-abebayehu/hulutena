@@ -83,7 +83,7 @@ export const updateAppointment = async (req, res) => {
 export const deleteAppointment = async (req, res) => {
     const { id } = req.params;
     try {
-        await Appointment.findByIdAndRemove(id);
+        await Appointment.findByIdAndDelete(id);
         res.status(200).json({ message: "Appointment deleted successfully." });
     } catch (error) {
         console.log(`Error in deleteAppointment: ${error.message}`);
