@@ -11,6 +11,7 @@ import doctorRouter from './routes/doctor.route.js';
 import appointmentRouter from './routes/appointment.route.js';
 import chatbotRouter from './routes/chatbot.route.js';
 import discussionRouter from './routes/discussion.route.js';
+import resourceRouter from './routes/resource.route.js';
 
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use('/api/doctors', doctorRouter);
 app.use('/api/appointments', appointmentRouter);
 app.use('/api/chatbot', chatbotRouter);
 app.use("/api/discussions", discussionRouter);
+app.use('/api/resources', resourceRouter);
 
 app.listen(PORT, () => {
     console.log(`server on at http://localhost:${PORT}`);
