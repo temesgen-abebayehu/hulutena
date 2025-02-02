@@ -3,11 +3,17 @@ import bcrypt from "bcryptjs";
 import { generateTokenAndSetCookie } from "../utils/generateToken.js";
 
 export const Register = async (req, res) => {
-  const { fullName, email, role, password, contactNumber } = req.body;
+  const { fullName, email, role, password, confiremPassword, contactNumber } = req.body;
 
   try {
     // Trim input fields
     const trimmedFullName = fullName.trim();
+
+    // Check password and confirm password
+    if (password !== confiremPassword) {
+      return res.status(400).json({ message: "Password not match" });
+    }
+
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
