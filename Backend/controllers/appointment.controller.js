@@ -2,7 +2,7 @@ import Appointment from '../models/appointment.model.js';
 
 
 export const createAppointment = async (req, res) => {
-    const { doctor, appointmentType, date, time } = req.body;
+    const { doctor, appointmentType, patientName, phoneNumber, email, date, time } = req.body;
     
     try {
       // Verify that req.user is set by protectRoute (authenticated user)
@@ -15,7 +15,10 @@ export const createAppointment = async (req, res) => {
       // Create a new appointment with patient info from req.user
       const newAppointment = new Appointment({
         doctor,
-        patient: existingPatient._id,
+        patientName,
+        phoneNumber,
+        email,
+        createdBy: existingPatient._id,
         appointmentType,
         date,
         time,
@@ -31,7 +34,7 @@ export const createAppointment = async (req, res) => {
 
 export const getAppointments = async (req, res) => {
     try {
-        const appointments = await Appointment.find();
+        const appointments = await Appointment.find({createdBy: req.user._id});
         res.status(200).json(appointments);
     } catch (error) {
         console.log(`Error in getAppointments: ${error.message}`);
@@ -42,7 +45,7 @@ export const getAppointments = async (req, res) => {
 export const getAppointment = async (req, res) => {
     const { id } = req.params;
     try {
-        const appointment = await Appointment.findById(id);
+        const appointment = await Appointment.findById({createdBy: req.user._id, _id: id});
         res.status(200).json(appointment);
     } catch (error) {
         console.log(`Error in getAppointment: ${error.message}`);
@@ -52,9 +55,20 @@ export const getAppointment = async (req, res) => {
 
 export const updateAppointment = async (req, res) => {
     const { id } = req.params;
-    const { appointmentType, date, time, status } = req.body;
+    const { appointmentType, date, time, patientName, phoneNumber, email } = req.body;
     try {        
-        const updatedAppointment = await Appointment.findByIdAndUpdate(id, { appointmentType, date, time, status }, { new: true });
+        const updatedAppointment = await Appointment.findByIdAndUpdate(
+            id, 
+            { 
+                appointmentType, 
+                date, 
+                time, 
+                patientName, 
+                phoneNumber, 
+                email 
+            }, { new: true }
+        );
+        
         if (!updatedAppointment) {
             return res.status(404).json({ message: "Appointment not found." });
         }

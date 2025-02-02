@@ -1,19 +1,31 @@
 import mongoose from "mongoose";
 
 const appointmentSchema = new mongoose.Schema({
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     doctor: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Doctor',
+        ref: 'User',
         required: true
     },
-    patient: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Patient',
+    patientName: {
+        type: String,
         required: true
     },
+    phoneNumber: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },    
     appointmentType: {
         type: String,
-        enum: ['voice', 'video', 'in-person'],
+        enum: [ 'online', 'in-person'],
         required: true
     },
     date: {
@@ -23,6 +35,11 @@ const appointmentSchema = new mongoose.Schema({
     time: {
         type: String,
         required: true
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'completed'],
+        default: 'pending'
     },
     status: {
         type: String,
