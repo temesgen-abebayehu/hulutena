@@ -21,7 +21,7 @@ export const getUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   if (req.user._id.toString() === req.params.id) {
     try {
-      const user = await User.findByIdAndUpdate(req.params.id, {
+      await User.findByIdAndUpdate(req.params.id, {
         $set: req.body,
       });
 

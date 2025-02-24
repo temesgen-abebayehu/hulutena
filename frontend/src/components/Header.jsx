@@ -1,12 +1,47 @@
 import { FaBars, FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // For navigation
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const navigate = useNavigate(); // Hook for navigation
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleProfileMenu = () => setIsProfileOpen(!isProfileOpen);
+
+  // Get user data from localStorage and parse it
+  const storedUser = localStorage.getItem("user");
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  const profileImage = user?.currentUser.profileImage;
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`, // Include the user's token
+        },
+      });
+
+      if (response.ok) {
+        localStorage.removeItem("user");
+        navigate("/");
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
+  // Handle profile navigation
+  const handleProfile = () => {
+    navigate("/profile"); // Redirect to profile page
+    setIsProfileOpen(false); // Close the profile menu
+  };
 
   return (
     <header className="flex flex-row justify-between p-4 shadow-md bg-slate-200 relative">
@@ -34,31 +69,30 @@ function Header() {
             Contact Us
           </a>
         </div>
-        {localStorage.getItem("user") ? (
+
+        {user ? (
           <div className="relative">
-            <button onClick={toggleProfileMenu} className="text-2xl">
-              <FaUserCircle />
+            <button onClick={toggleProfileMenu} className="w-10 h-10 rounded-full overflow-hidden">
+              {profileImage ? (
+                <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <FaUserCircle className="text-2xl" />
+              )}
             </button>
             {isProfileOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md p-2">
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                <button
+                  onClick={handleProfile}
+                  className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                 >
                   My Profile
-                </a>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                >
-                  Settings
-                </a>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="block text-red-700 w-full text-left px-4 py-2 hover:bg-gray-100"
                 >
                   Logout
-                </a>
+                </button>
               </div>
             )}
           </div>
@@ -67,10 +101,12 @@ function Header() {
             Login/Register
           </a>
         )}
+
         <button onClick={toggleMenu}>
           <FaBars className="text-2xl lg:hidden" />
         </button>
       </div>
+
       {isMenuOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
           <div className="bg-white w-64 h-full p-4 shadow-lg flex flex-col space-y-4">
