@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { loginUser } from "../services/authService";
-import { FaGoogle, FaFacebook } from "react-icons/fa"; // For social icons
+import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
+import { FaGoogle, FaFacebook } from "react-icons/fa";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -8,8 +8,9 @@ function LoginPage() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Validate form inputs
+
   const validateForm = () => {
     if (!email || !password) {
       setError("All fields are required.");
@@ -35,14 +36,24 @@ function LoginPage() {
     }
 
     try {
-      await loginUser({ email, password });
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed. Please try again.');
+      }
+
+      localStorage.setItem("user", JSON.stringify({ currentUser: data }));
       setMessage("Login successful! Redirecting...");
       setEmail("");
       setPassword("");
       setError(null);
       // Simulate redirect after 2 seconds
       setTimeout(() => {
-        window.location.href = "/dashboard"; // Redirect to dashboard or home page
+        window.location.href = "/";
       }, 2000);
     } catch (error) {
       setError(error.message || "Login failed. Please try again.");
@@ -105,15 +116,29 @@ function LoginPage() {
             >
               Password
             </label>
+            <div className="relative">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"} // Toggle input type
               id="password"
+              name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 pr-10"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-2"
+            >
+              {showPassword ? (
+                <AiOutlineEyeInvisible className="h-5 w-5 text-gray-500" />
+              ) : (
+                <AiOutlineEye className="h-5 w-5 text-gray-500" />
+              )}
+            </button>
+            </div>
           </div>
 
           {/* Forgot Password */}

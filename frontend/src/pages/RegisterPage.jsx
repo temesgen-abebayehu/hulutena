@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { registerUser } from "../services/authService";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"; 
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -14,25 +14,10 @@ function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
+  const [showPassword, setShowPassword] = useState(false); 
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const validateForm = () => {
-    if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
-      setError("All fields are required.");
-      return false;
-    }
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long.");
-      return false;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
-      return false;
-    }
-    return true;
   };
 
   const handleSubmit = async (e) => {
@@ -40,12 +25,20 @@ function RegisterPage() {
     setError(null);
     setMessage(null);
 
-    if (!validateForm()) return;
-
     setLoading(true);
     try {
-      await registerUser(formData);
-      setMessage("Registration successful! You can now log in.");
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setMessage("Registration successful! You can now log in.");        
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Registration failed.");
+      }
       setFormData({ fullName: "", email: "", role: "patient", password: "", contactNumber: "", confirmPassword: "" });
     } catch (err) {
       setError(err.message || "Registration failed.");
@@ -126,33 +119,55 @@ function RegisterPage() {
           </div>
 
           {/* Password */}
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <label htmlFor="password" className="block text-gray-700 font-medium mb-2">Password</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"} // Toggle input type
               id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               placeholder="Create a password"
-              className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+              className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 pr-10"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-7"
+            >
+              {showPassword ? (
+                <AiOutlineEyeInvisible className="h-5 w-5 text-gray-500" />
+              ) : (
+                <AiOutlineEye className="h-5 w-5 text-gray-500" />
+              )}
+            </button>
           </div>
 
           {/* Confirm Password */}
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2">Confirm Password</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"} // Toggle input type
               id="confirmPassword"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="Confirm your password"
-              className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+              className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 pr-10"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-7"
+            >
+              {showPassword ? (
+                <AiOutlineEyeInvisible className="h-5 w-5 text-gray-500" />
+              ) : (
+                <AiOutlineEye className="h-5 w-5 text-gray-500" />
+              )}
+            </button>
           </div>
 
           {/* Terms and Conditions */}
@@ -201,7 +216,7 @@ function RegisterPage() {
         {/* Already Registered */}
         <p className="text-center text-gray-600 mt-6">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-600 hover:underline">Log in here</a>
+          <a href="/login" className="text-blue-600 hover:underline">Login</a>
         </p>
       </div>
     </div>
