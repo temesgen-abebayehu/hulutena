@@ -4,6 +4,10 @@ import Verification from "../models/Verification.model.js";
 export const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     const { password, ...others } = user._doc;
     if (others.role === "patient") {
         const { specialization, ...patientDetails } = others;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 function EditProfile() {
@@ -15,6 +15,7 @@ function EditProfile() {
   const [successMessage, setSuccessMessage] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false); // Track image upload status
   const navigate = useNavigate();
+  const fileInputRef = useRef(null); // Add a ref for the file input
 
   // Fetch user data when the component mounts
   useEffect(() => {
@@ -60,18 +61,18 @@ function EditProfile() {
   };
 
   // Handle profile image upload
-const handleImageUpload = async (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-  
+
     try {
       setUploadingImage(true);
       setError("");
       setSuccessMessage("");
-  
+
       // Optionally clear the previous image if needed
       setUser((prevUser) => ({ ...prevUser, profileImage: "" }));
-  
+
       // Upload image to Cloudinary
       const formData = new FormData();
       formData.append("file", file);
@@ -122,40 +123,60 @@ const handleImageUpload = async (e) => {
   // Handle form submission
   const handleSave = async () => {
     if (!validateForm()) return;
-
+  
     try {
       setLoading(true);
       setError("");
       setSuccessMessage("");
-
+  
       const storedUser = localStorage.getItem("user");
       if (!storedUser) {
         throw new Error("User not found in local storage.");
       }
-
+  
       const userId = JSON.parse(storedUser).currentUser._id;
-      const response = await fetch(`/api/users/${userId}`, {
+  
+      // Get the original user data
+      const response = await fetch(`/api/users/${userId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch user data.");
+      }
+  
+      const originalUser = await response.json();
+  
+      // Find only changed fields
+      const updatedFields = {};
+      Object.keys(user).forEach((key) => {
+        if (user[key] && user[key] !== originalUser[key]) {
+          updatedFields[key] = user[key];
+        }
+      });
+  
+      // Only send the update request if there are changes
+      if (Object.keys(updatedFields).length === 0) {
+        setSuccessMessage("No changes detected.");
+        setLoading(false);
+        return;
+      }
+  
+      const updateResponse = await fetch(`/api/users/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(user),
+        body: JSON.stringify(updatedFields), // Send only changed fields
       });
-
-      if (!response.ok) {
+  
+      if (!updateResponse.ok) {
         throw new Error("Failed to update user data.");
       }
-
-      const updatedUser = await response.json();
+  
+      const updatedUser = await updateResponse.json();
       setSuccessMessage("Profile updated successfully!");
-
-      // Update local storage with the updated user data
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ currentUser: updatedUser })
-      );
-
-      // Redirect to profile page after 2 seconds
+  
+      // Update local storage
+      localStorage.setItem("user", JSON.stringify({ currentUser: updatedUser }));
+  
       setTimeout(() => {
         navigate("/profile");
       }, 2000);
@@ -164,7 +185,7 @@ const handleImageUpload = async (e) => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   // Handle cancel
   const handleCancel = () => {
@@ -196,19 +217,21 @@ const handleImageUpload = async (e) => {
 
         <div className="space-y-4">
           {/* Profile Image Upload */}
-          <div>
-            <label className="block text-sm text-gray-500">Profile Image</label>
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center space-y-4">
+            <label className="block text-gray-500">Profile Image</label>
+            <div className="flex md:flex-wrap items-center justify-center gap-4">
               <img
                 src={user.profileImage || "/profile.png"}
                 alt="Profile"
-                className="w-16 h-16 rounded-full object-cover"
+                className="w-16 md:w-32 h-16 md:h-32 rounded-full object-cover cursor-pointer"
+                onClick={() => fileInputRef.current.click()} // Trigger file input click
               />
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                className="w-full p-2 border rounded-md"
+                className="hidden" // Hide the file input
+                ref={fileInputRef} // Attach the ref
                 disabled={uploadingImage}
               />
             </div>

@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
@@ -15,12 +16,12 @@ import resourceRouter from './routes/resource.route.js';
 import paymentRouter from './routes/payment.route.js';
 import chatDoctorRouter from './routes/chatWithDoctor.route.js';
 
-
 dotenv.config();
 const app = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 const PORT = 3000;
 
 connectDB();

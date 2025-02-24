@@ -21,21 +21,21 @@ function ProfilePage() {
           const response = await fetch(`/api/appointments?userId=${userData._id}`);
           if (response.ok) {
             const data = await response.json();
-
+            
             // Fetch doctor details for each appointment
-            const appointmentsWithDoctor = await Promise.all(
+            const appointmentsWithDoctorDetails = await Promise.all(
               data.slice(0, 5).map(async (appointment) => {
-                const doctorResponse = await fetch(`/api/users/${appointment.doctorId}`);
+                const doctorResponse = await fetch(`/api/doctors/${appointment.doctor}`);
                 if (doctorResponse.ok) {
                   const doctorData = await doctorResponse.json();
                   return { ...appointment, doctor: doctorData };
                 } else {
-                  return { ...appointment, doctor: null };
+                  throw new Error("Failed to fetch doctor details.");
                 }
               })
             );
 
-            setAppointments(appointmentsWithDoctor);
+            setAppointments(appointmentsWithDoctorDetails);
           } else {
             setError("Failed to fetch appointments.");
           }
@@ -65,7 +65,7 @@ function ProfilePage() {
   if (!user) {
     return <p>No user data found.</p>;
   }
-
+  
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -106,20 +106,6 @@ function ProfilePage() {
               <label className="text-sm text-gray-500">Contact Number</label>
               <p className="text-lg font-semibold">{user.contactNumber}</p>
             </div>
-            {user.role === "doctor" && (
-              <>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <label className="text-sm text-gray-500">Specialty</label>
-                  <p className="text-lg font-semibold">{user.specialization.join(", ")}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <label className="text-sm text-gray-500">Languages</label>
-                  <p className="text-lg font-semibold">
-                    {user.language ? user.language.join(", ") : "N/A"}
-                  </p>
-                </div>
-              </>
-            )}
           </div>
         </div>
 
@@ -136,6 +122,9 @@ function ProfilePage() {
                 >
                   <p className="text-lg font-semibold">
                     Patient: {appointment.patientName}
+                  </p>
+                  <p className="text-slate-800">
+                    Doctor: <span className="font-medium hover:underline" onClick={() => navigate(`/doctor-profile/${appointment.doctor._id}`)}>{appointment.doctor.fullName}</span>
                   </p>
                   <p className="text-sm text-gray-500">
                     Appointment Type: {appointment.appointmentType}

@@ -2,14 +2,19 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 function UserAppointment() {
-  const { id } = useParams(); // Get the appointment ID from the URL
+  const { id } = useParams();
+  useEffect(() => {
+    if (!id) {
+      setError("Invalid appointment ID.");
+      setLoading(false);
+    }
+  }, [id]);
   const navigate = useNavigate();
   const [appointment, setAppointment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isEditing, setIsEditing] = useState(false); // Track edit mode
+  const [isEditing, setIsEditing] = useState(false);
 
-  // Fetch appointment details
   useEffect(() => {
     const fetchAppointment = async () => {
       try {
