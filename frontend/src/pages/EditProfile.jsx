@@ -15,7 +15,7 @@ function EditProfile() {
   const [successMessage, setSuccessMessage] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false); // Track image upload status
   const navigate = useNavigate();
-  const fileInputRef = useRef(null); // Add a ref for the file input
+  const fileInputRef = useRef(null); 
 
   // Fetch user data when the component mounts
   useEffect(() => {
@@ -164,7 +164,7 @@ function EditProfile() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedFields), // Send only changed fields
+        body: JSON.stringify(updatedFields),
       });
   
       if (!updateResponse.ok) {

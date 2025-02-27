@@ -14,6 +14,7 @@ import Appointment from "./pages/AppointmentPage";
 import Profile from "./pages/ProfilePage";
 import UserAppointment from "./pages/UserAppointment";
 import EditProfile from "./pages/EditProfile";
+import PaymentPage from "./pages/PaymentPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
     <Routes>
       <Route path="/appointment" element={<Appointment />} />
       <Route path="/appointment/:id" element={<UserAppointment />} />
+      <Route path="/payment" element={<PaymentPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/login" element={<LoginPage />} />

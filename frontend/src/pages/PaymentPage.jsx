@@ -1,18 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   FaArrowLeft,
   FaCheckCircle,
   FaUpload,
   FaMoneyCheckAlt,
   FaCopy,
+  FaSpinner,
 } from "react-icons/fa";
 
-function Payment({ appointmentDetails, onPaymentComplete }) {
-  const [selectedBank, setSelectedBank] = useState("CBE");
+function Payment() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { appointmentId, doctor } = location.state || {};
+
   const [paymentReceipt, setPaymentReceipt] = useState(null);
-  const [paymentConfirmation, setPaymentConfirmation] = useState(false);
+  const [selectedBank, setSelectedBank] = useState("CBE");
   const [confirmationMessage, setConfirmationMessage] = useState("");
-  const [isPaymentCompleted, setIsPaymentCompleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false); 
+  const [receiptUrl, setReceiptUrl] = useState("");
+
+  useEffect(() => {
+    if (!appointmentId || !doctor) {
+      navigate("/appointment");
+    }
+  }, [appointmentId, doctor, navigate]);
 
   const ourAccountNumbers = [
     { id: 1, bankName: "CBE", accountNumber: "1000400426938" },
@@ -31,26 +44,82 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
     (account) => account.bankName === selectedBank
   );
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
     setPaymentReceipt(file);
+    setIsUploading(true); 
+    setConfirmationMessage("Uploading receipt...");
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "hulutena");
+
+    try {
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/dysfxppj1/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to upload receipt.");
+
+      const data = await response.json();
+      setReceiptUrl(data.secure_url);
+      setConfirmationMessage("Receipt uploaded successfully!");
+    } catch (error) {
+      console.error("Error uploading receipt:", error);
+      setConfirmationMessage("Error uploading receipt. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
-  const handlePayment = (e) => {
+  const handlePayment = async (e) => {
     e.preventDefault();
 
-    if (!paymentReceipt) {
-      setConfirmationMessage(
-        "Please upload the payment receipt to complete the payment."
-      );
+    if (!paymentReceipt || !selectedBank || !selectedAccount?.accountNumber || !receiptUrl) {
+      setConfirmationMessage("Please fill out all fields and upload the payment receipt.");
       return;
     }
 
-    // Simulate payment completion
-    setIsPaymentCompleted(true);
-    setPaymentConfirmation(true);
-    setConfirmationMessage("Payment completed successfully. Thank you!");
+    setIsLoading(true);
+    setConfirmationMessage("");
 
+    try {
+      const paymentData = {
+        appointmentId,
+        bankName: selectedBank,
+        bankAccount: selectedAccount.accountNumber,
+        receipt: receiptUrl,
+      };
+
+
+      const response = await fetch(`/api/payments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(paymentData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Server Error:", errorData);
+        throw new Error(errorData.message || "Payment failed. Please try again.");
+      }
+
+      setConfirmationMessage("Payment completed successfully!");
+      setTimeout(() => navigate("/appointment"), 2000);
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      setConfirmationMessage(error.message || "An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const copyAccountNumber = () => {
@@ -66,9 +135,8 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
   return (
     <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center">
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
-        {/* Back Button */}
         <button
-          onClick={onPaymentComplete}
+          onClick={() => navigate("/appointment")}
           className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
         >
           <FaArrowLeft className="mr-2" />
@@ -80,39 +148,28 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
           Payment Process
         </h1>
 
-        {/* Display Appointment Details */}
-        {appointmentDetails && (
+        {doctor && (
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <h2 className="text-lg font-semibold text-gray-700 mb-2">
-              Appointment Details
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-700 mb-2">Doctor Details</h2>
             <p className="text-gray-600">
-              <strong>Date:</strong>{" "}
-              {appointmentDetails.selectedDate?.toDateString()}
+              <strong>Name:</strong> {doctor.fullName}
             </p>
             <p className="text-gray-600">
-              <strong>Time:</strong> {appointmentDetails.selectedTime}
+              <strong>Specialty:</strong> {doctor.specialization.join(", ")}
             </p>
             <p className="text-gray-600">
-              <strong>Type:</strong> {appointmentDetails.appointmentType}
+              <strong>Pronounce:</strong> {doctor.gender}
             </p>
           </div>
         )}
 
-        {/* Payment Options */}
         <div className="mb-4">
-          <label
-            htmlFor="bank"
-            className="block text-gray-700 font-medium mb-2"
-          >
-            Select Payment Option
-          </label>
+          <label className="block text-gray-700 font-medium mb-2">Select Bank</label>
           <select
-            id="bank"
-            name="bank"
             value={selectedBank}
             onChange={(e) => setSelectedBank(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
           >
             {ourAccountNumbers.map((account) => (
               <option key={account.id} value={account.bankName}>
@@ -122,11 +179,8 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
           </select>
         </div>
 
-        {/* Account Number with Copy Functionality */}
         <div className="mb-4">
-          <p className="text-gray-700">
-            Receiver {selectedBank} Account Number:
-          </p>
+          <p className="text-gray-700">Receiver {selectedBank} Account Number:</p>
           <div className="flex items-center justify-between p-2 border border-gray-300 rounded-lg">
             <p className="font-semibold text-gray-800">
               {selectedAccount?.accountNumber}
@@ -140,11 +194,9 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
           </div>
         </div>
 
-        {/* File Upload */}
         <div className="mb-4">
           <p className="text-gray-700 mb-2">
-            After you have made the payment, please attach the payment receipt
-            here:
+            After you have made the payment, please attach the payment receipt here:
           </p>
           <div className="flex items-center justify-center w-full p-4 border-2 border-dashed border-gray-300 rounded-lg">
             <label className="cursor-pointer flex items-center">
@@ -155,58 +207,42 @@ function Payment({ appointmentDetails, onPaymentComplete }) {
                 accept=".png, .jpeg, .jpg, .pdf"
                 onChange={handleFileUpload}
                 className="hidden"
+                required
               />
             </label>
           </div>
           {paymentReceipt && (
-            <p className="mt-2 text-sm text-gray-600">
-              Uploaded: {paymentReceipt.name}
-            </p>
+            <p className="mt-2 text-sm text-gray-600">Uploaded: {paymentReceipt.name}</p>
           )}
         </div>
 
-        {/* Complete Payment Button */}
         <button
           onClick={handlePayment}
-          disabled={isPaymentCompleted}
-          className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          disabled={isLoading || isUploading} // Disable button while uploading or loading
+          className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
         >
-          {isPaymentCompleted ? "Payment Completed" : "Complete Payment"}
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <FaSpinner className="animate-spin mr-2" />
+              Processing...
+            </div>
+          ) : (
+            "Complete Payment"
+          )}
         </button>
 
-        {/* Confirmation Message */}
         {confirmationMessage && (
           <div
             className={`mt-4 p-4 rounded-md flex items-center ${
-              confirmationMessage.includes("successfully") ||
-              confirmationMessage.includes("copied")
+              confirmationMessage.includes("successfully")
                 ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
+                : confirmationMessage.includes("Uploading")
+                ? "bg-blue-100 text-blue-800" // Blue for uploading
+                : "bg-red-100 text-red-800" // Red for errors
             }`}
           >
             <FaCheckCircle className="mr-2" />
             {confirmationMessage}
-          </div>
-        )}
-
-        {paymentConfirmation && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h2 className="text-xl font-bold">Appointment Scheduled!</h2>
-              <div className="flex items-center justify-center mt-4">
-                <FaCheckCircle className="text-green-500 text-6xl mt-4" />
-                <p className="font-bold">
-                  Your appointment has been successfully scheduled!
-                </p>
-              </div>
-              <p>You will receive a confirmation email shortly.</p>
-              <button
-                className="mt-4 bg-green-500 text-white px-4 py-2 rounded"
-                onClick={() => setPaymentConfirmation(false)}
-              >
-                Close
-              </button>
-            </div>
           </div>
         )}
       </div>
