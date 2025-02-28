@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {
   FaCheckCircle,
@@ -9,43 +9,50 @@ import {
   FaClipboardList,
 } from "react-icons/fa";
 
-const DoctorCardItem = ({ doctor, handleBookAppointment }) => {
-
+const DoctorCard = ({ doctor, handleBookAppointment }) => {
   return (
-    <div className="flex flex-col items-center p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
+    <div className="flex flex-col items-center w-full sm:w-80 p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
+      {/* Doctor Image and Verification */}
+      <div className="relative">
         <img
-          className="h-40 w-40 rounded-full object-cover"
+          className="h-32 w-32 sm:h-40 sm:w-40 rounded-full object-cover border-4 border-white shadow-md"
           src={doctor.profileImage}
           alt={doctor.fullName}
         />
-        <div className="flex flex-col items-start gap-2 text-slate-800">
-          <h3 className="flex items-center gap-2 text-2xl font-semibold text-blue-900">
-            {doctor.fullName}{" "}
-            {doctor.isVerified && <FaCheckCircle className="text-green-700" />}
-          </h3>
-          <p className="text-blue-900">
-            <FaUserMd className="inline-block mr-1" /> Specialty:{" "} {doctor.specialization.join(", ")}
-          </p>
-          <p className="flex items-center">
-            <FaLanguage className="mr-1" /> {doctor.language?.join(", ")}
-          </p>
-          <p className="flex items-center">
-            <FaClipboardList className="mr-1" /> {doctor.numberOfServices} Services
-          </p>
-          <p className="">
-            <FaLocationArrow className="inline-block mr-1" />{" "}
-            {doctor.rating?.length || 0} Reviews
-          </p>
-          <div className="flex items-center gap-2 text-yellow-600 font-bold">
-            <p>{doctor.avarageRating.toFixed(1)}</p>
-            <FaStar />
-          </div>
+        {doctor.isVerified && (
+          <FaCheckCircle className="absolute bottom-2 right-2 text-green-500 bg-white rounded-full" size={20} />
+        )}
+      </div>
+
+      {/* Doctor Details */}
+      <div className="mt-4 text-center sm:text-left w-full">
+        <h3 className="flex items-center justify-center sm:justify-start gap-2 text-xl font-semibold text-blue-900">
+          {doctor.fullName}
+        </h3>
+        <p className="text-blue-900 mt-2">
+          <FaUserMd className="inline-block mr-1" /> Specialty:{" "}
+          {doctor.specialization.join(", ")}
+        </p>
+        <p className="flex items-center justify-center sm:justify-start mt-2">
+          <FaLanguage className="mr-1" /> {doctor.language?.join(", ")}
+        </p>
+        <p className="flex items-center justify-center sm:justify-start mt-2">
+          <FaClipboardList className="mr-1" /> {doctor.numberOfServices} Services
+        </p>
+        <p className="flex items-center justify-center sm:justify-start mt-2">
+          <FaLocationArrow className="inline-block mr-1" />{" "}
+          {doctor.rating?.length || 0} Reviews
+        </p>
+        <div className="flex items-center justify-center sm:justify-start gap-2 text-yellow-600 font-bold mt-2">
+          <p>{doctor.avarageRating.toFixed(1)}</p>
+          <FaStar />
         </div>
       </div>
+
+      {/* Book Appointment Button */}
       <button
         onClick={() => handleBookAppointment(doctor)}
-        className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+        className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
       >
         Book Appointment
       </button>
@@ -53,7 +60,7 @@ const DoctorCardItem = ({ doctor, handleBookAppointment }) => {
   );
 };
 
-DoctorCardItem.propTypes = {
+DoctorCard.propTypes = {
   doctor: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     profileImage: PropTypes.string.isRequired,
@@ -71,37 +78,6 @@ DoctorCardItem.propTypes = {
     avarageRating: PropTypes.number.isRequired,
     isVerified: PropTypes.bool,
   }).isRequired,
-  handleBookAppointment: PropTypes.func.isRequired,
-};
-
-const DoctorCard = ({ doctors, handleBookAppointment }) => {
-  return (
-    <div>
-      {doctors.length > 0 ? (
-        <div className="flex flex-wrap gap-5 justify-center">
-          {doctors.map((doctor) => (
-            <DoctorCardItem
-              key={doctor._id}
-              doctor={doctor}
-              handleBookAppointment={handleBookAppointment}
-            />
-          ))}
-        </div>
-      ) : (
-        <p className="text-gray-600 text-center mt-8">
-          No doctors found matching your criteria.
-        </p>
-      )}
-    </div>
-  );
-};
-
-DoctorCard.propTypes = {
-  doctors: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.string.isRequired,
-    })
-  ).isRequired,
   handleBookAppointment: PropTypes.func.isRequired,
 };
 

@@ -10,6 +10,7 @@ function UserAppointment() {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
 
   // Fetch appointment details
   useEffect(() => {
@@ -50,8 +51,6 @@ function UserAppointment() {
 
   // Save changes to the appointment
   const handleSaveChanges = async () => {
-    if (!window.confirm("Are you sure you want to save changes?")) return;
-
     try {
       const response = await fetch(`/api/appointments/${id}`, {
         method: "PUT",
@@ -61,8 +60,11 @@ function UserAppointment() {
 
       if (!response.ok) throw new Error("Failed to update appointment.");
       setIsEditing(false);
+      navigate(-1);
     } catch (err) {
       setError(err.message || "An error occurred while updating the appointment.");
+    } finally {
+      setShowSaveModal(false);
     }
   };
 
@@ -144,6 +146,32 @@ function UserAppointment() {
                 </button>
                 <button
                   onClick={() => setShowDeleteModal(false)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-300"
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Save Confirmation Modal */}
+        {showSaveModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <div className="flex items-center mb-4">
+                <FaInfoCircle className="text-blue-500 mr-2" size={24} />
+                <p className="text-lg">Are you sure you want to save changes?</p>
+              </div>
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={handleSaveChanges}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={() => setShowSaveModal(false)}
                   className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-300"
                 >
                   No
@@ -260,13 +288,13 @@ function UserAppointment() {
             <label className="text-sm text-gray-500">Note</label>
             {isEditing ? (
               <textarea
-                name="note"
-                value={appointment.note}
+                name="notes"
+                value={appointment.notes}
                 onChange={handleInputChange}
                 className="w-full p-2 border rounded-md"
               />
             ) : (
-              <p className="text-lg font-semibold">{appointment.note}</p>
+              <p className="text-lg font-semibold">{appointment.notes}</p>
             )}
           </div>
 
@@ -293,7 +321,7 @@ function UserAppointment() {
               <label className="text-sm text-gray-500">Status</label>
               <p className="text-lg font-semibold">{appointment.status}</p>
             </div>
-          )}          
+          )}
         </div>
 
         {/* Action Buttons */}
@@ -307,7 +335,7 @@ function UserAppointment() {
           {isEditing ? (
             <div className="flex gap-4">
               <button
-                onClick={handleSaveChanges}
+                onClick={() => setShowSaveModal(true)}
                 className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
               >
                 <FaSave className="mr-2" /> Save Changes

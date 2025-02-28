@@ -49,7 +49,7 @@ function AppointmentPage() {
                 (doctor.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 specialization.includes(searchTerm.toLowerCase()) ||
                 doctor.language?.some((lang) => lang.toLowerCase().includes(searchTerm.toLowerCase()))) &&
-                doctor.onlineStatus === false
+                doctor.onlineStatus === true
             );
         });
     }, [doctors, searchTerm]);
@@ -76,14 +76,28 @@ function AppointmentPage() {
                             className="w-full p-2 border border-gray-300 rounded-lg"
                         />
                     </div>
-                    <DoctorCard doctors={filteredDoctors} handleBookAppointment={handleBookAppointment} />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+                        {filteredDoctors.length > 0 ? (
+                            filteredDoctors.map((doctor) => (
+                                <DoctorCard
+                                    key={doctor._id}
+                                    doctor={doctor}
+                                    handleBookAppointment={handleBookAppointment}
+                                />
+                            ))
+                        ) : (
+                            <p className="text-gray-600 text-center mt-8">
+                                No doctors found matching your criteria.
+                            </p>
+                        )}
+                    </div>
                 </>
-            ) :  (
+            ) : (
                 <AppointmentForm
                     doctor={selectedDoctor}
                     handleBack={handleBack}
                 />
-            ) }
+            )}
         </div>
     );
 }
