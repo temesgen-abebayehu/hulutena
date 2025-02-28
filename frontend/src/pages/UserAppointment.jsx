@@ -1,32 +1,39 @@
 import { useState, useEffect } from "react";
+import { FaArrowLeft, FaInfoCircle, FaTrash, FaEdit, FaSave, FaTimes } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
 
 function UserAppointment() {
   const { id } = useParams();
-  useEffect(() => {
-    if (!id) {
-      setError("Invalid appointment ID.");
-      setLoading(false);
-    }
-  }, [id]);
   const navigate = useNavigate();
   const [appointment, setAppointment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // Fetch appointment details
   useEffect(() => {
+    if (!id) {
+      setError("Invalid appointment ID.");
+      setLoading(false);
+      return;
+    }
+
     const fetchAppointment = async () => {
       try {
         const response = await fetch(`/api/appointments/${id}`);
-        if (response.ok) {
-          const data = await response.json();
-          setAppointment(data);
-        } else {
-          setError("Failed to fetch appointment details.");
-        }
+        if (!response.ok) throw new Error("Failed to fetch appointment details.");
+
+        const data = await response.json();
+        const doctorResponse = await fetch(`/api/doctors/${data.doctor}`);
+        if (!doctorResponse.ok) throw new Error("Failed to fetch doctor details.");
+
+        const doctorData = await doctorResponse.json();
+        data.doctor = doctorData;
+
+        setAppointment(data);
       } catch (err) {
-        setError("An error occurred while fetching appointment details.");
+        setError(err.message || "An error occurred while fetching appointment details.");
       } finally {
         setLoading(false);
       }
@@ -38,49 +45,113 @@ function UserAppointment() {
   // Handle input changes in edit mode
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setAppointment((prevAppointment) => ({
-      ...prevAppointment,
-      [name]: value,
-    }));
+    setAppointment((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle save changes
+  // Save changes to the appointment
   const handleSaveChanges = async () => {
+    if (!window.confirm("Are you sure you want to save changes?")) return;
+
     try {
       const response = await fetch(`/api/appointments/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(appointment),
       });
 
-      if (response.ok) {
-        setIsEditing(false); // Exit edit mode
-      } else {
-        setError("Failed to update appointment.");
-      }
+      if (!response.ok) throw new Error("Failed to update appointment.");
+      setIsEditing(false);
     } catch (err) {
-      setError("An error occurred while updating the appointment.");
+      setError(err.message || "An error occurred while updating the appointment.");
     }
   };
 
+  // Delete the appointment
+  const handleDeleteAppointment = async () => {
+    try {
+      const response = await fetch(`/api/appointments/${id}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("Failed to delete appointment.");
+      navigate("/profile");
+    } catch (err) {
+      setError(err.message || "An error occurred while deleting the appointment.");
+    } finally {
+      setShowDeleteModal(false);
+    }
+  };
+
+  // Navigate to payment page
+  const handleNavigateToPayment = () => {
+    navigate("/payment", { state: { appointmentId: appointment._id, doctor: appointment.doctor } });
+  };
+
+  // Loading state
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
   }
 
+  // Error state
   if (error) {
-    return <p className="text-red-500">{error}</p>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-500 text-lg">{error}</p>
+      </div>
+    );
   }
 
+  // No appointment found
   if (!appointment) {
-    return <p>No appointment found.</p>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-gray-700 text-lg">No appointment found.</p>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Appointment Details</h1>
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">Appointment Details</h1>
+          {!isEditing && (
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="text-red-500 hover:text-red-600 transition duration-300"
+            >
+              <FaTrash size={24} />
+            </button>
+          )}
+        </div>
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <div className="flex items-center mb-4">
+                <FaInfoCircle className="text-blue-500 mr-2" size={24} />
+                <p className="text-lg">Are you sure you want to delete this appointment?</p>
+              </div>
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={handleDeleteAppointment}
+                  className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-300"
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Appointment Details */}
         <div className="space-y-4">
@@ -184,75 +255,77 @@ function UserAppointment() {
             )}
           </div>
 
-          {/* Payment Status */}
+          {/* Note */}
           <div className="bg-gray-50 p-4 rounded-lg">
-            <label className="text-sm text-gray-500">Payment Status</label>
+            <label className="text-sm text-gray-500">Note</label>
             {isEditing ? (
-              <select
-                name="paymentStatus"
-                value={appointment.paymentStatus}
+              <textarea
+                name="note"
+                value={appointment.note}
                 onChange={handleInputChange}
                 className="w-full p-2 border rounded-md"
-              >
-                <option value="completed">Completied</option>
-                <option value="pending">Pending</option>
-              </select>
+              />
             ) : (
-              <p className="text-lg font-semibold">{appointment.paymentStatus}</p>
+              <p className="text-lg font-semibold">{appointment.note}</p>
             )}
           </div>
 
+          {/* Payment Status */}
+          {!isEditing && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <label className="text-sm text-gray-500">Complete Payment</label>
+              {appointment.paymentStatus === "not-paid" ? (
+                <button
+                  onClick={handleNavigateToPayment}
+                  className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                >
+                  Go to Payment
+                </button>
+              ) : (
+                <p className="text-lg font-semibold">{appointment.paymentStatus}</p>
+              )}
+            </div>
+          )}
+
           {/* Status */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <label className="text-sm text-gray-500">Status</label>
-            {isEditing ? (
-              <select
-                name="status"
-                value={appointment.status}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded-md"
-              >
-                <option value="pending">Pending</option>
-                <option value="Completed">Completed</option>
-              </select>
-            ) : (
+          {!isEditing && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <label className="text-sm text-gray-500">Status</label>
               <p className="text-lg font-semibold">{appointment.status}</p>
-            )}
-          </div>
+            </div>
+          )}          
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-6 flex gap-2">
+        <div className="mt-6 flex justify-between">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition duration-300"
+          >
+            <FaArrowLeft className="mr-2" /> Back
+          </button>
           {isEditing ? (
-            <>
+            <div className="flex gap-4">
               <button
                 onClick={handleSaveChanges}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
               >
-                Save Changes
+                <FaSave className="mr-2" /> Save Changes
               </button>
               <button
                 onClick={() => setIsEditing(false)}
-                className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-300"
+                className="flex items-center bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-300"
               >
-                Cancel
+                <FaTimes className="mr-2" /> Cancel
               </button>
-            </>
+            </div>
           ) : (
-            <>
-              <button
-                onClick={() => setIsEditing(true)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-              >
-                Edit Appointment
-              </button>
-              <button
-                onClick={() => navigate(-1)} // Go back to the previous page
-                className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-300"
-              >
-                Back
-              </button>
-            </>
+            <button
+              onClick={() => setIsEditing(true)}
+              className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+            >
+              <FaEdit className="mr-2" /> Edit Appointment
+            </button>
           )}
         </div>
       </div>

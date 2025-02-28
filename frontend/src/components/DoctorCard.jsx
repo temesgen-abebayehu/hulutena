@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 
 const DoctorCardItem = ({ doctor, handleBookAppointment }) => {
-console.log(doctor)
+
   return (
     <div className="flex flex-col items-center p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
       <div className="flex flex-col sm:flex-row items-center gap-4 w-full">

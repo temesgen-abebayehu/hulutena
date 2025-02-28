@@ -38,16 +38,20 @@ const appointmentSchema = new mongoose.Schema({
     },
     paymentStatus: {
         type: String,
-        enum: ['pending', 'completed'],
-        default: 'pending'
+        enum: ['not-paid', 'pending', 'completed'],
+        default: 'not-paid'
     },
     status: {
         type: String,
         enum: ['pending','scheduled', 'completed'],
         default: 'pending'
+    },
+    notes: {
+        type: String,
+        default: ''
     }
 }, { timestamps: true });
 
-const Appointment = mongoose.model('Appointment', appointmentSchema);
+const Appointment = mongoose.models.Appointment || mongoose.model('Appointment', appointmentSchema);
 
 export default Appointment;

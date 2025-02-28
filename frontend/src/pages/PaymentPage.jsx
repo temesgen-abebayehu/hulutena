@@ -23,7 +23,7 @@ function Payment() {
 
   useEffect(() => {
     if (!appointmentId || !doctor) {
-      navigate("/appointment");
+      navigate(-1);
     }
   }, [appointmentId, doctor, navigate]);
 
@@ -97,7 +97,6 @@ function Payment() {
         receipt: receiptUrl,
       };
 
-
       const response = await fetch(`/api/payments`, {
         method: "POST",
         headers: {
@@ -112,8 +111,17 @@ function Payment() {
         throw new Error(errorData.message || "Payment failed. Please try again.");
       }
 
-      setConfirmationMessage("Payment completed successfully!");
-      setTimeout(() => navigate("/appointment"), 2000);
+      // Update payment status to pending
+      await fetch(`/api/appointments/${appointmentId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ paymentStatus: "pending" }),
+      });
+
+      setConfirmationMessage("Your Payment is Under Review! We will notify you once it's approved.");
+      setTimeout(() => navigate("/appointment"), 5000);
     } catch (error) {
       console.error("Error processing payment:", error);
       setConfirmationMessage(error.message || "An error occurred. Please try again.");
@@ -136,11 +144,10 @@ function Payment() {
     <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center">
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
         <button
-          onClick={() => navigate("/appointment")}
+          onClick={() => navigate(-1)}
           className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
         >
-          <FaArrowLeft className="mr-2" />
-          Back to Appointment Form
+          <FaArrowLeft className="mr-2" /> Back
         </button>
 
         <h1 className="text-xl font-semibold text-blue-800 mb-4 flex items-center">
@@ -155,10 +162,10 @@ function Payment() {
               <strong>Name:</strong> {doctor.fullName}
             </p>
             <p className="text-gray-600">
-              <strong>Specialty:</strong> {doctor.specialization.join(", ")}
+              <strong>Specialty:</strong> {doctor.specialization ? doctor.specialization.join(", ") : "N/A"}
             </p>
             <p className="text-gray-600">
-              <strong>Pronounce:</strong> {doctor.gender}
+              <strong>Pronounce:</strong> {doctor.gender === 'male'? 'He': 'She'}
             </p>
           </div>
         )}
@@ -237,8 +244,8 @@ function Payment() {
               confirmationMessage.includes("successfully")
                 ? "bg-green-100 text-green-800"
                 : confirmationMessage.includes("Uploading")
-                ? "bg-blue-100 text-blue-800" // Blue for uploading
-                : "bg-red-100 text-red-800" // Red for errors
+                ? "bg-blue-100 text-blue-800" 
+                : "bg-red-100 text-red-800" 
             }`}
           >
             <FaCheckCircle className="mr-2" />

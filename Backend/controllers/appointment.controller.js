@@ -1,4 +1,4 @@
-import Appointment from '../models/appointment.model.js';
+import Appointment from '../models/Appointment.model.js';
 
 
 export const createAppointment = async (req, res) => {
@@ -55,24 +55,18 @@ export const getAppointment = async (req, res) => {
 
 export const updateAppointment = async (req, res) => {
     const { id } = req.params;
-    const { appointmentType, date, time, patientName, phoneNumber, email } = req.body;
-    try {        
+    const updates = req.body;
+    try {
         const updatedAppointment = await Appointment.findByIdAndUpdate(
-            id, 
-            { 
-                appointmentType, 
-                date, 
-                time, 
-                patientName, 
-                phoneNumber, 
-                email 
-            }, { new: true }
+            id,
+            { $set: updates },
+            { new: true }
         );
-        
+
         if (!updatedAppointment) {
             return res.status(404).json({ message: "Appointment not found." });
         }
-        
+
         res.status(200).json(updatedAppointment);
     } catch (error) {
         console.log(`Error in updateAppointment: ${error.message}`);
