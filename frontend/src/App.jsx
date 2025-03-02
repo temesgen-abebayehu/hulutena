@@ -5,10 +5,10 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import Resourses from "./pages/Resourses";
+import Resources from "./pages/ResourcesPage";
 import Community from "./pages/Community";
 import DoctorProfile from "./pages/DoctorProfile";
-import WrittenPost from "./pages/WrittenPost";
+import SingleResource from "./pages/SingleResource";
 import ContactPage from "./pages/ContactPage";
 import Appointment from "./pages/AppointmentPage";
 import Profile from "./pages/ProfilePage";
@@ -30,8 +30,8 @@ function App() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/profile/edit" element={<EditProfile />} />
-      <Route path="/resourses" element={<Resourses />} />
-      <Route path="/resourses/:id" element={<WrittenPost />} />
+      <Route path="/resources" element={<Resources />} />
+      <Route path="/resources/:id" element={<SingleResource />} />
       <Route path="/community" element={<Community />} />
       <Route path="/doctor-profile/:id" element={<DoctorProfile />} />
       <Route path="/" element={<HomePage />} />
