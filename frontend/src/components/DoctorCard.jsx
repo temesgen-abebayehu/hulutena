@@ -10,6 +10,8 @@ import {
 } from "react-icons/fa";
 
 const DoctorCard = ({ doctor, handleBookAppointment }) => {
+  const userId = JSON.parse(localStorage.getItem("user")).currentUser._id;
+
   return (
     <div className="flex flex-col items-center w-full sm:w-80 p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
       {/* Doctor Image and Verification */}
@@ -26,8 +28,8 @@ const DoctorCard = ({ doctor, handleBookAppointment }) => {
 
       {/* Doctor Details */}
       <div className="mt-4 text-center sm:text-left w-full">
-        <h3 className="flex items-center justify-center sm:justify-start gap-2 text-xl font-semibold text-blue-900">
-          {doctor.fullName}
+        <h3 className="flex items-center justify-center sm:justify-start gap-2 text-xl font-semibold text-blue-900 hover:text-blue-700 hover:underline">
+          <a href={`/doctor-profile/${doctor._id}`}>{doctor.fullName}</a>
         </h3>
         <p className="text-blue-900 mt-2">
           <FaUserMd className="inline-block mr-1" /> Specialty:{" "}
@@ -50,12 +52,14 @@ const DoctorCard = ({ doctor, handleBookAppointment }) => {
       </div>
 
       {/* Book Appointment Button */}
-      <button
-        onClick={() => handleBookAppointment(doctor)}
-        className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
-      >
-        Book Appointment
-      </button>
+      {userId !== doctor._id && (
+        <button
+          className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          onClick={() => handleBookAppointment(doctor)}
+        >
+          Book Appointment
+        </button>
+      )}
     </div>
   );
 };

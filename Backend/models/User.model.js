@@ -56,6 +56,14 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    address: {
+        type: String,
+    },
+    availability: {
+        type: String,
+        enum: ['online', 'in-person'],
+        default: '',
+    },
     experience: {
         type: Number,
         default: 0,

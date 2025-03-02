@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const ChatWithDoctorSchema = new mongoose.Schema(
     {
-        patientId: {
+        senderId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,

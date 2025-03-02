@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
   FaArrowLeft,
   FaComments,
@@ -7,35 +8,66 @@ import {
   FaMapMarkerAlt,
   FaLanguage,
   FaBriefcase,
-  FaGraduationCap,
   FaClock,
   FaStethoscope,
+  FaServicestack,
 } from "react-icons/fa";
+import ChatWithDoctor from "../components/ChatWithDoctor";
 
 function Profile() {
+  const { id } = useParams();
+  const [doctor, setDoctor] = useState(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [rating, setRating] = useState(0);
 
-  const doctor = {
-    id: 1,
-    name: "Specialist Doctor 1",
-    address: "Addis Ababa, Ethiopia",
-    experience: 11,
-    education: ["Addis Ababa University", "Harvard University"],
-    rating: 4.6,
-    languages: ["English", "Spanish"],
-    availability: "Online & In-person",
-    specialty: "Cardiologist",
-    imgSrc: "/doctor2.jpg",
-  };
+  // Fetch logged-in user data
+  const userId = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).currentUser._id : null;
 
-  const handleSendMessage = () => {
-    if (newMessage.trim() !== "") {
-      setChatMessages([...chatMessages, { text: newMessage, sender: "user" }]);
-      setNewMessage("");
-    }
-  };
+  // Fetch doctor data
+  useEffect(() => {
+    const fetchDoctor = async () => {
+      try {
+        const response = await fetch(`/api/doctors/${id}`);
+        if (!response.ok) throw new Error("Failed to fetch doctor data.");
+        const data = await response.json();
+        setDoctor(data);
+        setRating(data.rating.reduce((acc, curr) => acc + curr, 0) / data.rating.length);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDoctor();
+  }, [id]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
+
+  if (!doctor) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <p>No doctor found.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-2 relative">
@@ -44,17 +76,17 @@ function Profile() {
           <div className="overflow-hidden rounded-full h-60 w-60">
             <img
               className="object-cover h-full w-full"
-              src={doctor.imgSrc}
+              src={doctor.profileImage}
               alt="doctor profile"
             />
           </div>
           <div className="mt-4 md:mt-0 text-center md:text-left">
             <h2 className="flex flex-row items-center gap-2 text-2xl font-semibold text-blue-900">
-              {doctor.name} <FaCheckCircle color="green" size={16} />
+              {doctor.fullName} <FaCheckCircle color="green" size={16} />
             </h2>
-            <p className="text-lg text-gray-700">{doctor.specialty}</p>
+            <p className="text-lg text-gray-700">{doctor.specialization.join(', ')}</p>
             <div className="flex flex-row items-center gap-2 mt-2 font-semibold">
-              <p className="text-yellow-500">{doctor.rating}</p>
+              <p className="text-yellow-500">{rating}</p>
               {[1, 2, 3, 4, 5].map((index) => (
                 <div key={index} className="relative w-5 h-5">
                   <FaStar className="absolute top-0 left-0 text-slate-200" />
@@ -62,9 +94,9 @@ function Profile() {
                     className="absolute top-0 left-0 text-yellow-500"
                     style={{
                       clipPath:
-                        doctor.rating >= index - 0.5 && doctor.rating < index
+                        rating >= index - 0.5 && rating < index
                           ? "polygon(0 0, 50% 0, 50% 100%, 0 100%)"
-                          : doctor.rating >= index
+                          : rating >= index
                           ? "none"
                           : "polygon(0 0, 0 0, 0 100%, 0 100%)",
                     }}
@@ -74,7 +106,7 @@ function Profile() {
             </div>
           </div>
         </div>
-        <div className="mt-6 text-gray-700 text-lg space-y-2">          
+        <div className="mt-6 text-gray-700 text-lg space-y-2">
           <p>
             <span className="font-semibold">
               <FaMapMarkerAlt className="inline mr-4" />
@@ -85,7 +117,7 @@ function Profile() {
             <span className="font-semibold">
               <FaLanguage className="inline mr-4" />
             </span>
-            {doctor.languages.join(", ")}
+            {doctor.language.join(", ")}
           </p>
           <p>
             <span className="font-semibold">
@@ -95,9 +127,9 @@ function Profile() {
           </p>
           <p>
             <span className="font-semibold">
-              <FaGraduationCap className="inline mr-4" />
+              <FaServicestack className="inline mr-4" />
             </span>
-            {doctor.education.join(", ")}
+            {doctor.numberOfServices} Services
           </p>
           <p>
             <span className="font-semibold">
@@ -109,7 +141,7 @@ function Profile() {
             <span className="font-semibold">
               <FaStethoscope className="inline mr-4" />
             </span>
-            {doctor.specialty}
+            {doctor.specialization.join(", ")}
           </p>
         </div>
         <div className="mt-6 flex justify-between items-center">
@@ -120,57 +152,25 @@ function Profile() {
             <FaArrowLeft />
             <span>Back</span>
           </button>
-          <button
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300 flex items-center gap-2"
-            onClick={() => setIsChatOpen(!isChatOpen)}
-          >
-            <FaComments />
-            <span>Chat</span>
-          </button>
+          {userId !== doctor._id && (
+            <button
+              onClick={() => setIsChatOpen(true)}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 flex items-center gap-2"
+            >
+              <FaComments />
+              <span>Chat</span>
+            </button>
+          )}
         </div>
       </div>
 
       {isChatOpen && (
-        <div className="fixed bottom-4 right-4 w-80 bg-white rounded-lg shadow-lg flex flex-col">
-          <div className="bg-blue-500 text-white p-4 rounded-t-lg flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Chat with {doctor.name}</h3>
-            <button
-              onClick={() => setIsChatOpen(false)}
-              className="text-white font-bold"
-            >
-              &times;
-            </button>
-          </div>
-          <div className="p-4 h-64 overflow-y-auto flex flex-col space-y-2">
-            {chatMessages.map((msg, index) => (
-              <div
-                key={index}
-                className={`p-2 rounded ${
-                  msg.sender === "user"
-                    ? "bg-blue-100 self-end"
-                    : "bg-gray-200 self-start"
-                }`}
-              >
-                {msg.text}
-              </div>
-            ))}
-          </div>
-          <div className="p-4 border-t flex items-center">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              className="flex-grow border rounded-l px-4 py-2 focus:outline-none"
-              placeholder="Type a message..."
-            />
-            <button
-              onClick={handleSendMessage}
-              className="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600 transition duration-300"
-            >
-              Send
-            </button>
-          </div>
-        </div>
+        <ChatWithDoctor
+          doctorId={id}
+          userId={userId}
+          doctorName={doctor.fullName}
+          onClose={() => setIsChatOpen(false)}
+        />
       )}
     </div>
   );

@@ -76,7 +76,7 @@ function AppointmentPage() {
                             className="w-full p-2 border border-gray-300 rounded-lg"
                         />
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
                         {filteredDoctors.length > 0 ? (
                             filteredDoctors.map((doctor) => (
                                 <DoctorCard

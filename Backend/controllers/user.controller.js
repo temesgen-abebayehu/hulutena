@@ -86,3 +86,17 @@ export const verifyProfile = async (req, res) => {
     res.status(403).json({ message: "You can only verify your account" });
   }
 };
+
+export const getSenderName = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ name: user.fullName });
+  } catch (error) {
+    console.log(`Error in getSender: ${error.message}`);
+    res.status(404).json({ message: error.message });
+  }
+};
