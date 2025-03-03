@@ -10,7 +10,8 @@ import {
 } from "react-icons/fa";
 
 const DoctorCard = ({ doctor, handleBookAppointment }) => {
-  const userId = JSON.parse(localStorage.getItem("user")).currentUser._id;
+  const userData = JSON.parse(localStorage.getItem("user"))?.currentUser;
+  const userId = userData ? userData._id : null;
 
   return (
     <div className="flex flex-col items-center w-full sm:w-80 p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -52,7 +53,7 @@ const DoctorCard = ({ doctor, handleBookAppointment }) => {
       </div>
 
       {/* Book Appointment Button */}
-      {userId !== doctor._id && (
+      {userId && userId !== doctor._id && (
         <button
           className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           onClick={() => handleBookAppointment(doctor)}

@@ -80,7 +80,7 @@ function HomePage() {
               Listen to expert advice, health tips, and guided exercises to
               enhance your well-being.
             </p>
-            <a href="resourses"
+            <a href="resources"
               className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"              
             >
               Explore Audio
@@ -97,7 +97,7 @@ function HomePage() {
               Watch informative videos and tutorials from healthcare
               professionals.
             </p>
-            <a  href="resourses" className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+            <a  href="resources" className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
               Explore Videos
             </a>
           </div>
@@ -112,7 +112,7 @@ function HomePage() {
               Access detailed articles, guides, and eBooks on a variety of
               health topics.
             </p>
-            <a  href="resourses" className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition">
+            <a  href="resources" className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition">
               Explore Articles
             </a>
           </div>
@@ -212,7 +212,7 @@ function HomePage() {
               manage your health effectively
             </p>
             <a
-               href="resourses"
+               href="resources"
               className="text-blue-800 font-medium hover:underline hover:text-blue-600"
             >
               See Resources
