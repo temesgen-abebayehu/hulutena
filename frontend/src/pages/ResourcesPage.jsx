@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaPlus } from "react-icons/fa";
-import AudioResource from "../components/AudioResource";
-import VideoResource from "../components/VideoResource";
-import WrittenResource from "../components/WrittenResource";
+import AudioResource from "../components/resources/AudioResource";
+import VideoResource from "../components/resources/VideoResource";
+import WrittenResource from "../components/resources/WrittenResource";
 
 function ResourcesPage() {
     const [searchQuery, setSearchQuery] = useState("");

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import DoctorCard from "../components/DoctorCard";
-import AppointmentForm from "../components/AppointmentForm";
+import DoctorCard from "../components/appointments/DoctorCard";
+import AppointmentForm from "../components/appointments/AppointmentForm";
 
 function AppointmentPage() {
     const [doctors, setDoctors] = useState([]);

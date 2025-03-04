@@ -6,7 +6,7 @@ import RegisterPage from "./pages/RegisterPage";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Resources from "./pages/ResourcesPage";
-import Community from "./pages/Community";
+import CommunityPage from "./pages/CommunityPage";
 import DoctorProfile from "./pages/DoctorProfile";
 import SingleResource from "./pages/SingleResource";
 import ContactPage from "./pages/ContactPage";
@@ -32,7 +32,7 @@ function App() {
       <Route path="/profile/edit" element={<EditProfile />} />
       <Route path="/resources" element={<Resources />} />
       <Route path="/resources/:id" element={<SingleResource />} />
-      <Route path="/community" element={<Community />} />
+      <Route path="/community" element={<CommunityPage />} />
       <Route path="/doctor-profile/:id" element={<DoctorProfile />} />
       <Route path="/" element={<HomePage />} />
     </Routes>
