@@ -15,9 +15,15 @@ const discussionSchema = new mongoose.Schema(
       required: true,
     },
     author: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
     },
     likes: [
       {
@@ -32,9 +38,15 @@ const discussionSchema = new mongoose.Schema(
           required: true,
         },
         author: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-          required: true,
+          _id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+          },
+          name: {
+            type: String,
+            required: true,
+          },
         },
         likes: [
           {
@@ -67,8 +79,8 @@ discussionSchema.methods.toggleLike = function (userId) {
 };
 
 // Method to add a comment
-discussionSchema.methods.addComment = function (comment, userId) {
-  this.comments.push({ comment, author: userId });
+discussionSchema.methods.addComment = function (comment, userId, userName) {
+  this.comments.push({ comment, author: { _id: userId, name: userName } });
 };
 
 const Discussion = mongoose.model("Discussion", discussionSchema);

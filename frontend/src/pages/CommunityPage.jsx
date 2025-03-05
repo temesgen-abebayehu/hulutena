@@ -3,10 +3,10 @@ import { FaSearch } from "react-icons/fa";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import DiscussionForm from "../components/communityDiscussion/DiscussionForm";
 import DiscussionThread from "../components/communityDiscussion/DiscussionThread";
+import { set } from "mongoose";
 
 function CommunityDiscussion() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [limit, setLimit] = useState(8);
   const [threads, setThreads] = useState([]);
   const [newThread, setNewThread] = useState({ title: "", category: "", content: "" });
   const [commentText, setCommentText] = useState("");
@@ -16,17 +16,17 @@ function CommunityDiscussion() {
   const [editThreadText, setEditThreadText] = useState({ title: "", content: "" });
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentText, setEditCommentText] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteThreadId, setDeleteThreadId] = useState(null);
   const [deleteCommentId, setDeleteCommentId] = useState(null);
-  const [displayLimit, setDisplayLimit] = useState(5); // New state for display limit
+  const [displayLimit, setDisplayLimit] = useState(5);
 
   // Check if the user is logged in
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"))?.currentUser;
     if (user) {
-      setIsLoggedIn(true);
+      setLoggedInUser(user._id);
     }
   }, []);
 
@@ -36,6 +36,10 @@ function CommunityDiscussion() {
       try {
         const response = await fetch("/api/discussions");
         const data = await response.json();
+        if (!response.ok) {
+          throw new Error("Failed to fetch discussions.");
+        }
+
         const sortedThread = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         const sortedData = sortedThread.map((thread) => ({
           ...thread,
@@ -72,6 +76,10 @@ function CommunityDiscussion() {
         },
         body: JSON.stringify(newThread),
       });
+      if (!response.ok) {
+        throw new Error("Failed to create discussion.");
+      }
+
       const data = await response.json();
       setThreads([data, ...threads]);
       setNewThread({ title: "", category: "", content: "" });
@@ -91,6 +99,9 @@ function CommunityDiscussion() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      if (!response.ok) {
+        throw new Error("Failed to like discussion.");
+      }
       const data = await response.json();
       setThreads(threads.map((thread) => (thread._id === id ? data : thread)));
     } catch (error) {
@@ -108,6 +119,9 @@ function CommunityDiscussion() {
         },
         body: JSON.stringify(editThreadText),
       });
+      if (!response.ok) {
+        throw new Error("Failed to edit discussion.");
+      }
       const data = await response.json();
       setThreads(threads.map((thread) => (thread._id === threadId ? data : thread)));
       setEditThreadId(null);
@@ -119,14 +133,19 @@ function CommunityDiscussion() {
 
   const handleDeleteThread = async () => {
     try {
-      await fetch(`/api/discussions/${deleteThreadId}`, {
+      const response = await fetch(`/api/discussions/${deleteThreadId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      if (!response.ok) {
+        throw new Error("Failed to delete discussion.");
+      }
       setThreads(threads.filter((thread) => thread._id !== deleteThreadId));
       setShowDeleteModal(false);
+      setDeleteThreadId(null);
+      setDeleteCommentId(null);      
     } catch (error) {
       console.error("Error deleting discussion:", error);
     }
@@ -147,6 +166,9 @@ function CommunityDiscussion() {
         },
         body: JSON.stringify({ comment: commentText }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to add comment.");
+      }
       const data = await response.json();
       setThreads(threads.map((thread) => (thread._id === threadId ? data : thread)));
       setCommentText("");
@@ -158,20 +180,33 @@ function CommunityDiscussion() {
   };
 
   const handleDeleteComment = async () => {
-    try {
-      const response = await fetch(`/api/discussions/${deleteThreadId}/comment/${deleteCommentId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const data = await response.json();
-      setThreads(threads.map((thread) => (thread._id === deleteThreadId ? data : thread)));
-      setShowDeleteModal(false);
-    } catch (error) {
-      console.error("Error deleting comment:", error);
-    }
-  };
+      try {
+        const response = await fetch(`/api/discussions/${deleteThreadId}/comment/${deleteCommentId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to delete comment.");
+        }
+  
+        setThreads(threads.map((thread) => {
+          if (thread._id === deleteThreadId) {
+            return {
+              ...thread,
+              comments: thread.comments.filter((comment) => comment._id !== deleteCommentId),
+            };
+          }
+          return thread;
+        }));
+        setShowDeleteModal(false);
+        setDeleteThreadId(null);
+        setDeleteCommentId(null);
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+      }
+    };
 
   const handleEditComment = async (threadId, commentId) => {
     try {
@@ -183,6 +218,10 @@ function CommunityDiscussion() {
         },
         body: JSON.stringify({ comment: editCommentText }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to edit comment.");
+      }
+
       const data = await response.json();
       setThreads(threads.map((thread) => (thread._id === threadId ? data : thread)));
       setEditCommentId(null);
@@ -201,6 +240,10 @@ function CommunityDiscussion() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      if (!response.ok) {
+        throw new Error("Failed to like comment.");
+      }
+      
       const data = await response.json();
       setThreads(threads.map((thread) => (thread._id === threadId ? data : thread)));
     } catch (error) {
@@ -221,11 +264,13 @@ function CommunityDiscussion() {
   return (
     <div className="bg-gray-100 min-h-screen p-6 md:p-12">
       {/* Delete Confirmation Modal */}
-      <DeleteConfirmationModal
-        showDeleteModal={showDeleteModal}
-        setShowDeleteModal={setShowDeleteModal}
-        handleDelete={deleteCommentId ? handleDeleteComment : handleDeleteThread}
-      />
+      {showDeleteModal && (
+        <DeleteConfirmationModal
+          showDeleteModal={showDeleteModal}
+          setShowDeleteModal={setShowDeleteModal}
+          handleDelete={deleteCommentId ? handleDeleteComment : handleDeleteThread}
+        />
+      )}
 
       {/* Page Header */}
       <div className="text-center mb-10">
@@ -250,7 +295,7 @@ function CommunityDiscussion() {
       </div>
 
       {/* Create Discussion */}
-      {isLoggedIn && (
+      {loggedInUser && (
         <DiscussionForm
           newThread={newThread}
           handleInputChange={handleInputChange}
@@ -264,7 +309,7 @@ function CommunityDiscussion() {
         <DiscussionThread
           key={thread._id}
           thread={thread}
-          isLoggedIn={isLoggedIn}
+          loggedInUser={loggedInUser}
           editThreadId={editThreadId}
           editThreadText={editThreadText}
           setEditThreadId={setEditThreadId}

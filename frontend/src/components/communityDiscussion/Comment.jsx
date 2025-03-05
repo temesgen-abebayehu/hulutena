@@ -1,10 +1,11 @@
 import React from "react";
 import { FaEdit, FaTrash, FaThumbsUp, FaSave, FaTimes } from "react-icons/fa";
+import moment from "moment";
 
 const Comment = ({
   comment,
   threadId,
-  isLoggedIn,
+  loggedInUser,
   handleLikeComment,
   handleEditComment,
   editCommentId,
@@ -12,6 +13,7 @@ const Comment = ({
   setEditCommentId,
   setEditCommentText,
   setDeleteCommentId,
+  setDeleteThreadId,
   setShowDeleteModal,
 }) => {
   return (
@@ -42,11 +44,11 @@ const Comment = ({
           </div>
         ) : (
           <>
-            <p>{comment.comment}</p>
             <p className="text-sm text-gray-500">
-              By <span className="font-bold">{comment.author?.name || "Unknown"}</span>
+              By <span className="font-bold">{comment.author.name || "Unknown"}</span> - {moment(comment.createdAt).fromNow()}
             </p>
-            {isLoggedIn && (
+            <p>{comment.comment}</p>
+            {loggedInUser && (
               <button
                 onClick={() => handleLikeComment(threadId, comment._id)}
                 className="flex text-blue-800 items-center hover:text-blue-500 my-5"
@@ -58,7 +60,7 @@ const Comment = ({
           </>
         )}
       </div>
-      {isLoggedIn && (
+      {loggedInUser === comment.author._id && (
         <div className="flex flex-row justify-end items-center gap-x-10 md:gap-x-20">
           <button
             onClick={() => {
@@ -71,6 +73,7 @@ const Comment = ({
           <button
             onClick={() => {
               setDeleteCommentId(comment._id);
+              setDeleteThreadId(threadId);
               setShowDeleteModal(true);
             }}
           >

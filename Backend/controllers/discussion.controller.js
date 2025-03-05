@@ -14,9 +14,7 @@ export const getDiscussion = async (req, res) =>{
 // Get all discussions
 export const getDiscussions = async (req, res) => {
   try {
-    const discussions = await Discussion.find()
-      .populate("author", "name")
-      .populate("comments.author", "name");
+    const discussions = await Discussion.find();
     res.status(200).json(discussions);
   } catch (error) {
     console.error(`Error in getDiscussions: ${error.message}`);
@@ -28,13 +26,14 @@ export const getDiscussions = async (req, res) => {
 export const createDiscussion = async (req, res) => {
   try {
     const { title, category, content } = req.body;
-    const author = req.user.id;
+    const authorId = req.user.id;
+    const authorName = req.user.fullName;
 
     const newDiscussion = new Discussion({
       title,
       category,
       content,
-      author,
+      author: { _id: authorId, name: authorName },
     });
 
     await newDiscussion.save();
@@ -103,7 +102,7 @@ export const addComment = async (req, res) => {
       return res.status(404).json({ message: "Discussion not found" });
     }
 
-    discussion.addComment(req.body.comment, req.user.id);
+    discussion.addComment(req.body.comment, req.user.id, req.user.fullName);
     await discussion.save();
     res.status(201).json(discussion);
   } catch (error) {
