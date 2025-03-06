@@ -14,6 +14,7 @@ function EditProfile() {
     profileImage: "",
     dateOfBirth: "",
     availability: "",
+    address: "",
     language: [],
     specialization: [],
   });
@@ -53,6 +54,7 @@ function EditProfile() {
           dateOfBirth: data.dateOfBirth || "",
           language: data.language || [],
           availability: data.availability || "",
+          address: data.address || "",
           specialization: data.specialization || [],
         });
         setUserId(userId);

@@ -59,6 +59,7 @@ const userSchema = new mongoose.Schema({
     availability: {
         type: String,
         enum: ['online', 'in-person', 'both'],
+        default: 'online',
     },
     experience: {
         type: Number,

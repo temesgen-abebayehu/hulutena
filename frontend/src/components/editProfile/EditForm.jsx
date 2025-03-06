@@ -75,9 +75,23 @@ const EditForm = ({
             <input
               type="date"
               name="dateOfBirth"
-              value={user.dateOfBirth.split('T')[0]}
+              value={user.dateOfBirth.split("T")[0]}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+            />
+          </div>
+          {/* Address */}
+          <div>
+            <label className="block text-sm text-gray-500 font-medium">
+              Address
+            </label>
+            <input
+              type="text"
+              name="address"
+              value={user.address}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+              placeholder="Bole, Addis ababa, Ethiopia"
             />
           </div>
         </div>
@@ -178,20 +192,23 @@ const EditForm = ({
                     placeholder="Add a specialization and press Enter"
                   />
                 </div>
-                
+
                 {/* Availability */}
                 <div>
-                    <label className="block text-sm text-gray-500 font-medium"> Availability </label>
-                    <select
-                        name="availability"
-                        value={user.availability}
-                        onChange={handleChange}
-                        className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
-                    > 
-                        <option value="online"> Online </option>
-                        <option value="in-person"> In-Person </option>
-                        <option value="both"> In-Person and Online </option>
-                    </select>
+                  <label className="block text-sm text-gray-500 font-medium">
+                    {" "}
+                    Availability{" "}
+                  </label>
+                  <select
+                    name="availability"
+                    value={user.availability}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+                  >
+                    <option value="online"> Online </option>
+                    <option value="in-person"> In-Person </option>
+                    <option value="both"> In-Person and Online </option>
+                  </select>
                 </div>
               </div>
 
@@ -202,10 +219,14 @@ const EditForm = ({
                     Account Status
                   </label>
                   <div className="flex items-start p-3 bg-blue-100 rounded-md">
-                    <FaInfoCircle className="text-blue-600 mt-1 mr-2" size={18} />
+                    <FaInfoCircle
+                      className="text-blue-600 mt-1 mr-2"
+                      size={18}
+                    />
                     <p className="text-sm text-blue-800">
-                      If you're unavailable for appointments, you can temporarily
-                      deactivate your account. Reactivate anytime when you're ready.
+                      If you're unavailable for appointments, you can
+                      temporarily deactivate your account. Reactivate anytime
+                      when you're ready.
                     </p>
                   </div>
                   <select
@@ -220,7 +241,9 @@ const EditForm = ({
                     className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
                     required
                   >
-                    <option value="active">Active (Ready for appointments)</option>
+                    <option value="active">
+                      Active (Ready for appointments)
+                    </option>
                     <option value="inactive">
                       Temporarily Unavailable (Not ready for appointments)
                     </option>
