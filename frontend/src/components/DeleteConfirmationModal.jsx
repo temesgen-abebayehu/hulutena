@@ -1,14 +1,14 @@
 import React from "react";
 import { FaInfoCircle } from "react-icons/fa";
 
-const DeleteConfirmationModal = ({ showDeleteModal, setShowDeleteModal, handleDelete }) => {
+const DeleteConfirmationModal = ({ showDeleteModal, setShowDeleteModal, handleDelete, message }) => {
   return (
     showDeleteModal && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <div className="flex items-center mb-4">
             <FaInfoCircle className="text-blue-500 mr-2" size={24} />
-            <p className="text-lg">Are you sure you want to delete this?</p>
+            <p className="text-lg">{message ? message : 'Are you sure you want to delete this?'}</p>
           </div>
           <div className="flex justify-end gap-4">
             <button

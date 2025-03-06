@@ -69,10 +69,6 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    numberOfAppointments: {
-        type: Number,
-        default: 0,
-    },
     numberOfServices: {
         type: Number,
         default: 0,

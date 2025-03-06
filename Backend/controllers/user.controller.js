@@ -100,3 +100,17 @@ export const getSenderName = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+export const deleteUser = async (req, res) => {
+  if (req.user._id.toString() === req.params.id) {
+    try {
+      await User.findByIdAndDelete(req.params.id);
+      res.status(200).json({ message: "Account deleted successfully." });
+    } catch (error) {
+      console.log(`Error in deleteUser: ${error.message}`);
+      res.status(404).json({ message: error.message });
+    }
+  } else {
+    res.status(403).json({ message: "You can only delete your account" });
+  }
+};
