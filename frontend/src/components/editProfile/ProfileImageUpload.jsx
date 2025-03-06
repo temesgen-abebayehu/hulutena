@@ -50,7 +50,7 @@ const ProfileImageUpload = ({ profileImage, onImageUpload, uploadingImage, userI
       const imageUrl = data.secure_url;
   
       onImageUpload(imageUrl);
-      setSuccessMessage("Profile image updated successfully!");
+      setSuccessMessage("Profile image uploaded successfully! Click Save to update your profile.");
     } catch (err) {
       setError(`Error: ${err.message}`);
       console.error("Image upload error:", err);

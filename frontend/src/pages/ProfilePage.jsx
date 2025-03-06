@@ -192,7 +192,7 @@ function ProfilePage() {
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <label className="text-sm text-gray-500">Date of Birth</label>
-              <p className="text-lg font-semibold">{new Date(user.dateOfBirth).toLocaleDateString()}</p>
+              <p className="text-lg font-semibold">{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString(): ''}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <label className="text-sm text-gray-500">Spoken Language</label>

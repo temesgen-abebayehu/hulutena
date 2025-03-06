@@ -1,24 +1,11 @@
-// EditProfile.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileImageUpload from "../components/editProfile/ProfileImageUpload";
 import EditForm from "../components/editProfile/EditForm";
 
 function EditProfile() {
-  const [user, setUser] = useState({
-    fullName: "",
-    email: "",
-    contactNumber: "",
-    password: "",
-    role: "",
-    profileImage: "",
-    dateOfBirth: "",
-    availability: "",
-    address: "",
-    language: [],
-    specialization: [],
-  });
-  const [userId, setUserId] = useState("");
+  const [user, setUser] = useState({});
+  const [initialUserState, setInitialUserState] = useState({}); // Store initial user state
   const [confirmPassword, setConfirmPassword] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
   const [languageInput, setLanguageInput] = useState("");
@@ -44,20 +31,8 @@ function EditProfile() {
         }
 
         const data = await response.json();
-        setUser({
-          fullName: data.fullName || "",
-          email: data.email || "",
-          contactNumber: data.contactNumber || "",
-          password: "",
-          role: data.role || "",
-          profileImage: data.profileImage || "",
-          dateOfBirth: data.dateOfBirth || "",
-          language: data.language || [],
-          availability: data.availability || "",
-          address: data.address || "",
-          specialization: data.specialization || [],
-        });
-        setUserId(userId);
+        setUser(data);
+        setInitialUserState(data); // Store the initial user state
       } catch (err) {
         setError(err.message);
       } finally {
@@ -81,9 +56,10 @@ function EditProfile() {
   const handleLanguageInput = (e) => {
     if (e.key === "Enter" && languageInput.trim()) {
       e.preventDefault();
+      const newLanguage = languageInput.trim();
       setUser((prevUser) => ({
         ...prevUser,
-        language: [...prevUser.language, languageInput.trim()],
+        language: [...prevUser.language, newLanguage],
       }));
       setLanguageInput("");
     }
@@ -93,9 +69,10 @@ function EditProfile() {
   const handleSpecializationInput = (e) => {
     if (e.key === "Enter" && specializationInput.trim()) {
       e.preventDefault();
+      const newSpecialization = specializationInput.trim();
       setUser((prevUser) => ({
         ...prevUser,
-        specialization: [...prevUser.specialization, specializationInput.trim()],
+        specialization: [...prevUser.specialization, newSpecialization],
       }));
       setSpecializationInput("");
     }
@@ -122,7 +99,6 @@ function EditProfile() {
     setUploadingImage(true);
     setUser((prevUser) => ({ ...prevUser, profileImage: imageUrl }));
     setUploadingImage(false);
-    setSuccessMessage("Profile image updated successfully!");
   };
 
   // Validate form fields
@@ -143,43 +119,32 @@ function EditProfile() {
       setError("");
       setSuccessMessage("");
 
-      const storedUser = localStorage.getItem("user");
-      if (!storedUser) {
-        navigate("/login");
-        return;
-      }
-
-      const userId = JSON.parse(storedUser).currentUser._id;
-
-      // Get the original user data
-      const response = await fetch(`/api/users/${userId}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch user data.");
-      }
-
-      const originalUser = await response.json();
-
-      // Find only changed fields
-      const updatedFields = {};
-      Object.keys(user).forEach((key) => {
-        if (user[key] && user[key] !== originalUser[key]) {
-          updatedFields[key] = user[key];
+      // Create an object with only the updated fields
+      const fieldsToUpdate = {};
+      for (const key in user) {
+        if (user[key] !== initialUserState[key]) {
+          fieldsToUpdate[key] = user[key];
         }
-      });
+      }
 
-      // Only send the update request if there are changes
-      if (Object.keys(updatedFields).length === 0) {
+      // Remove password if it's empty
+      if (!fieldsToUpdate.password) {
+        delete fieldsToUpdate.password;
+      }
+
+      // If no fields were updated, show a message and return
+      if (Object.keys(fieldsToUpdate).length === 0) {
         setSuccessMessage("No changes detected.");
         setLoading(false);
         return;
       }
 
-      const updateResponse = await fetch(`/api/users/${userId}`, {
-        method: "PUT",
+      const updateResponse = await fetch(`/api/users/${user._id}`, {
+        method: "PATCH", // Use PATCH for partial updates
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedFields),
+        body: JSON.stringify(fieldsToUpdate),
       });
 
       if (!updateResponse.ok) {
@@ -233,12 +198,13 @@ function EditProfile() {
           profileImage={user.profileImage}
           onImageUpload={handleImageUpload}
           uploadingImage={uploadingImage}
-          userId={userId}
+          userId={user._id}
           setError={setError}
           setSuccessMessage={setSuccessMessage}
         />
         {error && <div className="text-red-500 text-center">{error}</div>}
         {successMessage && <div className="text-green-500 text-center">{successMessage}</div>}
+
         {/* Edit Form */}
         <EditForm
           user={user}
@@ -263,17 +229,17 @@ function EditProfile() {
             className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition duration-300"
           >
             Cancel
-          </button>         
-            <button
-              onClick={handleSave}
-              className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-              disabled={loading || uploadingImage}
-            >
-              {loading ? "Saving..." : "Save"}
-            </button>
-          </div>
+          </button>
+          <button
+            onClick={handleSave}
+            className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+            disabled={loading || uploadingImage}
+          >
+            {loading ? "Saving..." : "Save"}
+          </button>
         </div>
       </div>
+    </div>
   );
 }
 

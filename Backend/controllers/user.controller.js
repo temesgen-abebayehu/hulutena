@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import User from "../models/User.model.js";
 import Verification from "../models/Verification.model.js";
 
@@ -23,22 +24,59 @@ export const getUser = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-  if (req.user._id.toString() === req.params.id) {
-    try {
-      await User.findByIdAndUpdate(req.params.id, {
-        $set: req.body,
-      });
+  // Check if the user is updating their own account
+  if (req.user._id.toString() !== req.params.id) {
+    return res.status(403).json({ message: "You can only update your account." });
+  }
 
-      const updatedUser = await User.findById(req.params.id);
-      const { password, ...others } = updatedUser._doc;
-      res.status(200).json(others);
-    } catch (error) {
-      console.log(`Error in updateUser: ${error.message}`);
-      res.status(404).json({ message: error.message });
+  try {
+    // Define allowed fields for update
+    const allowedUpdates = [
+      "fullName",
+      "email",
+      "contactNumber",
+      "profileImage",
+      "language",
+      "specialization",
+      "password",
+      "address",
+      "dateOfBirth",
+      "availability",
+      "experience",
+      "onlineStatus",
+    ];
+
+    // Filter out disallowed fields
+    const updates = Object.keys(req.body).reduce((acc, key) => {
+      if (allowedUpdates.includes(key)) {
+        acc[key] = req.body[key];
+      }
+      return acc;
+    }, {});
+
+    // If password is being updated, hash it
+    if (updates.password) {
+      updates.password = await bcrypt.hash(updates.password, 10);
     }
-  } else {
-    console.log(req.user._id.toString(), req.params.id);
-    res.status(403).json({ message: "You can only update your account" });
+
+    // Update the user
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Remove the password from the response
+    const { password, ...userData } = updatedUser._doc;
+
+    res.status(200).json(userData);
+  } catch (error) {
+    console.log(`Error in updateUser: ${error.message}`);
+    res.status(500).json({ message: error.message });
   }
 };
 

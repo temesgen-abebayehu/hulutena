@@ -24,13 +24,13 @@ const EditForm = ({
         <div className="space-y-4">
           {/* Full Name */}
           <div>
-            <label className="block text-sm text-gray-500 font-medium">
+            <label className="block text-sm text-gray-500 font-bold">
               Full Name
             </label>
             <input
               type="text"
               name="fullName"
-              value={user.fullName}
+              value={user.fullName || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
               required
@@ -39,13 +39,13 @@ const EditForm = ({
 
           {/* Email */}
           <div>
-            <label className="block text-sm text-gray-500 font-medium">
+            <label className="block text-sm text-gray-500 font-bold">
               Email
             </label>
             <input
               type="email"
               name="email"
-              value={user.email}
+              value={user.email || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
               required
@@ -54,41 +54,73 @@ const EditForm = ({
 
           {/* Phone Number */}
           <div>
-            <label className="block text-sm text-gray-500 font-medium">
+            <label className="block text-sm text-gray-500 font-bold">
               Phone Number
             </label>
             <input
               type="text"
               name="contactNumber"
-              value={user.contactNumber}
+              value={user.contactNumber || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
               required
             />
           </div>
 
+          {/* Language */}
+          <div>
+            <label className="block text-sm text-gray-500 font-bold">
+              Languages You Speak
+            </label>
+            <div className="flex flex-wrap gap-2 p-2 border rounded-md">
+              {user.language.map((lang, index) => (
+                <div
+                  key={index}
+                  className="flex items-center bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm"
+                >
+                  {lang}
+                  <button
+                    type="button"
+                    onClick={() => removeLanguage(index)}
+                    className="ml-2 text-red-500 hover:text-red-700"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+              <input
+                type="text"
+                value={languageInput}
+                onChange={(e) => setLanguageInput(e.target.value)}
+                onKeyDown={handleLanguageInput}
+                className="flex-1 p-1 border-none focus:ring-0"
+                placeholder="Add a language and press Enter"
+              />
+            </div>
+          </div>
+
           {/* DateOfBirth */}
           <div>
-            <label className="block text-sm text-gray-500 font-medium">
+            <label className="block text-sm text-gray-500 font-bold">
               Date of Birth
             </label>
             <input
               type="date"
               name="dateOfBirth"
-              value={user.dateOfBirth.split("T")[0]}
+              value={user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split("T")[0] : ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
             />
           </div>
           {/* Address */}
           <div>
-            <label className="block text-sm text-gray-500 font-medium">
+            <label className="block text-sm text-gray-500 font-bold">
               Address
             </label>
             <input
               type="text"
               name="address"
-              value={user.address}
+              value={user.address || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
               placeholder="Bole, Addis ababa, Ethiopia"
@@ -100,13 +132,13 @@ const EditForm = ({
         <div className="space-y-4">
           {/* Password */}
           <div>
-            <label className="block text-sm text-gray-500 font-medium">
+            <label className="block text-sm text-gray-500 font-bold">
               New Password
             </label>
             <input
               type="password"
               name="password"
-              value={user.password}
+              value={user.password || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
               placeholder="Leave blank to keep current password"
@@ -115,7 +147,7 @@ const EditForm = ({
 
           {/* Confirm Password */}
           <div>
-            <label className="block text-sm text-gray-500 font-medium">
+            <label className="block text-sm text-gray-500 font-bold">
               Confirm Password
             </label>
             <input
@@ -130,41 +162,9 @@ const EditForm = ({
           {/* Doctor-Specific Fields */}
           {user.role === "doctor" && (
             <>
-              {/* Language */}
-              <div>
-                <label className="block text-sm text-gray-500 font-medium">
-                  Languages You Speak
-                </label>
-                <div className="flex flex-wrap gap-2 p-2 border rounded-md">
-                  {user.language.map((lang, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm"
-                    >
-                      {lang}
-                      <button
-                        type="button"
-                        onClick={() => removeLanguage(index)}
-                        className="ml-2 text-red-500 hover:text-red-700"
-                      >
-                        &times;
-                      </button>
-                    </div>
-                  ))}
-                  <input
-                    type="text"
-                    value={languageInput}
-                    onChange={(e) => setLanguageInput(e.target.value)}
-                    onKeyDown={handleLanguageInput}
-                    className="flex-1 p-1 border-none focus:ring-0"
-                    placeholder="Add a language and press Enter"
-                  />
-                </div>
-              </div>
-
               {/* Specialty */}
               <div>
-                <label className="block text-sm text-gray-500 font-medium">
+                <label className="block text-sm text-gray-500 font-bold">
                   Specializations
                 </label>
                 <div className="flex flex-wrap gap-2 p-2 border rounded-md">
@@ -195,13 +195,13 @@ const EditForm = ({
 
                 {/* Availability */}
                 <div>
-                  <label className="block text-sm text-gray-500 font-medium">
+                  <label className="block text-sm text-gray-500 font-bold">
                     {" "}
                     Availability{" "}
                   </label>
                   <select
                     name="availability"
-                    value={user.availability}
+                    value={user.availability || ""}
                     onChange={handleChange}
                     className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
                   >
@@ -212,10 +212,25 @@ const EditForm = ({
                 </div>
               </div>
 
+              {/* Experience */}
+              <div>
+                <label className="block text-sm text-gray-500 font-bold">
+                  Experience
+                </label>
+                <input
+                  type="text"
+                  name="experience"
+                  value={user.experience || ""}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+                  placeholder="Years of experience"
+                />
+              </div>
+
               {/* Active Account */}
               {user.isVerified && (
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-bold text-gray-700">
                     Account Status
                   </label>
                   <div className="flex items-start p-3 bg-blue-100 rounded-md">
