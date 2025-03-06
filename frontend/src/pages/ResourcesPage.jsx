@@ -12,7 +12,7 @@ function ResourcesPage() {
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [newResource, setNewResource] = useState({
         title: "",
-        type: "audio",
+        type: "",
         description: "",
         src: "",
     });
@@ -85,7 +85,7 @@ function ResourcesPage() {
             const data = await response.json();
             setResources((prev) => [...prev, data]);
             setShowCreateForm(false);
-            setNewResource({ title: "", type: "audio", description: "", src: "" });
+            setNewResource({ title: "", type: "", description: "", src: "" });
         } catch (error) {
             console.error("Error creating resource:", error);
             setError("Failed to create resource. Please try again.");
@@ -283,9 +283,11 @@ function ResourcesPage() {
                     <div className="mb-12">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-2xl font-semibold text-blue-800">Audio Resources</h2>
-                            <button className="text-blue-600 hover:underline hover:text-blue-800" onClick={() => setSearchQuery("audio")}>
-                                See more audio...
-                            </button>
+                            {filteredResources.length > 8 && (
+                                <button className="text-blue-600 hover:underline hover:text-blue-800" onClick={() => setSearchQuery("audio")}>
+                                    See more audio...
+                                </button>
+                            )}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {filteredAudio.slice(0, 8).map((audio) => (
@@ -307,9 +309,11 @@ function ResourcesPage() {
                     <div className="mb-12">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-2xl font-semibold text-blue-800">Video Resources</h2>
-                            <button className="text-blue-600 hover:underline hover:text-blue-800" onClick={() => setSearchQuery("video")}>
-                                See more video...
-                            </button>
+                            {filteredResources.length > 8 && (
+                                <button className="text-blue-600 hover:underline hover:text-blue-800" onClick={() => setSearchQuery("video")}>
+                                    See more video...
+                                </button>
+                            )}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredVideo.slice(0, 8).map((video) => (
@@ -331,9 +335,11 @@ function ResourcesPage() {
                     <div>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-2xl font-semibold text-blue-800">Written Resources</h2>
-                            <button className="text-blue-600 hover:underline hover:text-blue-800" onClick={() => setSearchQuery("written")}>
-                                See more written...
-                            </button>
+                            {filteredResources.length > 8 && (
+                                <button className="text-blue-600 hover:underline hover:text-blue-800" onClick={() => setSearchQuery("written")}>
+                                    See more written...
+                                </button>
+                            )}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredWritten.slice(0, 8).map((written) => (

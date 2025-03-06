@@ -32,6 +32,7 @@ function CreateResource({
               className="w-full p-2 border rounded-lg"
               required
             >
+              <option value="">Select Type</option>
               <option value="audio">Audio</option>
               <option value="video">Video</option>
               <option value="written">Written</option>
