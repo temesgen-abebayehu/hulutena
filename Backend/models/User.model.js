@@ -24,9 +24,6 @@ const userSchema = new mongoose.Schema({
         unique: true,
         require: true,
     },
-    address: {
-        type: String,
-    },
     gender: {
         type: String,
         enum: ['male', 'female'],
@@ -61,8 +58,7 @@ const userSchema = new mongoose.Schema({
     },
     availability: {
         type: String,
-        enum: ['online', 'in-person'],
-        default: '',
+        enum: ['online', 'in-person', 'both'],
     },
     experience: {
         type: Number,
@@ -82,7 +78,7 @@ const userSchema = new mongoose.Schema({
     },
     language: {
         type: [String],
-        default: ['አማረኛ', 'amharic'],
+        default: [],
     },
     isVerified: {
         type: Boolean,

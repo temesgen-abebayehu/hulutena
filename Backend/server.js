@@ -15,6 +15,7 @@ import discussionRouter from './routes/discussion.route.js';
 import resourceRouter from './routes/resource.route.js';
 import paymentRouter from './routes/payment.route.js';
 import chatDoctorRouter from './routes/chatWithDoctor.route.js';
+import { cloudinary_delete } from './config/cloudinaryCnfig.js';
 
 dotenv.config();
 const app = express();
@@ -36,6 +37,8 @@ app.use("/api/discussions", discussionRouter);
 app.use('/api/resources', resourceRouter);
 app.use('/api/payments', paymentRouter);
 app.use('/api/chatdoctors', chatDoctorRouter);
+
+app.post("/api/deleteImage", cloudinary_delete);
 
 app.listen(PORT, () => {
     console.log(`server on at http://localhost:${PORT}`);

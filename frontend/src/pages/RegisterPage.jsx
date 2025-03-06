@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"; 
 
 function RegisterPage() {
@@ -9,12 +10,14 @@ function RegisterPage() {
     password: "",
     contactNumber: "",
     confirmPassword: "",
+    gender: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const [showPassword, setShowPassword] = useState(false); 
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,12 +37,13 @@ function RegisterPage() {
       });
 
       if (response.ok) {
-        setMessage("Registration successful! You can now log in.");        
+        setMessage("Registration successful! You can now log in.");     
+        navigate("/login");
       } else {
         const errorData = await response.json();
         setError(errorData.message || "Registration failed.");
       }
-      setFormData({ fullName: "", email: "", role: "patient", password: "", contactNumber: "", confirmPassword: "" });
+      setFormData({ fullName: "", email: "", role: "patient", password: "", contactNumber: "", confirmPassword: "", gender: "" });
     } catch (err) {
       setError(err.message || "Registration failed.");
     } finally {
@@ -118,11 +122,36 @@ function RegisterPage() {
             />
           </div>
 
+          {/* gender */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Gender</label>
+            <div className="flex items-center">
+              <input 
+                type="radio" 
+                name="gender" 
+                value="male"
+                checked={formData.gender === "male"}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              <label className="mr-4">Male</label>
+              <input 
+                type="radio" 
+                name="gender"
+                value="female"
+                checked={formData.gender === "female"}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              <label>Female</label>
+            </div>
+          </div>
+
           {/* Password */}
           <div className="mb-4 relative">
             <label htmlFor="password" className="block text-gray-700 font-medium mb-2">Password</label>
             <input
-              type={showPassword ? "text" : "password"} // Toggle input type
+              type={showPassword ? "text" : "password"}
               id="password"
               name="password"
               value={formData.password}
@@ -133,7 +162,7 @@ function RegisterPage() {
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+              onClick={() => setShowPassword(!showPassword)}
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-7"
             >
               {showPassword ? (
@@ -148,7 +177,7 @@ function RegisterPage() {
           <div className="mb-4 relative">
             <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2">Confirm Password</label>
             <input
-              type={showPassword ? "text" : "password"} // Toggle input type
+              type={showPassword ? "text" : "password"}
               id="confirmPassword"
               name="confirmPassword"
               value={formData.confirmPassword}
@@ -159,7 +188,7 @@ function RegisterPage() {
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+              onClick={() => setShowPassword(!showPassword)}
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-7"
             >
               {showPassword ? (

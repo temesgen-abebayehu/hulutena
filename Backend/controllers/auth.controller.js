@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { generateTokenAndSetCookie } from "../utils/generateToken.js";
 
 export const Register = async (req, res) => {
-  const { fullName, email, role, password, confirmPassword, contactNumber } = req.body;
+  const { fullName, email, role, password, confirmPassword, contactNumber, gender } = req.body;
 
   try {
     // Trim input fields
@@ -63,6 +63,7 @@ export const Register = async (req, res) => {
       role,
       password: hashedPassword,
       contactNumber,
+      gender,
     });
 
     await user.save();
