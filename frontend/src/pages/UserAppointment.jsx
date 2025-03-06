@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { FaArrowLeft, FaInfoCircle, FaTrash, FaEdit, FaSave, FaTimes } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
+import SaveConfirmationModal from "../components/SaveConfirmationModal";
+import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 
 function UserAppointment() {
   const { id } = useParams();
@@ -131,54 +133,20 @@ function UserAppointment() {
 
         {/* Delete Confirmation Modal */}
         {showDeleteModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <div className="flex items-center mb-4">
-                <FaInfoCircle className="text-blue-500 mr-2" size={24} />
-                <p className="text-lg">Are you sure you want to delete this appointment?</p>
-              </div>
-              <div className="flex justify-end gap-4">
-                <button
-                  onClick={handleDeleteAppointment}
-                  className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => setShowDeleteModal(false)}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-300"
-                >
-                  No
-                </button>
-              </div>
-            </div>
-          </div>
+          <DeleteConfirmationModal
+            setShowDeleteModal={setShowDeleteModal}
+            handleDelete={handleDeleteAppointment}
+            message="Are you sure you want to delete this appointment?"
+          />
         )}
 
         {/* Save Confirmation Modal */}
         {showSaveModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <div className="flex items-center mb-4">
-                <FaInfoCircle className="text-blue-500 mr-2" size={24} />
-                <p className="text-lg">Are you sure you want to save changes?</p>
-              </div>
-              <div className="flex justify-end gap-4">
-                <button
-                  onClick={handleSaveChanges}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => setShowSaveModal(false)}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-300"
-                >
-                  No
-                </button>
-              </div>
-            </div>
-          </div>
+          <SaveConfirmationModal
+            handleSaveChanges={handleSaveChanges}
+            setShowSaveModal={setShowSaveModal}
+            message="Are you sure you want to save changes?"
+          />
         )}
 
         {/* Appointment Details */}

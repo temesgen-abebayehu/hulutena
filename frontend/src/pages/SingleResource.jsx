@@ -1,187 +1,203 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { FaArrowLeft, FaThumbsUp, FaThumbsDown, FaComment, FaTrash } from "react-icons/fa";
+import moment from "moment";
+import {
+  FaArrowLeft,
+  FaThumbsUp,
+  FaThumbsDown,
+  FaComment,
+  FaTrash,
+} from "react-icons/fa";
 
 function SingleResource() {
-    const { id } = useParams();
-    const [resource, setResource] = useState(null);
-    const [newComment, setNewComment] = useState("");
-    const userData = JSON.parse(localStorage.getItem("user")).currentUser;
-    const userId = userData._id;
-    const userName = userData.fullName;
+  const { id } = useParams();
+  const [resource, setResource] = useState(null);
+  const [newComment, setNewComment] = useState("");
+  const userData = JSON.parse(localStorage.getItem("user")).currentUser;
+  const userId = userData._id;
+  const userName = userData.fullName;
 
-    // Fetch resource from the backend
-    useEffect(() => {
-        const fetchResource = async () => {
-            try {
-                const response = await fetch(`/api/resources/${id}`);
-                if (!response.ok) throw new Error("Failed to fetch resource.");
-                const data = await response.json();
-                setResource(data);
-            } catch (error) {
-                console.error("Error fetching resource:", error);
-            }
-        };
-
-        fetchResource();
-    }, [id]);
-
-    // Handle like
-    const handleLike = async () => {
-        try {
-            const response = await fetch(`/api/resources/${id}/like`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            if (!response.ok) throw new Error("Failed to like resource.");
-            const data = await response.json();
-            setResource(data);
-        } catch (error) {
-            console.error("Error liking resource:", error);
-        }
+  // Fetch resource from the backend
+  useEffect(() => {
+    const fetchResource = async () => {
+      try {
+        const response = await fetch(`/api/resources/${id}`);
+        if (!response.ok) throw new Error("Failed to fetch resource.");
+        const data = await response.json();
+        setResource(data);
+      } catch (error) {
+        console.error("Error fetching resource:", error);
+      }
     };
 
-    // Handle dislike
-    const handleDislike = async () => {
-        try {
-            const response = await fetch(`/api/resources/${id}/dislike`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            if (!response.ok) throw new Error("Failed to dislike resource.");
-            const data = await response.json();
-            setResource(data);
-        } catch (error) {
-            console.error("Error disliking resource:", error);
+    fetchResource();
+  }, [id]);
+
+  // Handle like
+  const handleLike = async () => {
+    try {
+      const response = await fetch(`/api/resources/${id}/like`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to like resource.");
+      const data = await response.json();
+      setResource(data);
+    } catch (error) {
+      console.error("Error liking resource:", error);
+    }
+  };
+
+  // Handle dislike
+  const handleDislike = async () => {
+    try {
+      const response = await fetch(`/api/resources/${id}/dislike`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to dislike resource.");
+      const data = await response.json();
+      setResource(data);
+    } catch (error) {
+      console.error("Error disliking resource:", error);
+    }
+  };
+
+  // Handle adding a comment
+  const handleAddComment = async () => {
+    if (newComment.trim() === "") return;
+
+    try {
+      const response = await fetch(`/api/resources/${id}/comment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ text: newComment, user: userId, userName }),
+      });
+      if (!response.ok) throw new Error("Failed to add comment.");
+      const data = await response.json();
+
+      data.comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setResource(data);
+      setNewComment("");
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+  };
+
+  // Handle deleting a comment
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const response = await fetch(
+        `/api/resources/${id}/comment/${commentId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-    };
+      );
+      if (!response.ok) throw new Error("Failed to delete comment.");
+      const data = await response.json();
+      setResource(data);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
 
-    // Handle adding a comment
-    const handleAddComment = async () => {
-        if (newComment.trim() === "") return;
+  return (
+    <div className="p-8 md:p-16 md:mr-20 lg:mr-40 bg-white rounded-lg">
+      {/* Back Button */}
+      <button
+        className="flex flex-row items-center bg-slate-500 text-white p-2 rounded-lg gap-2"
+        onClick={() => window.history.back()}
+      >
+        <FaArrowLeft /> Back
+      </button>
+      {resource && (
+        <>
+          <h1 className="text-4xl font-bold mb-2">{resource.title}</h1>
+          <p className="text-gray-700 font-medium">{resource.description}</p>
 
-        try {
-            const response = await fetch(`/api/resources/${id}/comment`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify({ text: newComment, user: userId, userName }),
-            });
-            if (!response.ok) throw new Error("Failed to add comment.");
-            const data = await response.json();
-            setResource(data);
-            setNewComment("");
-        } catch (error) {
-            console.error("Error adding comment:", error);
-        }
-    };
-
-
-    // Handle deleting a comment
-    const handleDeleteComment = async (commentId) => {
-        try {
-            const response = await fetch(`/api/resources/${id}/comment/${commentId}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            if (!response.ok) throw new Error("Failed to delete comment.");
-            const data = await response.json();
-            setResource(data);
-        } catch (error) {
-            console.error("Error deleting comment:", error);
-        }
-    };
-
-    return (
-        <div className="p-8 md:p-16 md:mr-20 lg:mr-40 bg-white rounded-lg">
-            {/* Back Button */}
+          {/* Like, Dislike, and Comment Buttons */}
+          <div className="flex gap-4 mt-4">
             <button
-                className="flex flex-row items-center bg-slate-500 text-white p-2 rounded-lg gap-2"
-                onClick={() => window.history.back()}
+              onClick={handleLike}
+              className="flex items-center gap-2 text-blue-500"
             >
-                <FaArrowLeft /> Back
+              <FaThumbsUp /> {resource.likes.length}
             </button>
-            {resource && (
-                <>
-                    <h1 className="text-4xl font-bold mb-2">{resource.title}</h1>
-                    <p className="text-gray-700 font-medium">{resource.description}</p>
+            <button
+              onClick={handleDislike}
+              className="flex items-center gap-2 text-red-500"
+            >
+              <FaThumbsDown /> {resource.dislikes.length}
+            </button>
+            <button className="flex items-center gap-2 text-green-500">
+              <FaComment /> {resource.comments.length}
+            </button>
+          </div>
 
-                    {/* Like, Dislike, and Comment Buttons */}
-                    <div className="flex gap-4 mt-4">
+          {/* Comments Section */}
+          <div className="mt-8">
+            {/* Add Comment Section */}
+            <div className="mt-6">
+              <textarea
+                placeholder="Add a comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                className="w-full p-2 border rounded-lg"
+              />
+              <button
+                onClick={handleAddComment}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2"
+              >
+                Add Comment
+              </button>
+            </div>
+
+            {/* Comments */}
+            {resource.comments.length > 0 ? (
+              <div className="mt-6">
+                <h2 className="text-xl font-semibold">Comments</h2>
+                {resource.comments.map((comment) => (
+                  <div
+                    key={comment._id}
+                    className="mt-4 p-4 bg-gray-100 rounded-lg space-y-4"
+                  >
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-500 text-sm mt-2">
+                        By:{" "}
+                        <span className="font-bold">{comment.userName}</span>
+                        {" | "} {moment(comment.createdAt).fromNow()}
+                      </p>
+                      {comment.user === userId && (
                         <button
-                            onClick={handleLike}
-                            className="flex items-center gap-2 text-blue-500"
+                          onClick={() => handleDeleteComment(comment._id)}
+                          className="text-red-500 mt-2 flex items-center gap-2"
                         >
-                            <FaThumbsUp /> {resource.likes.length}
+                          <FaTrash /> Delete
                         </button>
-                        <button
-                            onClick={handleDislike}
-                            className="flex items-center gap-2 text-red-500"
-                        >
-                            <FaThumbsDown /> {resource.dislikes.length}
-                        </button>
-                        <button className="flex items-center gap-2 text-green-500">
-                            <FaComment /> {resource.comments.length}
-                        </button>
+                      )}
                     </div>
-
-                    {/* Comments Section */}
-                    <div className="mt-8">
-                        {/* Add Comment Section */}
-                        <div className="mt-6">
-                            <textarea
-                                placeholder="Add a comment..."
-                                value={newComment}
-                                onChange={(e) => setNewComment(e.target.value)}
-                                className="w-full p-2 border rounded-lg"
-                            />
-                            <button
-                                onClick={handleAddComment}
-                                className="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2"
-                            >
-                                Add Comment
-                            </button>
-                        </div>
-
-                        {/* Comments */}
-                        {resource.comments.length > 0 ? (
-                            <div className="mt-6">
-                                <h2 className="text-xl font-semibold">Comments</h2>
-                                {resource.comments.map((comment) => (
-                                    <div key={comment._id} className="mt-4 p-4 bg-gray-100 rounded-lg space-y-4">
-                                        <div className="flex justify-between items-center">
-                                            <p className="text-gray-500 text-sm mt-2">
-                                                Commented by: <span className="font-medium">{comment.userName}</span>
-                                            </p>
-                                            {comment.user === userId && (
-                                                <button
-                                                    onClick={() => handleDeleteComment(comment._id)}
-                                                    className="text-red-500 mt-2 flex items-center gap-2"
-                                                >
-                                                    <FaTrash /> Delete
-                                                </button>
-                                            )}
-                                        </div>
-                                        <p className="text-gray-800 pl-4">{comment.text}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-gray-600 mt-4">No comments yet.</p>
-                        )}
-                    </div>
-                </>
+                    <p className="text-gray-800 pl-4">{comment.text}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600 mt-4">No comments yet.</p>
             )}
-        </div>
-    );
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
 
 export default SingleResource;

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaInfoCircle, FaPaperPlane } from "react-icons/fa";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 
 function ChatWithDoctor({ doctorId, userId, doctorName, onClose }) {
   const [chatMessages, setChatMessages] = useState({ messages: [] });
@@ -164,28 +165,11 @@ function ChatWithDoctor({ doctorId, userId, doctorName, onClose }) {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <div className="flex items-center mb-4">
-              <FaInfoCircle className="text-blue-500 mr-2" size={24} />
-              <p className="text-lg">Are you sure you want to delete this chat?</p>
-            </div>
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={confirmDeleteChat}
-                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
-              >
-                Yes
-              </button>
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-300"
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmationModal
+          setShowDeleteModal={setShowDeleteModal}
+          handleDelete={confirmDeleteChat}
+          message="Are you sure you want to delete this chat?"
+        />
       )}
     </div>
   );

@@ -3,7 +3,6 @@ import { FaSearch } from "react-icons/fa";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import DiscussionForm from "../components/communityDiscussion/DiscussionForm";
 import DiscussionThread from "../components/communityDiscussion/DiscussionThread";
-import { set } from "mongoose";
 
 function CommunityDiscussion() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -266,9 +265,9 @@ function CommunityDiscussion() {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <DeleteConfirmationModal
-          showDeleteModal={showDeleteModal}
           setShowDeleteModal={setShowDeleteModal}
           handleDelete={deleteCommentId ? handleDeleteComment : handleDeleteThread}
+          message={deleteCommentId ? "Are you sure you want to delete this comment?" : "Are you sure you want to delete this discussion?"}
         />
       )}
 

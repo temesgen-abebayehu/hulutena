@@ -234,12 +234,14 @@ function ProfilePage() {
             Delete Account
           </button>
         </div>
-        <DeleteConfirmationModal
-          showDeleteModal={showDeleteModal}
-          setShowDeleteModal={setShowDeleteModal}
-          handleDelete={handleDelete}
-          message="Are you sure you want to delete your account? This action looses all your data and cannot access again."
-        />
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && (
+          <DeleteConfirmationModal
+            setShowDeleteModal={setShowDeleteModal}
+            handleDelete={handleDelete}
+            message="Are you sure you want to delete your account? This action looses all your data and cannot access again."
+          />
+        )}
 
         <div className="md:col-span-1 bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Appointments</h2>

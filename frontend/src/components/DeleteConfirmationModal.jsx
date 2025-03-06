@@ -1,9 +1,8 @@
 import React from "react";
 import { FaInfoCircle } from "react-icons/fa";
 
-const DeleteConfirmationModal = ({ showDeleteModal, setShowDeleteModal, handleDelete, message }) => {
+const DeleteConfirmationModal = ({  setShowDeleteModal, handleDelete, message }) => {
   return (
-    showDeleteModal && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <div className="flex items-center mb-4">
@@ -26,7 +25,6 @@ const DeleteConfirmationModal = ({ showDeleteModal, setShowDeleteModal, handleDe
           </div>
         </div>
       </div>
-    )
   );
 };
 
