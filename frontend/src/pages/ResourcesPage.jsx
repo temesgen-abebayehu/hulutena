@@ -27,7 +27,8 @@ function ResourcesPage() {
                 const response = await fetch("/api/resources");
                 if (!response.ok) throw new Error("Failed to fetch resources.");
                 const data = await response.json();
-                setResources(data);
+                const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setResources(sortedData);
             } catch (error) {
                 console.error("Error fetching resources:", error);
                 setError("Failed to load resources. Please try again later.");

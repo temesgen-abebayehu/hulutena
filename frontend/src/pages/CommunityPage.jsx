@@ -39,12 +39,9 @@ function CommunityDiscussion() {
           throw new Error("Failed to fetch discussions.");
         }
 
-        const sortedThread = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        const sortedData = sortedThread.map((thread) => ({
-          ...thread,
-          comments: thread.comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
-        }));
-        setThreads(sortedData);
+        // Sort threads and comments
+        const sortedThreads = sortThreadsAndComments(data);
+        setThreads(sortedThreads);
       } catch (error) {
         console.error("Error fetching discussions:", error);
       }
@@ -52,6 +49,22 @@ function CommunityDiscussion() {
 
     fetchDiscussions();
   }, []);
+
+  // Helper function to sort threads and comments
+  const sortThreadsAndComments = (threads) => {
+    return threads
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .map((thread) => ({
+        ...thread,
+        comments: thread.comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
+      }));
+  };
+
+  // Update threads with sorting logic after any state change
+  const updateThreads = (updatedThreads) => {
+    const sortedThreads = sortThreadsAndComments(updatedThreads);
+    setThreads(sortedThreads);
+  };
 
   const handleSearch = (e) => setSearchQuery(e.target.value);
 
@@ -80,7 +93,7 @@ function CommunityDiscussion() {
       }
 
       const data = await response.json();
-      setThreads([data, ...threads]);
+      updateThreads([data, ...threads]);
       setNewThread({ title: "", category: "", content: "" });
       setErrorMessage("");
     } catch (error) {
@@ -102,7 +115,8 @@ function CommunityDiscussion() {
         throw new Error("Failed to like discussion.");
       }
       const data = await response.json();
-      setThreads(threads.map((thread) => (thread._id === id ? data : thread)));
+      const updatedThreads = threads.map((thread) => (thread._id === id ? data : thread));
+      updateThreads(updatedThreads);
     } catch (error) {
       console.error("Error liking discussion:", error);
     }
@@ -122,7 +136,8 @@ function CommunityDiscussion() {
         throw new Error("Failed to edit discussion.");
       }
       const data = await response.json();
-      setThreads(threads.map((thread) => (thread._id === threadId ? data : thread)));
+      const updatedThreads = threads.map((thread) => (thread._id === threadId ? data : thread));
+      updateThreads(updatedThreads);
       setEditThreadId(null);
       setEditThreadText({ title: "", content: "" });
     } catch (error) {
@@ -141,10 +156,11 @@ function CommunityDiscussion() {
       if (!response.ok) {
         throw new Error("Failed to delete discussion.");
       }
-      setThreads(threads.filter((thread) => thread._id !== deleteThreadId));
+      const updatedThreads = threads.filter((thread) => thread._id !== deleteThreadId);
+      updateThreads(updatedThreads);
       setShowDeleteModal(false);
       setDeleteThreadId(null);
-      setDeleteCommentId(null);      
+      setDeleteCommentId(null);
     } catch (error) {
       console.error("Error deleting discussion:", error);
     }
@@ -169,7 +185,8 @@ function CommunityDiscussion() {
         throw new Error("Failed to add comment.");
       }
       const data = await response.json();
-      setThreads(threads.map((thread) => (thread._id === threadId ? data : thread)));
+      const updatedThreads = threads.map((thread) => (thread._id === threadId ? data : thread));
+      updateThreads(updatedThreads);
       setCommentText("");
       setErrorMessage("");
     } catch (error) {
@@ -179,33 +196,34 @@ function CommunityDiscussion() {
   };
 
   const handleDeleteComment = async () => {
-      try {
-        const response = await fetch(`/api/discussions/${deleteThreadId}/comment/${deleteCommentId}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to delete comment.");
-        }
-  
-        setThreads(threads.map((thread) => {
-          if (thread._id === deleteThreadId) {
-            return {
-              ...thread,
-              comments: thread.comments.filter((comment) => comment._id !== deleteCommentId),
-            };
-          }
-          return thread;
-        }));
-        setShowDeleteModal(false);
-        setDeleteThreadId(null);
-        setDeleteCommentId(null);
-      } catch (error) {
-        console.error("Error deleting comment:", error);
+    try {
+      const response = await fetch(`/api/discussions/${deleteThreadId}/comment/${deleteCommentId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete comment.");
       }
-    };
+
+      const updatedThreads = threads.map((thread) => {
+        if (thread._id === deleteThreadId) {
+          return {
+            ...thread,
+            comments: thread.comments.filter((comment) => comment._id !== deleteCommentId),
+          };
+        }
+        return thread;
+      });
+      updateThreads(updatedThreads);
+      setShowDeleteModal(false);
+      setDeleteThreadId(null);
+      setDeleteCommentId(null);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
 
   const handleEditComment = async (threadId, commentId) => {
     try {
@@ -222,7 +240,8 @@ function CommunityDiscussion() {
       }
 
       const data = await response.json();
-      setThreads(threads.map((thread) => (thread._id === threadId ? data : thread)));
+      const updatedThreads = threads.map((thread) => (thread._id === threadId ? data : thread));
+      updateThreads(updatedThreads); 
       setEditCommentId(null);
       setEditCommentText("");
     } catch (error) {
@@ -242,9 +261,10 @@ function CommunityDiscussion() {
       if (!response.ok) {
         throw new Error("Failed to like comment.");
       }
-      
+
       const data = await response.json();
-      setThreads(threads.map((thread) => (thread._id === threadId ? data : thread)));
+      const updatedThreads = threads.map((thread) => (thread._id === threadId ? data : thread));
+      updateThreads(updatedThreads);
     } catch (error) {
       console.error("Error liking comment:", error);
     }

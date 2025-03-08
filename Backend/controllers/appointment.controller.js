@@ -2,7 +2,7 @@ import Appointment from '../models/Appointment.model.js';
 
 
 export const createAppointment = async (req, res) => {
-    const { doctor, appointmentType, patientName, phoneNumber, email, date, time } = req.body;
+    const { doctor, appointmentType, phoneNumber, email, date, time } = req.body;
     
     try {
       // Verify that req.user is set by protectRoute (authenticated user)
@@ -11,11 +11,27 @@ export const createAppointment = async (req, res) => {
       if (!existingPatient) {
         return res.status(404).json({ message: "User not found." });
       }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+          setErrorMessage("Please enter a valid email address.");
+          setIsSubmitting(false);
+          return;
+      }
+
+      // Validate phone number format (basic validation)
+      const phoneRegex = /^\d{10}$/;
+      if (!phoneRegex.test(phoneNumber)) {
+          setErrorMessage("Please enter a valid 10-digit phone number.");
+          setIsSubmitting(false);
+          return;
+      }
   
       // Create a new appointment with patient info from req.user
       const newAppointment = new Appointment({
         doctor,
-        patientName,
+        patientName: existingPatient.fullName,
         phoneNumber,
         email,
         createdBy: existingPatient._id,

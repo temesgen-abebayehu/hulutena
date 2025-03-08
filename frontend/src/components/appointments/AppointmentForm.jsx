@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   FaCalendarAlt,
-  FaUser,
   FaPhone,
   FaEnvelope,
   FaVideo,
@@ -17,15 +16,16 @@ import { useNavigate } from "react-router-dom";
 function AppointmentForm({ doctor, handleBack }) {
     const [formData, setFormData] = useState({
         selectedDate: null,
-        name: "",
         phone: "",
         email: "",
-        appointmentType: "in-person",
+        appointmentType: "online",
         selectedTime: "",
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate(); 
+
+    const loggedInUser = JSON.parse(localStorage.getItem("user"))?.currentUser || {};
 
     // Generate time slots from 9 AM to 5 PM in 2-hour intervals
     const timeSlots = [];
@@ -49,27 +49,11 @@ function AppointmentForm({ doctor, handleBack }) {
         setIsSubmitting(true);
         setErrorMessage("");
 
-        const { selectedDate, name, phone, email, selectedTime } = formData;
+        const { selectedDate, phone, email, selectedTime, appointmentType } = formData;
 
         // Validate all fields
-        if (!selectedDate || !name || !phone || !email || !selectedTime) {
-            setErrorMessage("Please fill out all fields before proceeding.");
-            setIsSubmitting(false);
-            return;
-        }
-
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            setErrorMessage("Please enter a valid email address.");
-            setIsSubmitting(false);
-            return;
-        }
-
-        // Validate phone number format (basic validation)
-        const phoneRegex = /^\d{10}$/;
-        if (!phoneRegex.test(phone)) {
-            setErrorMessage("Please enter a valid 10-digit phone number.");
+        if (!selectedDate || !selectedTime) {
+            setErrorMessage("Please fill out required fields before proceeding.");
             setIsSubmitting(false);
             return;
         }
@@ -79,10 +63,9 @@ function AppointmentForm({ doctor, handleBack }) {
             doctor: doctor._id,
             date: selectedDate,
             time: selectedTime,
-            patientName: name,
-            phoneNumber: phone,
-            email: email,
-            appointmentType: formData.appointmentType,
+            phoneNumber: phone || loggedInUser.contactNumber,
+            email: email || loggedInUser.email,
+            appointmentType: appointmentType,
         };
 
         try {
@@ -107,7 +90,6 @@ function AppointmentForm({ doctor, handleBack }) {
             // Navigate to the Payment component with the appointmentId
             navigate("/payment", { state: { appointmentId:data._id, doctor } });
         } catch (error) {
-            console.error("Error creating appointment:", error);
             setErrorMessage(error.message || "An error occurred. Please try again.");
         } finally {
             setIsSubmitting(false);
@@ -139,9 +121,9 @@ function AppointmentForm({ doctor, handleBack }) {
                     )}
 
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-2">
+                        <label className="block text-blue-900 font-medium mb-2">
                             <FaCalendarAlt className="inline mr-2" />
-                            Select Date
+                            Select Date *
                         </label>
                         <DatePicker
                             selected={formData.selectedDate}
@@ -154,25 +136,9 @@ function AppointmentForm({ doctor, handleBack }) {
                     </div>
 
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-2">
-                            <FaUser className="inline mr-2" />
-                            Patient Name
-                        </label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className="w-full p-2 border rounded"
-                            placeholder="Abebe Alemu"
-                            required
-                        />
-                    </div>
-
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium mb-2">
+                        <label className="block text-blue-900 font-medium mb-2">
                             <FaPhone className="inline mr-2" />
-                            Phone Number
+                            Phone Number(if your registered number is not availabile)
                         </label>
                         <input
                             type="tel"
@@ -181,14 +147,13 @@ function AppointmentForm({ doctor, handleBack }) {
                             onChange={handleChange}
                             className="w-full p-2 border rounded"
                             placeholder="0901010101"
-                            required
                         />
                     </div>
 
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-2">
+                        <label className="block text-blue-900 font-medium mb-2">
                             <FaEnvelope className="inline mr-2" />
-                            Email
+                            Email(if your registered email is not availabile)
                         </label>
                         <input
                             type="email"
@@ -197,13 +162,12 @@ function AppointmentForm({ doctor, handleBack }) {
                             onChange={handleChange}
                             className="w-full p-2 border rounded"
                             placeholder="abc@gmail.com"
-                            required
                         />
                     </div>
 
                     <div className="mb-4">
-                        <label className="block text-sm font-medium mb-2">
-                            Appointment Type
+                        <label className="block text-blue-900 font-medium mb-2">
+                            Appointment Type *
                         </label>
                         <div className="flex gap-4">
                             <label className="flex items-center">
@@ -236,8 +200,8 @@ function AppointmentForm({ doctor, handleBack }) {
                     </div>
 
                     <div className="mb-6">
-                        <label className="block text-sm font-medium mb-2">
-                            Select Time Slot
+                        <label className="block text-blue-900 font-medium mb-2">
+                            Select Time Slot *
                         </label>
                         <select
                             name="selectedTime"

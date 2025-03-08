@@ -134,6 +134,7 @@ const DiscussionThread = ({
                 key={comment._id}
                 comment={comment}
                 threadId={thread._id}
+                setDeleteThreadId={setDeleteThreadId}
                 loggedInUser={loggedInUser}
                 handleLikeComment={handleLikeComment}
                 handleEditComment={handleEditComment}

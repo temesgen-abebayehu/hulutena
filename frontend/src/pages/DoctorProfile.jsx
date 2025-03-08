@@ -107,18 +107,22 @@ function Profile() {
           </div>
         </div>
         <div className="mt-6 text-gray-700 text-lg space-y-2">
-          <p>
+          {doctor.address && (
+            <p>
             <span className="font-semibold">
               <FaMapMarkerAlt className="inline mr-4" />
             </span>
             {doctor.address}
           </p>
-          <p>
-            <span className="font-semibold">
-              <FaLanguage className="inline mr-4" />
-            </span>
-            {doctor.language.join(", ")}
-          </p>
+          )}
+          {doctor.languages && (
+            <p>
+              <span className="font-semibold">
+                <FaLanguage className="inline mr-4" />
+              </span>
+              {doctor.languages.join(", ")}
+            </p>
+          )}
           <p>
             <span className="font-semibold">
               <FaBriefcase className="inline mr-4" />
@@ -137,12 +141,14 @@ function Profile() {
             </span>
             {doctor.availability}
           </p>
-          <p>
-            <span className="font-semibold">
-              <FaStethoscope className="inline mr-4" />
-            </span>
-            {doctor.specialization.join(", ")}
-          </p>
+          {doctor.specialization.length > 0 && (
+            <p>
+              <span className="font-semibold">
+                <FaStethoscope className="inline mr-4" />
+              </span>
+              {doctor.specialization.join(", ")}
+            </p>
+          )}
         </div>
         <div className="mt-6 flex justify-between items-center">
           <button
