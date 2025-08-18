@@ -1,50 +1,106 @@
-# React + TypeScript + Vite
+# Hulutena
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack MERN (MongoDB, Express, React, Node.js) application for healthcare management, featuring appointment booking, doctor-patient chat, community discussions, resource sharing, and secure authentication.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- User authentication and authorization (Admin, Doctor, Patient)
+- Book and manage appointments
+- Chat with doctors in real-time
+- Community discussion forum
+- Resource sharing (documents, audio, images)
+- Payment integration
+- Profile management and image upload
+- Responsive frontend with Tailwind CSS and Vite
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+```
+Backend/
+  controllers/        # API logic for each feature
+  middlewares/        # Route protection and role-based access
+  models/             # Mongoose schemas
+  routes/             # Express route definitions
+  services/           # Business logic (e.g., chatbot)
+  utils/              # Utility functions
+  config/             # Database and cloudinary config
+  server.js           # Entry point
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+frontend/
+  src/
+   components/       # Reusable UI components
+   pages/            # Main app pages
+   ...               # Styles, assets, config
+  public/             # Static assets
+  index.html          # App entry
+  package.json        # Frontend dependencies
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Getting Started
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+### Prerequisites
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+- Node.js & npm
+- MongoDB (local or Atlas)
+- Cloudinary account (for image uploads)
+
+### Installation
+
+1. **Clone the repository**
+  ```bash
+  git clone https://github.com/temesgen-abebayehu/hulutena.git
+  cd hulutena
+  ```
+
+2. **Backend Setup**
+  ```bash
+  cd Backend
+  npm install
+  # Create .env file with MongoDB URI, JWT secret, Cloudinary keys
+  npm start
+  ```
+
+3. **Frontend Setup**
+  ```bash
+  cd ../frontend
+  npm install
+  npm run dev
+  ```
+
+4. **Access the app**
+  - Frontend: `http://localhost:5173`
+  - Backend API: `http://localhost:5000`
+
+## Environment Variables
+
+Create a `.env` file in `Backend/` with:
+```
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+## Scripts
+
+- `npm start` (Backend): Starts Express server
+- `npm run dev` (Frontend): Starts React app with Vite
+
+## Technologies Used
+
+- MongoDB, Mongoose
+- Express.js
+- React.js, Vite, Tailwind CSS
+- Node.js
+- Cloudinary (image uploads)
+- JWT (authentication)
+
+## Contributing
+
+Pull requests are welcome! For major changes, open an issue first to discuss what you would like to change.
+
+## License
+
+[MIT](LICENSE)
 ```
