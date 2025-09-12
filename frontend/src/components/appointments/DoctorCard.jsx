@@ -9,7 +9,7 @@ import {
   FaClipboardList,
 } from "react-icons/fa";
 
-const DoctorCard = ({ doctor, handleBookAppointment }) => {
+const DoctorCard = ({ doctor, onBookAppointment, t }) => {
   const userData = JSON.parse(localStorage.getItem("user"))?.currentUser;
   const userId = userData ? userData._id : null;
 
@@ -53,14 +53,12 @@ const DoctorCard = ({ doctor, handleBookAppointment }) => {
       </div>
 
       {/* Book Appointment Button */}
-      {userId && userId !== doctor._id && (
-        <button
-          className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          onClick={() => handleBookAppointment(doctor)}
-        >
-          Book Appointment
-        </button>
-      )}
+      <button
+        onClick={() => onBookAppointment(doctor)}
+        className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+      >
+        {t.bookAppointmentButton}
+      </button>
     </div>
   );
 };
@@ -83,7 +81,10 @@ DoctorCard.propTypes = {
     avarageRating: PropTypes.number.isRequired,
     isVerified: PropTypes.bool,
   }).isRequired,
-  handleBookAppointment: PropTypes.func.isRequired,
+  onBookAppointment: PropTypes.func.isRequired,
+  t: PropTypes.shape({
+    bookAppointmentButton: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default DoctorCard;

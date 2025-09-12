@@ -2,6 +2,7 @@ import React from "react";
 import { FaEdit, FaTrash, FaThumbsUp, FaSave, FaTimes } from "react-icons/fa";
 import moment from "moment";
 import Comment from "./Comment";
+import { useLanguage } from "../../context/LanguageContext";
 
 const DiscussionThread = ({
   thread,
@@ -29,6 +30,7 @@ const DiscussionThread = ({
   setDeleteCommentId,
 }) => {
   const isAuthor = loggedInUser === thread.author._id;
+  const { t } = useLanguage();
 
   return (
     <div key={thread._id} className="bg-white p-6 shadow-lg rounded-lg mb-6">
@@ -67,8 +69,8 @@ const DiscussionThread = ({
           <div className="flex justify-between items-start">
             {/* Category, Timestamp, and Author (Left Side) */}
             <p className="text-gray-600 text-sm font-semibold mb-2">
-              {thread.category} | {moment(thread.createdAt).fromNow()} | By{" "}
-              <span className="font-bold">{thread.author.name || "Unknown"}</span>
+              {thread.category} | {moment(thread.createdAt).fromNow()} | {t.by}{" "}
+              <span className="font-bold">{thread.author.name || t.unknown}</span>
             </p>
 
             {/* Edit and Delete Buttons (Right Side) */}
@@ -103,7 +105,7 @@ const DiscussionThread = ({
               className="flex items-center text-blue-800 hover:text-blue-500 mb-4"
             >
               <FaThumbsUp className="mr-2" />
-              {thread.likes?.length || 0} Likes
+              {thread.likes?.length || 0} {t.likes}
             </button>
           )}
 
@@ -113,7 +115,7 @@ const DiscussionThread = ({
               <div className="mt-4">
                 <input
                   type="text"
-                  placeholder="Add a comment..."
+                  placeholder={t.addComment}
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
@@ -122,7 +124,7 @@ const DiscussionThread = ({
                   onClick={() => handleComment(thread._id)}
                   className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-700 mt-2"
                 >
-                  Add Comment
+                  {t.addComment}
                 </button>
               </div>
             )}
@@ -154,7 +156,7 @@ const DiscussionThread = ({
                 onClick={() => setCommentsLimit({ ...commentsLimit, [thread._id]: thread.comments.length })}
                 className="text-blue-600 hover:underline hover:text-blue-800 mt-2"
               >
-                See More Comments...
+                {t.seeMoreComments}
               </button>
             )}
             {(commentsLimit[thread._id] || 3) > 3 && (
@@ -162,7 +164,7 @@ const DiscussionThread = ({
                 onClick={() => setCommentsLimit({ ...commentsLimit, [thread._id]: 3 })}
                 className="text-blue-600 hover:underline hover:text-blue-800 mt-2"
               >
-                Close
+                {t.close}
               </button>
             )}
           </div>

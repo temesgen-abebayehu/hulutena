@@ -8,17 +8,19 @@ import {
   FaCopy,
   FaSpinner,
 } from "react-icons/fa";
+import { useLanguage } from "../context/LanguageContext";
 
 function Payment() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const { appointmentId, doctor } = location.state || {};
 
   const [paymentReceipt, setPaymentReceipt] = useState(null);
   const [selectedBank, setSelectedBank] = useState("CBE");
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isUploading, setIsUploading] = useState(false); 
+  const [isUploading, setIsUploading] = useState(false);
   const [receiptUrl, setReceiptUrl] = useState("");
 
   useEffect(() => {
@@ -49,8 +51,8 @@ function Payment() {
     if (!file) return;
 
     setPaymentReceipt(file);
-    setIsUploading(true); 
-    setConfirmationMessage("Uploading receipt...");
+    setIsUploading(true);
+    setConfirmationMessage(t.uploadingReceipt);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -65,14 +67,14 @@ function Payment() {
         }
       );
 
-      if (!response.ok) throw new Error("Failed to upload receipt.");
+      if (!response.ok) throw new Error(t.errorUploadingReceipt);
 
       const data = await response.json();
       setReceiptUrl(data.secure_url);
-      setConfirmationMessage("Receipt uploaded successfully!");
+      setConfirmationMessage(t.receiptUploaded);
     } catch (error) {
       console.error("Error uploading receipt:", error);
-      setConfirmationMessage("Error uploading receipt. Please try again.");
+      setConfirmationMessage(t.errorUploadingReceipt);
     } finally {
       setIsUploading(false);
     }
@@ -82,7 +84,7 @@ function Payment() {
     e.preventDefault();
 
     if (!paymentReceipt || !selectedBank || !selectedAccount?.accountNumber || !receiptUrl) {
-      setConfirmationMessage("Please fill out all fields and upload the payment receipt.");
+      setConfirmationMessage(t.fillAllFields);
       return;
     }
 
@@ -108,7 +110,7 @@ function Payment() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Server Error:", errorData);
-        throw new Error(errorData.message || "Payment failed. Please try again.");
+        throw new Error(errorData.message || t.paymentFailed);
       }
 
       // Update payment status to pending
@@ -120,7 +122,7 @@ function Payment() {
         body: JSON.stringify({ paymentStatus: "pending" }),
       });
 
-      setConfirmationMessage("Your Payment is Under Review! We will notify you once it's approved.");
+      setConfirmationMessage(t.paymentUnderReview);
       setTimeout(() => navigate("/appointment"), 5000);
     } catch (error) {
       console.error("Error processing payment:", error);
@@ -133,7 +135,7 @@ function Payment() {
   const copyAccountNumber = () => {
     if (selectedAccount?.accountNumber) {
       navigator.clipboard.writeText(selectedAccount.accountNumber);
-      setConfirmationMessage("Account number copied to clipboard!");
+      setConfirmationMessage(t.accountCopied);
       setTimeout(() => {
         setConfirmationMessage("");
       }, 2000);
@@ -147,31 +149,31 @@ function Payment() {
           onClick={() => navigate(-1)}
           className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
         >
-          <FaArrowLeft className="mr-2" /> Back
+          <FaArrowLeft className="mr-2" /> {t.back}
         </button>
 
         <h1 className="text-xl font-semibold text-blue-800 mb-4 flex items-center">
           <FaMoneyCheckAlt className="mr-2" />
-          Payment Process
+          {t.paymentProcess}
         </h1>
 
         {doctor && (
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <h2 className="text-lg font-semibold text-gray-700 mb-2">Doctor Details</h2>
+            <h2 className="text-lg font-semibold text-gray-700 mb-2">{t.doctorDetails}</h2>
             <p className="text-gray-600">
-              <strong>Name:</strong> {doctor.fullName}
+              <strong>{t.doctorName}:</strong> {doctor.fullName}
             </p>
             <p className="text-gray-600">
-              <strong>Specialty:</strong> {doctor.specialization ? doctor.specialization.join(", ") : "N/A"}
+              <strong>{t.specialty}:</strong> {doctor.specialization ? doctor.specialization.join(", ") : t.notAvailableShort}
             </p>
             <p className="text-gray-600">
-              <strong>Pronounce:</strong> {doctor.gender === 'male'? 'He': 'She'}
+              <strong>{t.pronoun}:</strong> {doctor.gender === 'male' ? 'He' : 'She'}
             </p>
           </div>
         )}
 
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Select Bank</label>
+          <label className="block text-gray-700 font-medium mb-2">{t.selectBank}</label>
           <select
             value={selectedBank}
             onChange={(e) => setSelectedBank(e.target.value)}
@@ -187,7 +189,7 @@ function Payment() {
         </div>
 
         <div className="mb-4">
-          <p className="text-gray-700">Receiver {selectedBank} Account Number:</p>
+          <p className="text-gray-700">{t.receiverAccount.replace('{bankName}', selectedBank)}</p>
           <div className="flex items-center justify-between p-2 border border-gray-300 rounded-lg">
             <p className="font-semibold text-gray-800">
               {selectedAccount?.accountNumber}
@@ -201,56 +203,57 @@ function Payment() {
           </div>
         </div>
 
-        <div className="mb-4">
-          <p className="text-gray-700 mb-2">
-            After you have made the payment, please attach the payment receipt here:
-          </p>
-          <div className="flex items-center justify-center w-full p-4 border-2 border-dashed border-gray-300 rounded-lg">
-            <label className="cursor-pointer flex items-center">
-              <FaUpload className="mr-2 text-blue-600" />
-              <span className="text-blue-600">Upload Receipt</span>
-              <input
-                type="file"
-                accept=".png, .jpeg, .jpg, .pdf"
-                onChange={handleFileUpload}
-                className="hidden"
-                required
-              />
+        <div className="mb-6">
+          <label className="block text-gray-700 font-medium mb-2">{t.uploadReceipt}</label>
+          <div className="flex items-center">
+            <label
+              htmlFor="receipt-upload"
+              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700"
+            >
+              <FaUpload className="mr-2" />
+              {paymentReceipt ? t.changeReceipt : t.chooseFile}
             </label>
+            <input
+              id="receipt-upload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
+            {isUploading && <FaSpinner className="animate-spin ml-4 text-blue-500" />}
           </div>
-          {paymentReceipt && (
-            <p className="mt-2 text-sm text-gray-600">Uploaded: {paymentReceipt.name}</p>
+          {paymentReceipt && !isUploading && (
+            <p className="text-green-600 mt-2 flex items-center">
+              <FaCheckCircle className="mr-2" />
+              {paymentReceipt.name}
+            </p>
           )}
         </div>
 
         <button
           onClick={handlePayment}
-          disabled={isLoading || isUploading} // Disable button while uploading or loading
-          className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
+          className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 flex items-center justify-center"
+          disabled={isLoading || isUploading}
         >
           {isLoading ? (
-            <div className="flex items-center justify-center">
-              <FaSpinner className="animate-spin mr-2" />
-              Processing...
-            </div>
+            <FaSpinner className="animate-spin" />
           ) : (
-            "Complete Payment"
+            <>
+              <FaCheckCircle className="mr-2" />
+              {t.submitPayment}
+            </>
           )}
         </button>
 
         {confirmationMessage && (
-          <div
-            className={`mt-4 p-4 rounded-md flex items-center ${
-              confirmationMessage.includes("successfully")
-                ? "bg-green-100 text-green-800"
-                : confirmationMessage.includes("Uploading")
-                ? "bg-blue-100 text-blue-800" 
-                : "bg-red-100 text-red-800" 
-            }`}
+          <p
+            className={`mt-4 text-center ${confirmationMessage.includes("Error") || confirmationMessage.includes("failed")
+              ? "text-red-500"
+              : "text-green-500"
+              }`}
           >
-            <FaCheckCircle className="mr-2" />
             {confirmationMessage}
-          </div>
+          </p>
         )}
       </div>
     </div>

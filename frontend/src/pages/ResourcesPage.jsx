@@ -4,6 +4,7 @@ import AudioResource from "../components/resources/AudioResource";
 import VideoResource from "../components/resources/VideoResource";
 import WrittenResource from "../components/resources/WrittenResource";
 import CreateResource from "../components/resources/CreateResource";
+import { useLanguage } from "../context/LanguageContext";
 
 function ResourcesPage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -19,19 +20,20 @@ function ResourcesPage() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { t } = useLanguage();
 
     // Fetch resources from the backend
     useEffect(() => {
         const fetchResources = async () => {
             try {
                 const response = await fetch("/api/resources");
-                if (!response.ok) throw new Error("Failed to fetch resources.");
+                if (!response.ok) throw new Error(t.failedToFetchResources);
                 const data = await response.json();
                 const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setResources(sortedData);
             } catch (error) {
                 console.error("Error fetching resources:", error);
-                setError("Failed to load resources. Please try again later.");
+                setError(t.failedToLoadResources);
             } finally {
                 setLoading(false);
             }
@@ -82,14 +84,14 @@ function ResourcesPage() {
                 body: JSON.stringify(newResource),
             });
 
-            if (!response.ok) throw new Error("Failed to create resource.");
+            if (!response.ok) throw new Error(t.failedToCreateResource);
             const data = await response.json();
             setResources((prev) => [...prev, data]);
             setShowCreateForm(false);
             setNewResource({ title: "", type: "", description: "", src: "" });
         } catch (error) {
             console.error("Error creating resource:", error);
-            setError("Failed to create resource. Please try again.");
+            setError(t.failedToCreateResource);
         }
     };
 
@@ -102,14 +104,14 @@ function ResourcesPage() {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
             });
-            if (!response.ok) throw new Error("Failed to like resource.");
+            if (!response.ok) throw new Error(t.failedToLikeResource);
             const data = await response.json();
             setResources((prev) =>
                 prev.map((resource) => (resource._id === resourceId ? data : resource))
             );
         } catch (error) {
             console.error("Error liking resource:", error);
-            setError("Failed to like resource. Please try again.");
+            setError(t.failedToLikeResource);
         }
     };
 
@@ -122,14 +124,14 @@ function ResourcesPage() {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
             });
-            if (!response.ok) throw new Error("Failed to dislike resource.");
+            if (!response.ok) throw new Error(t.failedToDislikeResource);
             const data = await response.json();
             setResources((prev) =>
                 prev.map((resource) => (resource._id === resourceId ? data : resource))
             );
         } catch (error) {
             console.error("Error disliking resource:", error);
-            setError("Failed to dislike resource. Please try again.");
+            setError(t.failedToDislikeResource);
         }
     };
 
@@ -142,11 +144,11 @@ function ResourcesPage() {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
             });
-            if (!response.ok) throw new Error("Failed to delete resource.");
+            if (!response.ok) throw new Error(t.failedToDeleteResource);
             setResources((prev) => prev.filter((resource) => resource._id !== resourceId));
         } catch (error) {
             console.error("Error deleting resource:", error);
-            setError("Failed to delete resource. Please try again.");
+            setError(t.failedToDeleteResource);
         }
     };
 
@@ -161,19 +163,19 @@ function ResourcesPage() {
                 },
                 body: JSON.stringify(updatedResource),
             });
-            if (!response.ok) throw new Error("Failed to edit resource.");
+            if (!response.ok) throw new Error(t.failedToEditResource);
             const data = await response.json();
             setResources((prev) =>
                 prev.map((resource) => (resource._id === resourceId ? data : resource))
             );
         } catch (error) {
             console.error("Error editing resource:", error);
-            setError("Failed to edit resource. Please try again.");
+            setError(t.failedToEditResource);
         }
     };
 
     if (loading) {
-        return <div className="text-center mt-8">Loading resources...</div>;
+        return <div className="text-center mt-8">{t.loadingResources}</div>;
     }
 
     if (error) {
@@ -184,9 +186,9 @@ function ResourcesPage() {
         <div className="bg-gray-100 min-h-screen p-6 md:p-12">
             {/* Header */}
             <div className="text-center mb-10">
-                <h1 className="text-4xl font-bold text-blue-800">HuluTena Healthcare Services</h1>
+                <h1 className="text-4xl font-bold text-blue-800">{t.resourcesTitle}</h1>
                 <p className="text-lg text-gray-600 mt-4">
-                    Access a variety of healthcare resources, including audio, video, and written materials.
+                    {t.resourcesIntro}
                 </p>
             </div>
 
@@ -194,7 +196,7 @@ function ResourcesPage() {
             <div className="mb-10 flex justify-center">
                 <input
                     type="text"
-                    placeholder="Search resources..."
+                    placeholder={t.searchResourcesPlaceholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full max-w-xl p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
@@ -214,7 +216,7 @@ function ResourcesPage() {
                         onClick={() => setShowCreateForm(!showCreateForm)}
                         className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
                     >
-                        <FaPlus /> Create Resource
+                        <FaPlus /> {t.createResource}
                     </button>
                 </div>
             )}
@@ -231,7 +233,7 @@ function ResourcesPage() {
             {/* Filtered Results */}
             {searchQuery ? (
                 <div>
-                    <h2 className="text-2xl font-semibold text-blue-800 mb-6">Search Results</h2>
+                    <h2 className="text-2xl font-semibold text-blue-800 mb-6">{t.searchResults}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {filteredResources.map((resource) => {
                             if (resource.type === "audio") {
@@ -283,10 +285,10 @@ function ResourcesPage() {
                     {/* Audio Section */}
                     <div className="mb-12">
                         <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-semibold text-blue-800">Audio Resources</h2>
+                            <h2 className="text-2xl font-semibold text-blue-800">{t.audioResources}</h2>
                             {filteredResources.length > 8 && (
                                 <button className="text-blue-600 hover:underline hover:text-blue-800" onClick={() => setSearchQuery("audio")}>
-                                    See more audio...
+                                    {t.seeMoreAudio}
                                 </button>
                             )}
                         </div>
@@ -309,10 +311,10 @@ function ResourcesPage() {
                     {/* Video Section */}
                     <div className="mb-12">
                         <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-semibold text-blue-800">Video Resources</h2>
+                            <h2 className="text-2xl font-semibold text-blue-800">{t.videoResources}</h2>
                             {filteredResources.length > 8 && (
                                 <button className="text-blue-600 hover:underline hover:text-blue-800" onClick={() => setSearchQuery("video")}>
-                                    See more video...
+                                    {t.seeMoreVideo}
                                 </button>
                             )}
                         </div>
@@ -335,10 +337,10 @@ function ResourcesPage() {
                     {/* Written Section */}
                     <div>
                         <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-semibold text-blue-800">Written Resources</h2>
+                            <h2 className="text-2xl font-semibold text-blue-800">{t.writtenResources}</h2>
                             {filteredResources.length > 8 && (
                                 <button className="text-blue-600 hover:underline hover:text-blue-800" onClick={() => setSearchQuery("written")}>
-                                    See more written...
+                                    {t.seeMoreWritten}
                                 </button>
                             )}
                         </div>

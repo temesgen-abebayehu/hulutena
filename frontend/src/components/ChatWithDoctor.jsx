@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { FaInfoCircle, FaPaperPlane } from "react-icons/fa";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import { useLanguage } from "../context/LanguageContext";
 
 function ChatWithDoctor({ doctorId, userId, doctorName, onClose }) {
+  const { t } = useLanguage();
   const [chatMessages, setChatMessages] = useState({ messages: [] });
   const [newMessage, setNewMessage] = useState("");
   const [chatId, setChatId] = useState(null);
@@ -13,7 +15,7 @@ function ChatWithDoctor({ doctorId, userId, doctorName, onClose }) {
     const fetchChatMessages = async () => {
       try {
         const response = await fetch(`/api/chatdoctors?doctorId=${doctorId}&&senderId=${userId}`);
-        if (!response.ok) throw new Error("Failed to fetch chat messages.");
+        if (!response.ok) throw new Error(t.failedToFetchMessages);
         const data = await response.json();
 
         // Handle array response
@@ -38,7 +40,7 @@ function ChatWithDoctor({ doctorId, userId, doctorName, onClose }) {
     };
 
     fetchChatMessages();
-  }, [doctorId, userId]);
+  }, [doctorId, userId, t]);
 
   // Send a new message
   const handleSendMessage = async () => {
@@ -76,7 +78,7 @@ function ChatWithDoctor({ doctorId, userId, doctorName, onClose }) {
         setChatMessages(data);
       }
 
-      if (!response.ok) throw new Error("Failed to send message.");
+      if (!response.ok) throw new Error(t.failedToSendMessage);
       setNewMessage("");
     } catch (err) {
       console.error("Error sending message:", err);
@@ -94,7 +96,7 @@ function ChatWithDoctor({ doctorId, userId, doctorName, onClose }) {
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error("Failed to delete chat.");
+      if (!response.ok) throw new Error(t.failedToDeleteChat);
       setChatMessages({ messages: [] });
       setChatId(null);
       setShowDeleteModal(false);
@@ -111,7 +113,7 @@ function ChatWithDoctor({ doctorId, userId, doctorName, onClose }) {
   return (
     <div className="fixed bottom-4 right-4 w-80 bg-white rounded-lg shadow-lg flex flex-col">
       <div className="bg-blue-500 text-white p-4 rounded-t-lg flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Chat with 
+        <h3 className="text-lg font-semibold">{t.chatWith}
           <a href={`/doctor-profile/${doctorId}`} className="text-lg text-blue-50 hover:underline" onClick={onClose}> {doctorName}</a>
         </h3>
         <button
@@ -126,11 +128,10 @@ function ChatWithDoctor({ doctorId, userId, doctorName, onClose }) {
           chatMessages.messages.map((msg, index) => (
             <div
               key={index}
-              className={`p-2 rounded ${
-                msg.sender === userId
+              className={`p-2 rounded ${msg.sender === userId
                   ? "bg-blue-100 self-end"
                   : "bg-gray-200 self-start"
-              }`}
+                }`}
             >
               <p>{msg.message}</p>
               <span className="text-xs text-gray-500">{formatTimestamp(msg.timestamp)}</span>
@@ -146,13 +147,13 @@ function ChatWithDoctor({ doctorId, userId, doctorName, onClose }) {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           className="flex-grow border rounded-l px-4 py-2 focus:outline-none"
-          placeholder="Type a message..."
+          placeholder={t.typeMessage}
         />
         <button
           onClick={handleSendMessage}
           className={`bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600 transition duration-300 ${newMessage.trim() === "" ? "opacity-50 cursor-not-allowed" : ""}`}
         >
-          <FaPaperPlane size={24}/>
+          <FaPaperPlane size={24} />
         </button>
       </div>
       <button
@@ -160,17 +161,18 @@ function ChatWithDoctor({ doctorId, userId, doctorName, onClose }) {
         className="bg-red-500 text-white px-4 py-2 rounded-b hover:bg-red-600 transition duration-300 flex items-center justify-center"
       >
         <FaInfoCircle className="mr-2" size={16} />
-        Delete Chat
+        {t.deleteChat}
       </button>
 
       {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <DeleteConfirmationModal
-          setShowDeleteModal={setShowDeleteModal}
-          handleDelete={confirmDeleteChat}
-          message="Are you sure you want to delete this chat?"
-        />
-      )}
+
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDeleteChat}
+        message={t.confirmDeleteChat}
+      />
+
     </div>
   );
 }

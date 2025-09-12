@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCheckCircle, FaInfoCircle } from "react-icons/fa";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
+import { useLanguage } from "../context/LanguageContext";
 
 function ProfilePage() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,7 @@ function ProfilePage() {
                   const doctorData = await doctorResponse.json();
                   return { ...appointment, doctor: doctorData };
                 } else {
-                  throw new Error("Failed to fetch doctor details.");
+                  throw new Error(t.failedToFetchDoctorDetails);
                 }
               })
             );
@@ -44,18 +46,18 @@ function ProfilePage() {
 
             setAppointments(sortedAppointments);
           } else {
-            setError("Failed to fetch appointments.");
+            setError(t.failedToFetchAppointments);
           }
         }
       } catch (err) {
-        setError("An error occurred while fetching data.");
+        setError(t.errorFetchingData);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [t]);
 
   const handleEditProfile = () => {
     navigate("/profile/edit");
@@ -123,7 +125,7 @@ function ProfilePage() {
   }
 
   if (!user) {
-    return <p>No user data found.</p>;
+    return <p>{t.noUserData}</p>;
   }
 
   const indexOfLastAppointment = currentPage * appointmentsPerPage;
@@ -135,7 +137,7 @@ function ProfilePage() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 bg-white rounded-lg shadow-lg p-6">
           <div className="bg-blue-600 p-6 rounded-t-lg">
-            <h1 className="text-3xl font-bold text-white">Profile</h1>
+            <h1 className="text-3xl font-bold text-white">{t.profileTitle}</h1>
           </div>
           <div className="flex items-center justify-between mt-6">
             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
@@ -149,79 +151,79 @@ function ProfilePage() {
               onClick={handleEditProfile}
               className="ml-4 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300"
             >
-              {user.language.length > 0 && user.address && user.specialization.length > 0 ? "Edit Profile" : "Complete Profile"}
+              {user.language?.length > 0 && user.address && user.specialization?.length > 0 ? t.editProfile : t.completeProfile}
             </button>
           </div>
           <div className="mt-6 space-y-4">
             {user.isVerified ? (
               <div className="flex items-center bg-green-100 gap-4 p-4 rounded-lg">
                 <FaCheckCircle className="text-green-700" size={25} />
-                <p>Verified</p>
+                <p>{t.verified}</p>
               </div>
             ) : (
               <a href="#"
                 className="border-red-700 rounded-lg p-4 bg-red-50 hover:underline text-red-700"
               >
                 <FaInfoCircle className="inline-block mr-2" />
-                {user.role === "doctor" ? "Verify Your account to offer service." : "Verify Your account to get In-person service."}
+                {user.role === "doctor" ? t.verifyDoctor : t.verifyPatient}
               </a>
             )}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <label className="text-sm text-gray-500">Full Name</label>
+              <label className="text-sm text-gray-500">{t.fullName}</label>
               <p className="text-lg font-semibold">{user.fullName}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <label className="text-sm text-gray-500">Email</label>
+              <label className="text-sm text-gray-500">{t.emailAddress}</label>
               <p className="text-lg font-semibold">{user.email}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <label className="text-sm text-gray-500">Role</label>
+              <label className="text-sm text-gray-500">{t.role}</label>
               <p className="text-lg font-semibold">{user.role}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <label className="text-sm text-gray-500">Gender</label>
+              <label className="text-sm text-gray-500">{t.gender}</label>
               <p className="text-lg font-semibold">{user.gender}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <label className="text-sm text-gray-500">Contact Number</label>
+              <label className="text-sm text-gray-500">{t.contactNumber}</label>
               <p className="text-lg font-semibold">{user.contactNumber}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <label className="text-sm text-gray-500">Address</label>
+              <label className="text-sm text-gray-500">{t.address}</label>
               <p className="text-lg font-semibold">{user.address}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <label className="text-sm text-gray-500">Date of Birth</label>
-              <p className="text-lg font-semibold">{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString(): ''}</p>
+              <label className="text-sm text-gray-500">{t.dateOfBirth}</label>
+              <p className="text-lg font-semibold">{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : ''}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <label className="text-sm text-gray-500">Spoken Language</label>
-              <p className="text-lg font-semibold">{user.language.join(', ')}</p>
+              <label className="text-sm text-gray-500">{t.spokenLanguage}</label>
+              <p className="text-lg font-semibold">{user.language?.join(', ')}</p>
             </div>
             {user.role === "doctor" && (
               <div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <label className="text-sm text-gray-500">Specialization</label>
-                  <p className="text-lg font-semibold">{user.specialization.join(', ')}</p>
+                  <label className="text-sm text-gray-500">{t.specializations}</label>
+                  <p className="text-lg font-semibold">{user.specialization?.join(', ')}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <label className="text-sm text-gray-500">Availability</label>
+                  <label className="text-sm text-gray-500">{t.availability}</label>
                   <p className="text-lg font-semibold">{user.availability}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <label className="text-sm text-gray-500">Rating</label>
+                  <label className="text-sm text-gray-500">{t.rating}</label>
                   <p className="text-lg font-semibold">{sum(user.rating) / user.rating.length}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <label className="text-sm text-gray-500">Experience</label>
+                  <label className="text-sm text-gray-500">{t.experience}</label>
                   <p className="text-lg font-semibold">{user.experience}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <label className="text-sm text-gray-500">Number Of Services You Offered</label>
+                  <label className="text-sm text-gray-500">{t.servicesOffered}</label>
                   <p className="text-lg font-semibold">{user.numberOfServices}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <label className="text-sm text-gray-500">Number Of Appointments You Have</label>
+                  <label className="text-sm text-gray-500">{t.appointmentsCount}</label>
                   <p className="text-lg font-semibold">{appointments.length}</p>
                 </div>
               </div>
@@ -231,20 +233,21 @@ function ProfilePage() {
             onClick={confirmDelete}
             className="mt-4 bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition duration-300"
           >
-            Delete Account
+            {t.deleteAccount}
           </button>
         </div>
         {/* Delete Confirmation Modal */}
-        {showDeleteModal && (
-          <DeleteConfirmationModal
-            setShowDeleteModal={setShowDeleteModal}
-            handleDelete={handleDelete}
-            message="Are you sure you want to delete your account? This action looses all your data and cannot access again."
-          />
-        )}
+
+        <DeleteConfirmationModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleDelete}
+          message={t.deleteAccountConfirmation}
+        />
+
 
         <div className="md:col-span-1 bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Appointments</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">{t.appointmentsTitle}</h2>
           <div className="space-y-4">
             {currentAppointments.length > 0 ? (
               currentAppointments.map((appointment) => (
@@ -254,32 +257,32 @@ function ProfilePage() {
                   className="block bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition duration-300"
                 >
                   <p className="text-lg font-semibold">
-                    Patient: {appointment.patientName}
+                    {t.patientName}: {appointment.patientName}
                   </p>
                   <p className="text-slate-800">
-                    Doctor: <div className="inline font-medium hover:underline cursor-pointer" onClick={(e) => { e.preventDefault(); navigate(`/doctor-profile/${appointment.doctor._id}`); }}>{appointment.doctor.fullName}</div>
+                    {t.doctorNameProfile}: <div className="inline font-medium hover:underline cursor-pointer" onClick={(e) => { e.preventDefault(); navigate(`/doctor-profile/${appointment.doctor._id}`); }}>{appointment.doctor.fullName}</div>
                   </p>
                   <p className="text-sm text-gray-500">
-                    Appointment Type: <span className="font-medium">{appointment.appointmentType}</span>
+                    {t.appointmentType}: <span className="font-medium">{appointment.appointmentType}</span>
                   </p>
                   <p className="text-sm text-gray-500">
-                    Date: {new Date(appointment.date).toLocaleDateString()}
+                    {t.date}: {new Date(appointment.date).toLocaleDateString()}
                   </p>
                   <p className="text-sm text-gray-500">
-                    Time: <span className="font-medium">
+                    {t.time}: <span className="font-medium">
                       {formatTime(appointment.time)}
                     </span>
                   </p>
                   <p className="text-sm text-gray-500">
-                    Payment Status: <span className="font-medium">{appointment.paymentStatus}</span>
+                    {t.paymentStatus}: <span className="font-medium">{appointment.paymentStatus}</span>
                   </p>
                   <p className="text-sm text-gray-500">
-                    Status: <span className="font-medium">{appointment.status}</span>
+                    {t.status}: <span className="font-medium">{appointment.status}</span>
                   </p>
                 </a>
               ))
             ) : (
-              <p>No appointments found.</p>
+              <p>{t.noAppointmentsFound}</p>
             )}
           </div>
           <div className="flex justify-center mt-4">

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
+import { useLanguage } from "../context/LanguageContext";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const { t } = useLanguage();
 
 
   const validateForm = () => {
@@ -67,7 +69,7 @@ function LoginPage() {
       {/* Login Card */}
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
         <h1 className="text-3xl font-bold text-blue-800 text-center mb-6">
-          Welcome Back! Login to Your Account
+          {t.loginTitle}
         </h1>
         <p className="text-gray-600 text-center mb-6">
           Access your healthcare resources and stay connected.
@@ -93,9 +95,9 @@ function LoginPage() {
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="block text-gray-700 font-medium mb-2"
+              className="block text-gray-700 font-semibold mb-2"
             >
-              Email Address
+              {t.emailAddress}
             </label>
             <input
               type="email"
@@ -109,35 +111,35 @@ function LoginPage() {
           </div>
 
           {/* Password Input */}
-          <div className="mb-4">
+          <div className="mb-6">
             <label
               htmlFor="password"
-              className="block text-gray-700 font-medium mb-2"
+              className="block text-gray-700 font-semibold mb-2"
             >
-              Password
+              {t.password}
             </label>
             <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"} // Toggle input type
-              id="password"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 pr-10"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)} // Toggle visibility
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-2"
-            >
-              {showPassword ? (
-                <AiOutlineEyeInvisible className="h-5 w-5 text-gray-500" />
-              ) : (
-                <AiOutlineEye className="h-5 w-5 text-gray-500" />
-              )}
-            </button>
+              <input
+                type={showPassword ? "text" : "password"} // Toggle input type
+                id="password"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-2"
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <AiOutlineEye className="h-5 w-5 text-gray-500" />
+                )}
+              </button>
             </div>
           </div>
 
@@ -205,13 +207,10 @@ function LoginPage() {
         </div>
 
         {/* Register Link */}
-        <p className="text-center text-gray-600 mt-6">
-          Don't have an account?{" "}
-          <a
-            href="/register"
-            className="text-blue-600 hover:underline"
-          >
-            Sign up here
+        <p className="text-center text-gray-600">
+          {t.dontHaveAccount}{" "}
+          <a href="/register" className="text-blue-500 hover:underline">
+            {t.register}
           </a>
         </p>
       </div>

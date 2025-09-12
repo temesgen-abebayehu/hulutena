@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import SaveConfirmationModal from "../SaveConfirmationModal";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
+import { useLanguage } from "../../context/LanguageContext";
 
 const AudioResource = ({
   resource,
@@ -21,6 +22,7 @@ const AudioResource = ({
   isAdmin,
   isLoggedIn,
 }) => {
+  const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [editedResource, setEditedResource] = useState({ ...resource });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -99,7 +101,7 @@ const AudioResource = ({
             value={editedResource.title}
             onChange={handleInputChange}
             className="w-full p-2 border rounded-lg mb-2"
-            placeholder="Title"
+            placeholder={t.titleLabel}
           />
           <input
             type="text"
@@ -107,14 +109,14 @@ const AudioResource = ({
             value={editedResource.src}
             onChange={handleInputChange}
             className="w-full p-2 border rounded-lg mb-2"
-            placeholder="Source URL"
+            placeholder={t.sourceUrlLabel}
           />
           <textarea
             name="description"
             value={editedResource.description}
             onChange={handleInputChange}
             className="w-full p-2 border rounded-lg mb-2"
-            placeholder="Description"
+            placeholder={t.descriptionLabel}
           />
         </div>
       ) : (
@@ -124,12 +126,12 @@ const AudioResource = ({
             <img
               className="w-full h-full object-contain"
               src={resource.img}
-              alt="Audio Icon"
+              alt={t.audioIconAlt}
             />
           </div>
           <audio controls className="w-full">
             <source src={resource.src} type="audio/mpeg" />
-            Your browser does not support the audio element.
+            {t.browserNoAudioSupport}
           </audio>
 
           {/* Like, Dislike, and Comment Buttons */}
@@ -163,18 +165,20 @@ const AudioResource = ({
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <DeleteConfirmationModal
-          handleDelete={handleDelete}
-          setShowDeleteModal={setShowDeleteModal}
-          message="Are you sure you want to delete this audio resource?"
+          onConfirm={handleDelete}
+          onClose={() => setShowDeleteModal(false)}
+          isOpen={showDeleteModal}
+          message={t.confirmDeleteAudioResource}
         />
       )}
 
       {/* Save Confirmation Modal */}
       {showSaveModal && (
         <SaveConfirmationModal
-          handleSaveChanges={handleSave}
-          setShowSaveModal={setShowSaveModal}
-          message="Are you sure you want to save changes?"
+          onConfirm={handleSave}
+          onClose={() => setShowSaveModal(false)}
+          isOpen={showSaveModal}
+          message={t.confirmSaveChanges}
         />
       )}
     </div>

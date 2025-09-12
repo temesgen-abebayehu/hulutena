@@ -34,7 +34,7 @@ export const Register = async (req, res) => {
     }
 
     // Validate contact number format
-    const contactNumberRegex = /^(09\d{8}|07\d{8}|251(9|7)\d{8})$/;
+    const contactNumberRegex = /^(09\d{8}|07\d{8}|2519\d{8}|2517\d{8})$/;
     if (!contactNumberRegex.test(contactNumber)) {
       return res.status(400).json({ message: "Invalid Phone number format!" });
     }

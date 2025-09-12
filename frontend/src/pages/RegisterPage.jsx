@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"; 
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { useLanguage } from "../context/LanguageContext";
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -16,8 +17,9 @@ function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
-  const [showPassword, setShowPassword] = useState(false); 
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,7 +39,7 @@ function RegisterPage() {
       });
 
       if (response.ok) {
-        setMessage("Registration successful! You can now log in.");     
+        setMessage("Registration successful! You can now log in.");
         navigate("/login");
       } else {
         const errorData = await response.json();
@@ -52,18 +54,31 @@ function RegisterPage() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-blue-800 text-center mb-6">Create an Account</h1>
-        <p className="text-gray-600 text-center mb-6">Join our community and access valuable healthcare resources.</p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+      <div className="w-full max-w-lg p-8 bg-white shadow-lg rounded-lg">
+        <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
+          {t.registerTitle}
+        </h1>
 
-        {error && <p className="bg-red-100 text-red-700 p-3 rounded-md mb-4">{error}</p>}
-        {message && <p className="bg-green-100 text-green-700 p-3 rounded-md mb-4">{message}</p>}
+        {error && (
+          <div className="bg-red-100 text-red-700 p-3 rounded-md mb-4">
+            {error}
+          </div>
+        )}
+        {message && (
+          <div className="bg-green-100 text-green-700 p-3 rounded-md mb-4">
+            {message}
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit}>
-          {/* Full Name */}
+        <form onSubmit={handleSubmit} noValidate>
           <div className="mb-4">
-            <label htmlFor="fullName" className="block text-gray-700 font-medium mb-2">Full Name</label>
+            <label
+              htmlFor="fullName"
+              className="block text-gray-700 font-semibold mb-2"
+            >
+              {t.username}
+            </label>
             <input
               type="text"
               id="fullName"
@@ -76,9 +91,13 @@ function RegisterPage() {
             />
           </div>
 
-          {/* Email */}
           <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 font-medium mb-2">Email Address</label>
+            <label
+              htmlFor="email"
+              className="block text-gray-700 font-semibold mb-2"
+            >
+              {t.emailAddress}
+            </label>
             <input
               type="email"
               id="email"
@@ -91,9 +110,13 @@ function RegisterPage() {
             />
           </div>
 
-          {/* Role Selection */}
           <div className="mb-4">
-            <label htmlFor="role" className="block text-gray-700 font-medium mb-2">Role</label>
+            <label
+              htmlFor="role"
+              className="block text-gray-700 font-medium mb-2"
+            >
+              Role
+            </label>
             <select
               id="role"
               name="role"
@@ -107,9 +130,13 @@ function RegisterPage() {
             </select>
           </div>
 
-          {/* Phone Number */}
           <div className="mb-4">
-            <label htmlFor="contactNumber" className="block text-gray-700 font-medium mb-2">Phone Number</label>
+            <label
+              htmlFor="contactNumber"
+              className="block text-gray-700 font-medium mb-2"
+            >
+              Phone Number
+            </label>
             <input
               type="tel"
               id="contactNumber"
@@ -122,21 +149,20 @@ function RegisterPage() {
             />
           </div>
 
-          {/* gender */}
           <div className="mb-4">
             <label className="block text-gray-700 font-medium mb-2">Gender</label>
             <div className="flex items-center">
-              <input 
-                type="radio" 
-                name="gender" 
+              <input
+                type="radio"
+                name="gender"
                 value="male"
                 checked={formData.gender === "male"}
                 onChange={handleChange}
                 className="mr-2"
               />
               <label className="mr-4">Male</label>
-              <input 
-                type="radio" 
+              <input
+                type="radio"
                 name="gender"
                 value="female"
                 checked={formData.gender === "female"}
@@ -147,59 +173,70 @@ function RegisterPage() {
             </div>
           </div>
 
-          {/* Password */}
-          <div className="mb-4 relative">
-            <label htmlFor="password" className="block text-gray-700 font-medium mb-2">Password</label>
-            <input
-              type={showPassword ? "text" : "password"}
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Create a password"
-              className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 pr-10"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-7"
+          <div className="mb-4">
+            <label
+              htmlFor="password"
+              className="block text-gray-700 font-semibold mb-2"
             >
-              {showPassword ? (
-                <AiOutlineEyeInvisible className="h-5 w-5 text-gray-500" />
-              ) : (
-                <AiOutlineEye className="h-5 w-5 text-gray-500" />
-              )}
-            </button>
+              {t.password}
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Create a password"
+                className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-7"
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <AiOutlineEye className="h-5 w-5 text-gray-500" />
+                )}
+              </button>
+            </div>
           </div>
 
-          {/* Confirm Password */}
-          <div className="mb-4 relative">
-            <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2">Confirm Password</label>
-            <input
-              type={showPassword ? "text" : "password"}
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirm your password"
-              className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 pr-10"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-7"
+          <div className="mb-6">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-gray-700 font-semibold mb-2"
             >
-              {showPassword ? (
-                <AiOutlineEyeInvisible className="h-5 w-5 text-gray-500" />
-              ) : (
-                <AiOutlineEye className="h-5 w-5 text-gray-500" />
-              )}
-            </button>
+              {t.confirmPassword}
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Confirm your password"
+                className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-7"
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <AiOutlineEye className="h-5 w-5 text-gray-500" />
+                )}
+              </button>
+            </div>
           </div>
 
-          {/* Terms and Conditions */}
           <div className="flex items-center mb-4">
             <input type="checkbox" id="terms" required className="mr-2" />
             <label htmlFor="terms" className="text-gray-600 text-sm">
@@ -208,7 +245,6 @@ function RegisterPage() {
             </label>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -240,13 +276,14 @@ function RegisterPage() {
               "Register"
             )}
           </button>
-        </form>
 
-        {/* Already Registered */}
-        <p className="text-center text-gray-600 mt-6">
-          Already have an account?{" "}
-          <a href="/login" className="text-blue-600 hover:underline">Login</a>
-        </p>
+          <p className="text-center text-gray-600">
+            {t.alreadyHaveAccount}{" "}
+            <a href="/login" className="text-blue-500 hover:underline">
+              {t.login}
+            </a>
+          </p>
+        </form>
       </div>
     </div>
   );

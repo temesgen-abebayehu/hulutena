@@ -13,9 +13,11 @@ import {
   FaServicestack,
 } from "react-icons/fa";
 import ChatWithDoctor from "../components/ChatWithDoctor";
+import { useLanguage } from "../context/LanguageContext";
 
 function Profile() {
   const { id } = useParams();
+  const { t } = useLanguage();
   const [doctor, setDoctor] = useState(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ function Profile() {
     const fetchDoctor = async () => {
       try {
         const response = await fetch(`/api/doctors/${id}`);
-        if (!response.ok) throw new Error("Failed to fetch doctor data.");
+        if (!response.ok) throw new Error(t.failedToFetchDoctor);
         const data = await response.json();
         setDoctor(data);
         setRating(data.rating.reduce((acc, curr) => acc + curr, 0) / data.rating.length);
@@ -42,7 +44,7 @@ function Profile() {
     };
 
     fetchDoctor();
-  }, [id]);
+  }, [id, t]);
 
   // Loading state
   if (loading) {
@@ -64,7 +66,7 @@ function Profile() {
   if (!doctor) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <p>No doctor found.</p>
+        <p>{t.noDoctorFound}</p>
       </div>
     );
   }
@@ -97,8 +99,8 @@ function Profile() {
                         rating >= index - 0.5 && rating < index
                           ? "polygon(0 0, 50% 0, 50% 100%, 0 100%)"
                           : rating >= index
-                          ? "none"
-                          : "polygon(0 0, 0 0, 0 100%, 0 100%)",
+                            ? "none"
+                            : "polygon(0 0, 0 0, 0 100%, 0 100%)",
                     }}
                   />
                 </div>
@@ -109,11 +111,11 @@ function Profile() {
         <div className="mt-6 text-gray-700 text-lg space-y-2">
           {doctor.address && (
             <p>
-            <span className="font-semibold">
-              <FaMapMarkerAlt className="inline mr-4" />
-            </span>
-            {doctor.address}
-          </p>
+              <span className="font-semibold">
+                <FaMapMarkerAlt className="inline mr-4" />
+              </span>
+              {doctor.address}
+            </p>
           )}
           {doctor.languages && (
             <p>
@@ -127,13 +129,13 @@ function Profile() {
             <span className="font-semibold">
               <FaBriefcase className="inline mr-4" />
             </span>
-            {doctor.experience} years
+            {doctor.experience} {t.years}
           </p>
           <p>
             <span className="font-semibold">
               <FaServicestack className="inline mr-4" />
             </span>
-            {doctor.numberOfServices} Services
+            {doctor.numberOfServices} {t.services}
           </p>
           <p>
             <span className="font-semibold">
@@ -156,7 +158,7 @@ function Profile() {
             onClick={() => window.history.back()}
           >
             <FaArrowLeft />
-            <span>Back</span>
+            <span>{t.back}</span>
           </button>
           {userId && userId !== doctor._id && (
             <button
@@ -164,7 +166,7 @@ function Profile() {
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 flex items-center gap-2"
             >
               <FaComments />
-              <span>Chat</span>
+              <span>{t.chat}</span>
             </button>
           )}
         </div>

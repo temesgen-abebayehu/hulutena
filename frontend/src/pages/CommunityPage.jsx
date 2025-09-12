@@ -3,8 +3,10 @@ import { FaSearch } from "react-icons/fa";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import DiscussionForm from "../components/communityDiscussion/DiscussionForm";
 import DiscussionThread from "../components/communityDiscussion/DiscussionThread";
+import { useLanguage } from "../context/LanguageContext";
 
 function CommunityDiscussion() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [threads, setThreads] = useState([]);
   const [newThread, setNewThread] = useState({ title: "", category: "", content: "" });
@@ -36,7 +38,7 @@ function CommunityDiscussion() {
         const response = await fetch("/api/discussions");
         const data = await response.json();
         if (!response.ok) {
-          throw new Error("Failed to fetch discussions.");
+          throw new Error(t.failedToFetchDiscussions);
         }
 
         // Sort threads and comments
@@ -48,7 +50,7 @@ function CommunityDiscussion() {
     };
 
     fetchDiscussions();
-  }, []);
+  }, [t]);
 
   // Helper function to sort threads and comments
   const sortThreadsAndComments = (threads) => {
@@ -75,7 +77,7 @@ function CommunityDiscussion() {
 
   const handleCreateThread = async () => {
     if (!newThread.title || !newThread.category || !newThread.content) {
-      setErrorMessage("All fields are required to create a discussion!");
+      setErrorMessage(t.allFieldsRequired);
       return;
     }
 
@@ -89,7 +91,7 @@ function CommunityDiscussion() {
         body: JSON.stringify(newThread),
       });
       if (!response.ok) {
-        throw new Error("Failed to create discussion.");
+        throw new Error(t.failedToCreateDiscussion);
       }
 
       const data = await response.json();
@@ -98,7 +100,7 @@ function CommunityDiscussion() {
       setErrorMessage("");
     } catch (error) {
       console.error("Error creating discussion:", error);
-      setErrorMessage("Failed to create discussion.");
+      setErrorMessage(t.failedToCreateDiscussion);
     }
   };
 
@@ -112,7 +114,7 @@ function CommunityDiscussion() {
         },
       });
       if (!response.ok) {
-        throw new Error("Failed to like discussion.");
+        throw new Error(t.failedToLikeDiscussion);
       }
       const data = await response.json();
       const updatedThreads = threads.map((thread) => (thread._id === id ? data : thread));
@@ -133,7 +135,7 @@ function CommunityDiscussion() {
         body: JSON.stringify(editThreadText),
       });
       if (!response.ok) {
-        throw new Error("Failed to edit discussion.");
+        throw new Error(t.failedToEditDiscussion);
       }
       const data = await response.json();
       const updatedThreads = threads.map((thread) => (thread._id === threadId ? data : thread));
@@ -154,7 +156,7 @@ function CommunityDiscussion() {
         },
       });
       if (!response.ok) {
-        throw new Error("Failed to delete discussion.");
+        throw new Error(t.failedToDeleteDiscussion);
       }
       const updatedThreads = threads.filter((thread) => thread._id !== deleteThreadId);
       updateThreads(updatedThreads);
@@ -168,7 +170,7 @@ function CommunityDiscussion() {
 
   const handleComment = async (threadId) => {
     if (!commentText.trim()) {
-      setErrorMessage("Comment cannot be empty!");
+      setErrorMessage(t.commentCannotBeEmpty);
       return;
     }
 
@@ -182,7 +184,7 @@ function CommunityDiscussion() {
         body: JSON.stringify({ comment: commentText }),
       });
       if (!response.ok) {
-        throw new Error("Failed to add comment.");
+        throw new Error(t.failedToAddComment);
       }
       const data = await response.json();
       const updatedThreads = threads.map((thread) => (thread._id === threadId ? data : thread));
@@ -191,7 +193,7 @@ function CommunityDiscussion() {
       setErrorMessage("");
     } catch (error) {
       console.error("Error adding comment:", error);
-      setErrorMessage("Failed to add comment.");
+      setErrorMessage(t.failedToAddComment);
     }
   };
 
@@ -204,7 +206,7 @@ function CommunityDiscussion() {
         },
       });
       if (!response.ok) {
-        throw new Error("Failed to delete comment.");
+        throw new Error(t.failedToDeleteComment);
       }
 
       const updatedThreads = threads.map((thread) => {
@@ -236,12 +238,12 @@ function CommunityDiscussion() {
         body: JSON.stringify({ comment: editCommentText }),
       });
       if (!response.ok) {
-        throw new Error("Failed to edit comment.");
+        throw new Error(t.failedToEditComment);
       }
 
       const data = await response.json();
       const updatedThreads = threads.map((thread) => (thread._id === threadId ? data : thread));
-      updateThreads(updatedThreads); 
+      updateThreads(updatedThreads);
       setEditCommentId(null);
       setEditCommentText("");
     } catch (error) {
@@ -259,7 +261,7 @@ function CommunityDiscussion() {
         },
       });
       if (!response.ok) {
-        throw new Error("Failed to like comment.");
+        throw new Error(t.failedToLikeComment);
       }
 
       const data = await response.json();
@@ -283,94 +285,87 @@ function CommunityDiscussion() {
   return (
     <div className="bg-gray-100 min-h-screen p-6 md:p-12">
       {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <DeleteConfirmationModal
-          setShowDeleteModal={setShowDeleteModal}
-          handleDelete={deleteCommentId ? handleDeleteComment : handleDeleteThread}
-          message={deleteCommentId ? "Are you sure you want to delete this comment?" : "Are you sure you want to delete this discussion?"}
-        />
-      )}
+
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={deleteCommentId ? handleDeleteComment : handleDeleteThread}
+        message={deleteCommentId ? t.confirmDeleteComment : t.confirmDeleteDiscussion}
+      />
+
 
       {/* Page Header */}
       <div className="text-center mb-10">
-        <h1 className="text-4xl font-bold text-blue-800">Community Discussions</h1>
+        <h1 className="text-4xl font-bold text-blue-800">{t.communityTitle}</h1>
         <p className="text-lg text-gray-600 mt-4">
-          Join the discussion, share experiences, and learn from others in the community.
+          {t.communityDescription}
         </p>
       </div>
 
       {/* Search Bar */}
-      <div className="mb-10 flex justify-center">
-        <input
-          type="text"
-          placeholder="Search discussions..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className="w-full max-w-xl p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
-        />
-        <button className="bg-blue-500 text-white p-3 rounded-lg shadow-md ml-2 hover:bg-blue-600">
-          <FaSearch />
-        </button>
+      <div className="mb-8 max-w-lg mx-auto">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder={t.searchDiscussions}
+            value={searchQuery}
+            onChange={handleSearch}
+            className="w-full p-4 rounded-full bg-white border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+          />
+          <FaSearch className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        </div>
       </div>
 
-      {/* Create Discussion */}
-      {loggedInUser && (
-        <DiscussionForm
-          newThread={newThread}
-          handleInputChange={handleInputChange}
-          handleCreateThread={handleCreateThread}
-          errorMessage={errorMessage}
-        />
-      )}
+      {/* Create Discussion Form */}
+      <DiscussionForm
+        newThread={newThread}
+        handleInputChange={handleInputChange}
+        handleCreateThread={handleCreateThread}
+        errorMessage={errorMessage}
+      />
 
       {/* Discussion Threads */}
-      {filteredThreads.slice(0, displayLimit).map((thread) => (
-        <DiscussionThread
-          key={thread._id}
-          thread={thread}
-          loggedInUser={loggedInUser}
-          editThreadId={editThreadId}
-          editThreadText={editThreadText}
-          setEditThreadId={setEditThreadId}
-          setEditThreadText={setEditThreadText}
-          setDeleteThreadId={setDeleteThreadId}
-          handleLikeThread={handleLikeThread}
-          handleEditThread={handleEditThread}
-          handleDeleteThread={setDeleteThreadId}
-          handleComment={handleComment}
-          commentText={commentText}
-          setCommentText={setCommentText}
-          commentsLimit={commentsLimit}
-          setCommentsLimit={setCommentsLimit}
-          editCommentId={editCommentId}
-          editCommentText={editCommentText}
-          setEditCommentId={setEditCommentId}
-          setEditCommentText={setEditCommentText}
-          setDeleteCommentId={setDeleteCommentId}
-          handleLikeComment={handleLikeComment}
-          handleEditComment={handleEditComment}
-          handleDeleteComment={setDeleteCommentId}
-          setShowDeleteModal={setShowDeleteModal}
-        />
-      ))}
-
-      {/* Show More / Show Less Buttons */}
-      <div className="flex justify-center mt-6">
-        {displayLimit < filteredThreads.length && (
-          <button
-            onClick={handleShowMore}
-            className="bg-blue-500 text-white p-3 rounded-lg shadow-md hover:bg-blue-600 mr-2"
-          >
-            Show More
-          </button>
+      <div className="mt-10">
+        {filteredThreads.length > 0 ? (
+          filteredThreads.slice(0, displayLimit).map((thread) => (
+            <DiscussionThread
+              key={thread._id}
+              thread={thread}
+              loggedInUser={loggedInUser}
+              handleLikeThread={handleLikeThread}
+              setEditThreadId={setEditThreadId}
+              setEditThreadText={setEditThreadText}
+              editThreadId={editThreadId}
+              editThreadText={editThreadText}
+              handleEditThread={handleEditThread}
+              setDeleteThreadId={setDeleteThreadId}
+              setShowDeleteModal={setShowDeleteModal}
+              handleComment={handleComment}
+              commentText={commentText}
+              setCommentText={setCommentText}
+              commentsLimit={commentsLimit}
+              setCommentsLimit={setCommentsLimit}
+              handleLikeComment={handleLikeComment}
+              setEditCommentId={setEditCommentId}
+              setEditCommentText={setEditCommentText}
+              editCommentId={editCommentId}
+              editCommentText={editCommentText}
+              handleEditComment={handleEditComment}
+              setDeleteCommentId={setDeleteCommentId}
+            />
+          ))
+        ) : (
+          <p className="text-center text-gray-500">{t.noDiscussionsFound}</p>
         )}
-        {displayLimit > 5 && (
-          <button
-            onClick={() => setDisplayLimit(5)}
-            className="bg-blue-500 text-white p-3 rounded-lg shadow-md hover:bg-blue-600"
-          >
-            Show Less
-          </button>
+        {filteredThreads.length > displayLimit && (
+          <div className="text-center mt-6">
+            <button
+              onClick={handleShowMore}
+              className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition-transform transform hover:scale-105"
+            >
+              {t.showMore}
+            </button>
+          </div>
         )}
       </div>
     </div>

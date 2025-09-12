@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 import {
-  FaCalendarAlt,
-  FaPhone,
-  FaEnvelope,
-  FaVideo,
-  FaClinicMedical,
-  FaArrowLeft,
-  FaSpinner,
-  FaCheckCircle,
+    FaCalendarAlt,
+    FaPhone,
+    FaEnvelope,
+    FaVideo,
+    FaClinicMedical,
+    FaArrowLeft,
+    FaSpinner,
+    FaCheckCircle,
 } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
 
 function AppointmentForm({ doctor, handleBack }) {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         selectedDate: null,
         phone: "",
@@ -23,7 +25,7 @@ function AppointmentForm({ doctor, handleBack }) {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     const loggedInUser = JSON.parse(localStorage.getItem("user"))?.currentUser || {};
 
@@ -53,7 +55,7 @@ function AppointmentForm({ doctor, handleBack }) {
 
         // Validate all fields
         if (!selectedDate || !selectedTime) {
-            setErrorMessage("Please fill out required fields before proceeding.");
+            setErrorMessage(t.requiredFieldsWarning);
             setIsSubmitting(false);
             return;
         }
@@ -80,17 +82,17 @@ function AppointmentForm({ doctor, handleBack }) {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || "Failed to create appointment.");
+                throw new Error(errorData.message || t.failedToCreateAppointment);
             }
 
             const data = await response.json();
 
-            setErrorMessage("Appointment created successfully!");
+            setErrorMessage(t.appointmentCreatedSuccess);
 
             // Navigate to the Payment component with the appointmentId
-            navigate("/payment", { state: { appointmentId:data._id, doctor } });
+            navigate("/payment", { state: { appointmentId: data._id, doctor } });
         } catch (error) {
-            setErrorMessage(error.message || "An error occurred. Please try again.");
+            setErrorMessage(error.message || t.genericErrorTryAgain);
         } finally {
             setIsSubmitting(false);
         }
@@ -106,11 +108,11 @@ function AppointmentForm({ doctor, handleBack }) {
                         className="flex flex-row items-center text-blue-600 hover:text-blue-800 mb-4 gap-2"
                     >
                         <FaArrowLeft />
-                        <p>Back to Appointment list</p>
+                        <p>{t.backToAppointmentList}</p>
                     </button>
                     <h2 className="text-2xl font-bold mb-6 text-center flex items-center justify-center">
                         <FaCalendarAlt className="mr-2" />
-                        Book an Appointment
+                        {t.appointmentTitle}
                     </h2>
 
                     {errorMessage && (
@@ -123,14 +125,14 @@ function AppointmentForm({ doctor, handleBack }) {
                     <div className="mb-4">
                         <label className="block text-blue-900 font-medium mb-2">
                             <FaCalendarAlt className="inline mr-2" />
-                            Select Date *
+                            {t.selectDate}
                         </label>
                         <DatePicker
                             selected={formData.selectedDate}
                             onChange={handleDateChange}
                             className="w-full p-2 border rounded"
                             minDate={new Date()}
-                            placeholderText="Select a date"
+                            placeholderText={t.selectDate}
                             required
                         />
                     </div>
@@ -138,7 +140,7 @@ function AppointmentForm({ doctor, handleBack }) {
                     <div className="mb-4">
                         <label className="block text-blue-900 font-medium mb-2">
                             <FaPhone className="inline mr-2" />
-                            Phone Number(if your registered number is not availabile)
+                            {t.phoneNumberOptional}
                         </label>
                         <input
                             type="tel"
@@ -153,7 +155,7 @@ function AppointmentForm({ doctor, handleBack }) {
                     <div className="mb-4">
                         <label className="block text-blue-900 font-medium mb-2">
                             <FaEnvelope className="inline mr-2" />
-                            Email(if your registered email is not availabile)
+                            {t.emailOptional}
                         </label>
                         <input
                             type="email"
@@ -167,7 +169,7 @@ function AppointmentForm({ doctor, handleBack }) {
 
                     <div className="mb-4">
                         <label className="block text-blue-900 font-medium mb-2">
-                            Appointment Type *
+                            {t.appointmentTypeLabel}
                         </label>
                         <div className="flex gap-4">
                             <label className="flex items-center">
@@ -181,7 +183,7 @@ function AppointmentForm({ doctor, handleBack }) {
                                     required
                                 />
                                 <FaClinicMedical className="inline mr-2" />
-                                In-Person
+                                {t.appointmentTypeInPerson}
                             </label>
                             <label className="flex items-center">
                                 <input
@@ -194,14 +196,14 @@ function AppointmentForm({ doctor, handleBack }) {
                                     required
                                 />
                                 <FaVideo className="inline mr-2" />
-                                Online
+                                {t.appointmentTypeOnline}
                             </label>
                         </div>
                     </div>
 
                     <div className="mb-6">
                         <label className="block text-blue-900 font-medium mb-2">
-                            Select Time Slot *
+                            {t.selectTimeSlot}
                         </label>
                         <select
                             name="selectedTime"
@@ -211,7 +213,7 @@ function AppointmentForm({ doctor, handleBack }) {
                             required
                         >
                             <option value="" disabled>
-                                Choose a time
+                                {t.chooseTime}
                             </option>
                             {timeSlots.map((slot, index) => (
                                 <option key={index} value={slot}>
@@ -229,10 +231,10 @@ function AppointmentForm({ doctor, handleBack }) {
                         {isSubmitting ? (
                             <div className="flex items-center justify-center">
                                 <FaSpinner className="animate-spin mr-2" />
-                                Submitting...
+                                {t.submitting}
                             </div>
                         ) : (
-                            "Proceed to Payment"
+                            t.proceedToPayment
                         )}
                     </button>
                 </form>

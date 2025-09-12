@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileImageUpload from "../components/editProfile/ProfileImageUpload";
 import EditForm from "../components/editProfile/EditForm";
+import { useLanguage } from "../context/LanguageContext";
 
 function EditProfile() {
   const [user, setUser] = useState({});
@@ -14,6 +15,7 @@ function EditProfile() {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   // Fetch user data when the component mounts
   useEffect(() => {
@@ -182,63 +184,39 @@ function EditProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl">
-        {/* Cover Image */}
-        <div className="relative h-48 bg-gray-200 rounded-t-lg">
-          <img
-            src="/homeimage.jpeg"
-            alt="Cover"
-            className="w-full h-full object-cover rounded-t-lg"
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">{t.editProfileTitle}</h1>
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+      {successMessage && <p className="text-green-500">{successMessage}</p>}
+      {!loading && !error && (
+        <div className="flex flex-col md:flex-row gap-8">
+          <ProfileImageUpload
+            user={user}
+            setUser={setUser}
+            uploadingImage={uploadingImage}
+            setUploadingImage={setUploadingImage}
+            t={t}
+          />
+          <EditForm
+            user={user}
+            handleChange={handleChange}
+            handleLanguageAdd={handleLanguageAdd}
+            handleLanguageRemove={handleLanguageRemove}
+            languageInput={languageInput}
+            setLanguageInput={setLanguageInput}
+            handleSpecializationAdd={handleSpecializationAdd}
+            handleSpecializationRemove={handleSpecializationRemove}
+            specializationInput={specializationInput}
+            setSpecializationInput={setSpecializationInput}
+            confirmPassword={confirmPassword}
+            setConfirmPassword={setConfirmPassword}
+            handleSubmit={handleSubmit}
+            handleCancel={handleCancel}
+            t={t}
           />
         </div>
-
-        {/* Profile Image Upload */}
-        <ProfileImageUpload
-          profileImage={user.profileImage}
-          onImageUpload={handleImageUpload}
-          uploadingImage={uploadingImage}
-          userId={user._id}
-          setError={setError}
-          setSuccessMessage={setSuccessMessage}
-        />
-        {error && <div className="text-red-500 text-center">{error}</div>}
-        {successMessage && <div className="text-green-500 text-center">{successMessage}</div>}
-
-        {/* Edit Form */}
-        <EditForm
-          user={user}
-          handleChange={handleChange}
-          confirmPassword={confirmPassword}
-          setConfirmPassword={setConfirmPassword}
-          languageInput={languageInput}
-          setLanguageInput={setLanguageInput}
-          handleLanguageInput={handleLanguageInput}
-          removeLanguage={removeLanguage}
-          specializationInput={specializationInput}
-          setSpecializationInput={setSpecializationInput}
-          handleSpecializationInput={handleSpecializationInput}
-          removeSpecialization={removeSpecialization}
-        />
-
-        {/* Action Buttons */}
-        <div className="mt-6 flex justify-between p-6">
-          <button
-            onClick={handleCancel}
-            disabled={loading || uploadingImage}
-            className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition duration-300"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-            disabled={loading || uploadingImage}
-          >
-            {loading ? "Saving..." : "Save"}
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import SaveConfirmationModal from "../SaveConfirmationModal";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
+import { useLanguage } from "../../context/LanguageContext";
 
 const VideoResource = ({
   resource,
@@ -21,6 +22,7 @@ const VideoResource = ({
   isAdmin,
   isLoggedIn,
 }) => {
+  const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [editedResource, setEditedResource] = useState({ ...resource });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -99,7 +101,7 @@ const VideoResource = ({
             value={editedResource.title}
             onChange={handleInputChange}
             className="w-full p-2 border rounded-lg mb-2"
-            placeholder="Title"
+            placeholder={t.titleLabel}
           />
           <input
             type="text"
@@ -107,14 +109,14 @@ const VideoResource = ({
             value={editedResource.src}
             onChange={handleInputChange}
             className="w-full p-2 border rounded-lg mb-2"
-            placeholder="Source URL"
+            placeholder={t.sourceUrlLabel}
           />
           <textarea
             name="description"
             value={editedResource.description}
             onChange={handleInputChange}
             className="w-full p-2 border rounded-lg mb-2"
-            placeholder="Description"
+            placeholder={t.descriptionLabel}
           />
         </div>
       ) : (
@@ -162,18 +164,20 @@ const VideoResource = ({
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <DeleteConfirmationModal
-          handleDelete={confirmDelete}
-          setShowDeleteModal={setShowDeleteModal}
-          message="Are you sure you want to delete this resource?"
+          onConfirm={confirmDelete}
+          onClose={() => setShowDeleteModal(false)}
+          isOpen={showDeleteModal}
+          message={t.confirmDeleteResourceGeneric}
         />
       )}
 
       {/* Save Confirmation Modal */}
       {showSaveModal && (
         <SaveConfirmationModal
-          handleSaveChanges={handleSave}
-          setShowSaveModal={setShowSaveModal}
-          message="Are you sure you want to save changes?"
+          onConfirm={handleSave}
+          onClose={() => setShowSaveModal(false)}
+          isOpen={showSaveModal}
+          message={t.confirmSaveChanges}
         />
       )}
     </div>

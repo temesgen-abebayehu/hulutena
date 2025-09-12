@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import SaveConfirmationModal from "../SaveConfirmationModal";
 import DeleteConfirmationModal from "../DeleteConfirmationModal";
+import { useLanguage } from "../../context/LanguageContext";
 
 const WrittenResource = ({
   resource,
@@ -21,6 +22,7 @@ const WrittenResource = ({
   isAdmin,
   isLoggedIn,
 }) => {
+  const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [editedResource, setEditedResource] = useState({ ...resource });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -94,14 +96,14 @@ const WrittenResource = ({
             value={editedResource.title}
             onChange={handleInputChange}
             className="w-full p-2 border rounded-lg mb-2"
-            placeholder="Title"
+            placeholder={t.titleLabel}
           />
           <textarea
             name="description"
             value={editedResource.description}
             onChange={handleInputChange}
             className="w-full p-2 border rounded-lg mb-2"
-            placeholder="Description"
+            placeholder={t.descriptionLabel}
           />
         </div>
       ) : (
@@ -119,7 +121,7 @@ const WrittenResource = ({
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="text-blue-600 hover:underline hover:text-blue-800 ml-2"
               >
-                {isExpanded ? "See less" : "See more"}
+                {isExpanded ? t.seeLess : t.seeMore}
               </button>
             )}
           </p>
@@ -155,18 +157,20 @@ const WrittenResource = ({
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <DeleteConfirmationModal
-          setShowDeleteModal={setShowDeleteModal}
-          handleDelete={handleDeleteResource}
-          message="Are you sure you want to delete this resource?"
+          onConfirm={() => handleDeleteResource(resource._id)}
+          onClose={() => setShowDeleteModal(false)}
+          isOpen={showDeleteModal}
+          message={t.confirmDeleteResourceGeneric}
         />
       )}
 
       {/* Save Confirmation Modal */}
       {showSaveModal && (
         <SaveConfirmationModal
-          handleSaveChanges={handleSave}
-          setShowSaveModal={setShowSaveModal}
-          message="Are you sure you want to save changes?"
+          onConfirm={handleSave}
+          onClose={() => setShowSaveModal(false)}
+          isOpen={showSaveModal}
+          message={t.confirmSaveChanges}
         />
       )}
     </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import { FaEdit, FaTrash, FaThumbsUp, FaSave, FaTimes } from "react-icons/fa";
 import moment from "moment";
+import { useLanguage } from "../../context/LanguageContext";
 
 const Comment = ({
   comment,
@@ -16,6 +17,7 @@ const Comment = ({
   setDeleteThreadId,
   setShowDeleteModal,
 }) => {
+  const { t } = useLanguage();
   return (
     <div className="border-t pt-4 mt-4 text-gray-700 flex items-center justify-between">
       <div>
@@ -45,7 +47,11 @@ const Comment = ({
         ) : (
           <>
             <p className="text-sm text-gray-500">
-              By <span className="font-bold">{comment.author.name || "Unknown"}</span> - {moment(comment.createdAt).fromNow()}
+              {t.by}{" "}
+              <span className="font-bold">
+                {comment.author.name || t.unknown}
+              </span>{" "}
+              - {moment(comment.createdAt).fromNow()}
             </p>
             <p>{comment.comment}</p>
             {loggedInUser && (
@@ -54,7 +60,7 @@ const Comment = ({
                 className="flex text-blue-800 items-center hover:text-blue-500 my-5"
               >
                 <FaThumbsUp className="mr-2" />
-                {comment.likes?.length || 0} Likes
+                {comment.likes?.length || 0} {t.likes}
               </button>
             )}
           </>

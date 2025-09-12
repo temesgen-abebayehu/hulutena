@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useMemo } from "react";
 import DoctorCard from "../components/appointments/DoctorCard";
 import AppointmentForm from "../components/appointments/AppointmentForm";
+import { useLanguage } from "../context/LanguageContext";
 
 function AppointmentPage() {
     const [doctors, setDoctors] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const [error, setError] = useState(null);
+    const { t } = useLanguage();
 
     // Fetch doctors on component mount
     useEffect(() => {
@@ -47,8 +49,8 @@ function AppointmentPage() {
 
             return (
                 (doctor.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                specialization.includes(searchTerm.toLowerCase()) ||
-                doctor.language?.some((lang) => lang.toLowerCase().includes(searchTerm.toLowerCase()))) &&
+                    specialization.includes(searchTerm.toLowerCase()) ||
+                    doctor.language?.some((lang) => lang.toLowerCase().includes(searchTerm.toLowerCase()))) &&
                 doctor.onlineStatus === true
             );
         });
@@ -56,47 +58,39 @@ function AppointmentPage() {
 
     return (
         <div className="flex flex-col items-center p-12 bg-gray-50 min-h-screen">
-            <h1 className="text-4xl font-extrabold text-gray-800 text-center mb-4">
-                Healthcare Services at Your Fingertips
-            </h1>
-            <p className="text-lg text-gray-600 text-center max-w-2xl mb-8">
-                Discover a range of professional healthcare services designed to meet your needs.
-            </p>
-
-            {error && <div className="mb-4 p-4 bg-red-100 text-red-800 rounded-lg">{error}</div>}
-
-            {!selectedDoctor ? (
+            {selectedDoctor ? (
+                <AppointmentForm
+                    doctor={selectedDoctor}
+                    onBack={handleBack}
+                />
+            ) : (
                 <>
-                    <div className="w-full max-w-4xl mb-4">
+                    <h1 className="text-3xl font-bold mb-6">{t.appointmentTitle}</h1>
+                    <div className="mb-6">
                         <input
                             type="text"
-                            placeholder="Search by name, specialty, or language..."
+                            placeholder={t.searchPlaceholder}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded-lg"
+                            className="w-full p-3 border rounded-lg"
                         />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+                    {error && <p className="text-red-500 text-center">{error}</p>}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredDoctors.length > 0 ? (
                             filteredDoctors.map((doctor) => (
                                 <DoctorCard
                                     key={doctor._id}
                                     doctor={doctor}
-                                    handleBookAppointment={handleBookAppointment}
+                                    onBookAppointment={handleBookAppointment}
+                                    t={t}
                                 />
                             ))
                         ) : (
-                            <p className="text-gray-600 text-center mt-8">
-                                No doctors found matching your criteria.
-                            </p>
+                            <p className="text-center col-span-full">{t.noDoctorsFound}</p>
                         )}
                     </div>
                 </>
-            ) : (
-                <AppointmentForm
-                    doctor={selectedDoctor}
-                    handleBack={handleBack}
-                />
             )}
         </div>
     );

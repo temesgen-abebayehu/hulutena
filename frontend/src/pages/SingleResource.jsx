@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import moment from "moment";
 import {
   FaArrowLeft,
@@ -8,6 +8,7 @@ import {
   FaComment,
   FaTrash,
 } from "react-icons/fa";
+import { useLanguage } from "../context/LanguageContext";
 
 function SingleResource() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ function SingleResource() {
   const userData = JSON.parse(localStorage.getItem("user")).currentUser;
   const userId = userData._id;
   const userName = userData.fullName;
+  const { t } = useLanguage();
 
   // Fetch resource from the backend
   useEffect(() => {
@@ -111,91 +113,93 @@ function SingleResource() {
     }
   };
 
+  if (!resource) {
+    return <p>Loading...</p>;
+  }
+
   return (
-    <div className="p-8 md:p-16 md:mr-20 lg:mr-40 bg-white rounded-lg">
-      {/* Back Button */}
-      <button
-        className="flex flex-row items-center bg-slate-500 text-white p-2 rounded-lg gap-2"
-        onClick={() => window.history.back()}
-      >
-        <FaArrowLeft /> Back
-      </button>
-      {resource && (
-        <>
-          <h1 className="text-4xl font-bold mb-2">{resource.title}</h1>
-          <p className="text-gray-700 font-medium">{resource.description}</p>
+    <div className="container mx-auto p-4">
+      <Link to="/resources" className="flex items-center text-blue-500 mb-4">
+        <FaArrowLeft className="mr-2" />
+        {t.backToResources}
+      </Link>
+      <div className="bg-white shadow-lg rounded-lg p-6">
+        <h1 className="text-3xl font-bold mb-2">{resource.title}</h1>
+        <p className="text-gray-500 mb-4">
+          {t.resourceType}: {resource.type}
+        </p>
+        <p className="mb-4">{resource.description}</p>
 
-          {/* Like, Dislike, and Comment Buttons */}
-          <div className="flex gap-4 mt-4">
-            <button
-              onClick={handleLike}
-              className="flex items-center gap-2 text-blue-500"
-            >
-              <FaThumbsUp /> {resource.likes.length}
-            </button>
-            <button
-              onClick={handleDislike}
-              className="flex items-center gap-2 text-red-500"
-            >
-              <FaThumbsDown /> {resource.dislikes.length}
-            </button>
-            <button className="flex items-center gap-2 text-green-500">
-              <FaComment /> {resource.comments.length}
-            </button>
-          </div>
+        {/* Like, Dislike, and Comment Buttons */}
+        <div className="flex gap-4 mt-4">
+          <button
+            onClick={handleLike}
+            className="flex items-center gap-2 text-blue-500"
+          >
+            <FaThumbsUp /> {resource.likes.length}
+          </button>
+          <button
+            onClick={handleDislike}
+            className="flex items-center gap-2 text-red-500"
+          >
+            <FaThumbsDown /> {resource.dislikes.length}
+          </button>
+          <button className="flex items-center gap-2 text-green-500">
+            <FaComment /> {resource.comments.length}
+          </button>
+        </div>
+      </div>
 
-          {/* Comments Section */}
-          <div className="mt-8">
-            {/* Add Comment Section */}
-            <div className="mt-6">
-              <textarea
-                placeholder="Add a comment..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                className="w-full p-2 border rounded-lg"
-              />
-              <button
-                onClick={handleAddComment}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2"
+      {/* Comments Section */}
+      <div className="mt-8">
+        {/* Add Comment Section */}
+        <div className="mt-6">
+          <textarea
+            placeholder="Add a comment..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            className="w-full p-2 border rounded-lg"
+          />
+          <button
+            onClick={handleAddComment}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2"
+          >
+            Add Comment
+          </button>
+        </div>
+
+        {/* Comments */}
+        {resource.comments.length > 0 ? (
+          <div className="mt-6">
+            <h2 className="text-xl font-semibold">Comments</h2>
+            {resource.comments.map((comment) => (
+              <div
+                key={comment._id}
+                className="mt-4 p-4 bg-gray-100 rounded-lg space-y-4"
               >
-                Add Comment
-              </button>
-            </div>
-
-            {/* Comments */}
-            {resource.comments.length > 0 ? (
-              <div className="mt-6">
-                <h2 className="text-xl font-semibold">Comments</h2>
-                {resource.comments.map((comment) => (
-                  <div
-                    key={comment._id}
-                    className="mt-4 p-4 bg-gray-100 rounded-lg space-y-4"
-                  >
-                    <div className="flex justify-between items-center">
-                      <p className="text-gray-500 text-sm mt-2">
-                        By:{" "}
-                        <span className="font-bold">{comment.userName}</span>
-                        {" | "} {moment(comment.createdAt).fromNow()}
-                      </p>
-                      {comment.user === userId && (
-                        <button
-                          onClick={() => handleDeleteComment(comment._id)}
-                          className="text-red-500 mt-2 flex items-center gap-2"
-                        >
-                          <FaTrash /> Delete
-                        </button>
-                      )}
-                    </div>
-                    <p className="text-gray-800 pl-4">{comment.text}</p>
-                  </div>
-                ))}
+                <div className="flex justify-between items-center">
+                  <p className="text-gray-500 text-sm mt-2">
+                    By:{" "}
+                    <span className="font-bold">{comment.userName}</span>
+                    {" | "} {moment(comment.createdAt).fromNow()}
+                  </p>
+                  {comment.user === userId && (
+                    <button
+                      onClick={() => handleDeleteComment(comment._id)}
+                      className="text-red-500 mt-2 flex items-center gap-2"
+                    >
+                      <FaTrash /> Delete
+                    </button>
+                  )}
+                </div>
+                <p className="text-gray-800 pl-4">{comment.text}</p>
               </div>
-            ) : (
-              <p className="text-gray-600 mt-4">No comments yet.</p>
-            )}
+            ))}
           </div>
-        </>
-      )}
+        ) : (
+          <p className="text-gray-600 mt-4">No comments yet.</p>
+        )}
+      </div>
     </div>
   );
 }
