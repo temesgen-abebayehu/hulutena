@@ -1,9 +1,4 @@
-// Check if the app is running in production (Vercel sets this via Vite)
-const isProduction = import.meta.env.PROD;
-
-const BASE_URL = isProduction
-    ? "https://hulutena.onrender.com/api"
-    : "/api"; // Use proxy in development
+const BASE_URL = "/api";
 
 /**
  * A centralized API client that abstracts away the fetch logic,
