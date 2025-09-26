@@ -57,38 +57,64 @@ function AppointmentPage() {
     }, [doctors, searchTerm]);
 
     return (
-        <div className="flex flex-col items-center p-12 bg-gray-50 min-h-screen">
+        <div className="bg-gray-50 min-h-screen">
             {selectedDoctor ? (
-                <AppointmentForm
-                    doctor={selectedDoctor}
-                    onBack={handleBack}
-                />
+                <div className="py-12 px-4 sm:px-6 lg:px-8">
+                    <AppointmentForm doctor={selectedDoctor} onBack={handleBack} />
+                </div>
             ) : (
                 <>
-                    <h1 className="text-3xl font-bold mb-6">{t.appointmentTitle}</h1>
-                    <div className="mb-6">
-                        <input
-                            type="text"
-                            placeholder={t.searchPlaceholder}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full p-3 border rounded-lg"
-                        />
+                    {/* Hero Section */}
+                    <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-20 px-6 text-center shadow-xl">
+                        <div className="absolute inset-0 bg-black opacity-40"></div>
+                        <div className="relative z-10">
+                            <h1 className="text-5xl font-extrabold tracking-tight mb-4">
+                                {t.appointmentTitle}
+                            </h1>
+                            <p className="text-xl max-w-3xl mx-auto">
+                                {t.appointmentPageDescription}
+                            </p>
+                        </div>
                     </div>
-                    {error && <p className="text-red-500 text-center">{error}</p>}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredDoctors.length > 0 ? (
-                            filteredDoctors.map((doctor) => (
-                                <DoctorCard
-                                    key={doctor._id}
-                                    doctor={doctor}
-                                    onBookAppointment={handleBookAppointment}
-                                    t={t}
+
+                    {/* Search and Doctors Grid */}
+                    <div className="py-16 px-6">
+                        <div className="max-w-7xl mx-auto">
+                            <div className="mb-12 max-w-2xl mx-auto">
+                                <input
+                                    type="text"
+                                    placeholder={t.searchPlaceholder}
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full p-4 text-lg border-2 border-gray-300 rounded-full shadow-md focus:ring-4 focus:ring-blue-300 focus:outline-none transition duration-300"
                                 />
-                            ))
-                        ) : (
-                            <p className="text-center col-span-full">{t.noDoctorsFound}</p>
-                        )}
+                            </div>
+
+                            {error && (
+                                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg text-center mb-8">
+                                    {error}
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                                {filteredDoctors.length > 0 ? (
+                                    filteredDoctors.map((doctor) => (
+                                        <DoctorCard
+                                            key={doctor._id}
+                                            doctor={doctor}
+                                            onBookAppointment={handleBookAppointment}
+                                            t={t}
+                                        />
+                                    ))
+                                ) : (
+                                    <div className="col-span-full text-center py-12">
+                                        <p className="text-2xl text-gray-500">
+                                            {t.noDoctorsFound}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </>
             )}

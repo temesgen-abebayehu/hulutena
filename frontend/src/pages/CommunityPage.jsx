@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import DiscussionForm from "../components/communityDiscussion/DiscussionForm";
@@ -7,6 +8,7 @@ import { useLanguage } from "../context/LanguageContext";
 
 function CommunityDiscussion() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [threads, setThreads] = useState([]);
   const [newThread, setNewThread] = useState({ title: "", category: "", content: "" });
@@ -35,7 +37,7 @@ function CommunityDiscussion() {
   useEffect(() => {
     const fetchDiscussions = async () => {
       try {
-        const response = await fetch("/api/discussions");
+        const response = await fetch("/api/discussions", { credentials: "include" });
         const data = await response.json();
         if (!response.ok) {
           throw new Error(t.failedToFetchDiscussions);
@@ -86,8 +88,8 @@ function CommunityDiscussion() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        credentials: "include",
         body: JSON.stringify(newThread),
       });
       if (!response.ok) {
@@ -108,10 +110,8 @@ function CommunityDiscussion() {
     try {
       const response = await fetch(`/api/discussions/${id}/like`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error(t.failedToLikeDiscussion);
@@ -130,8 +130,8 @@ function CommunityDiscussion() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        credentials: "include",
         body: JSON.stringify(editThreadText),
       });
       if (!response.ok) {
@@ -151,9 +151,7 @@ function CommunityDiscussion() {
     try {
       const response = await fetch(`/api/discussions/${deleteThreadId}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error(t.failedToDeleteDiscussion);
@@ -179,8 +177,8 @@ function CommunityDiscussion() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        credentials: "include",
         body: JSON.stringify({ comment: commentText }),
       });
       if (!response.ok) {
@@ -201,9 +199,7 @@ function CommunityDiscussion() {
     try {
       const response = await fetch(`/api/discussions/${deleteThreadId}/comment/${deleteCommentId}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error(t.failedToDeleteComment);
@@ -233,8 +229,8 @@ function CommunityDiscussion() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        credentials: "include",
         body: JSON.stringify({ comment: editCommentText }),
       });
       if (!response.ok) {
@@ -255,10 +251,8 @@ function CommunityDiscussion() {
     try {
       const response = await fetch(`/api/discussions/${threadId}/comment/${commentId}/like`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error(t.failedToLikeComment);
@@ -283,9 +277,8 @@ function CommunityDiscussion() {
   );
 
   return (
-    <div className="bg-gray-100 min-h-screen p-6 md:p-12">
+    <div className="min-h-screen bg-gray-50">
       {/* Delete Confirmation Modal */}
-
       <DeleteConfirmationModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
@@ -293,81 +286,87 @@ function CommunityDiscussion() {
         message={deleteCommentId ? t.confirmDeleteComment : t.confirmDeleteDiscussion}
       />
 
-
-      {/* Page Header */}
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-bold text-blue-800">{t.communityTitle}</h1>
-        <p className="text-lg text-gray-600 mt-4">
-          {t.communityDescription}
-        </p>
-      </div>
-
-      {/* Search Bar */}
-      <div className="mb-8 max-w-lg mx-auto">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder={t.searchDiscussions}
-            value={searchQuery}
-            onChange={handleSearch}
-            className="w-full p-4 rounded-full bg-white border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-          />
-          <FaSearch className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-400" />
+      {/* Hero */}
+      <section className="relative isolate overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-sky-600 to-cyan-500" />
+        <div className="relative max-w-7xl mx-auto px-6 py-16 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-white">{t.communityTitle}</h1>
+          <p className="mt-4 text-lg md:text-xl text-white/90">{t.communityDescription}</p>
         </div>
-      </div>
+      </section>
 
-      {/* Create Discussion Form */}
-      <DiscussionForm
-        newThread={newThread}
-        handleInputChange={handleInputChange}
-        handleCreateThread={handleCreateThread}
-        errorMessage={errorMessage}
-      />
-
-      {/* Discussion Threads */}
-      <div className="mt-10">
-        {filteredThreads.length > 0 ? (
-          filteredThreads.slice(0, displayLimit).map((thread) => (
-            <DiscussionThread
-              key={thread._id}
-              thread={thread}
-              loggedInUser={loggedInUser}
-              handleLikeThread={handleLikeThread}
-              setEditThreadId={setEditThreadId}
-              setEditThreadText={setEditThreadText}
-              editThreadId={editThreadId}
-              editThreadText={editThreadText}
-              handleEditThread={handleEditThread}
-              setDeleteThreadId={setDeleteThreadId}
-              setShowDeleteModal={setShowDeleteModal}
-              handleComment={handleComment}
-              commentText={commentText}
-              setCommentText={setCommentText}
-              commentsLimit={commentsLimit}
-              setCommentsLimit={setCommentsLimit}
-              handleLikeComment={handleLikeComment}
-              setEditCommentId={setEditCommentId}
-              setEditCommentText={setEditCommentText}
-              editCommentId={editCommentId}
-              editCommentText={editCommentText}
-              handleEditComment={handleEditComment}
-              setDeleteCommentId={setDeleteCommentId}
+      {/* Main Content */}
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 pb-12">
+        {/* Search Bar Card */}
+        <div className="bg-white rounded-2xl shadow-lg p-5">
+          <div className="relative max-w-2xl mx-auto">
+            <input
+              type="text"
+              aria-label={t.searchDiscussions}
+              placeholder={t.searchDiscussions}
+              value={searchQuery}
+              onChange={handleSearch}
+              className="w-full p-4 rounded-full bg-white border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
             />
-          ))
-        ) : (
-          <p className="text-center text-gray-500">{t.noDiscussionsFound}</p>
-        )}
-        {filteredThreads.length > displayLimit && (
-          <div className="text-center mt-6">
-            <button
-              onClick={handleShowMore}
-              className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition-transform transform hover:scale-105"
-            >
-              {t.showMore}
-            </button>
+            <FaSearch className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400" />
           </div>
-        )}
-      </div>
+        </div>
+
+        {/* Create Discussion: gated by login */}
+        <DiscussionForm
+          newThread={newThread}
+          handleInputChange={handleInputChange}
+          handleCreateThread={handleCreateThread}
+          errorMessage={errorMessage}
+          isLoggedIn={Boolean(loggedInUser)}
+          onRequireLogin={() => navigate("/login")}
+        />
+
+        {/* Discussion Threads */}
+        <div className="mt-10">
+          {filteredThreads.length > 0 ? (
+            filteredThreads.slice(0, displayLimit).map((thread) => (
+              <DiscussionThread
+                key={thread._id}
+                thread={thread}
+                loggedInUser={loggedInUser}
+                handleLikeThread={handleLikeThread}
+                setEditThreadId={setEditThreadId}
+                setEditThreadText={setEditThreadText}
+                editThreadId={editThreadId}
+                editThreadText={editThreadText}
+                handleEditThread={handleEditThread}
+                setDeleteThreadId={setDeleteThreadId}
+                setShowDeleteModal={setShowDeleteModal}
+                handleComment={handleComment}
+                commentText={commentText}
+                setCommentText={setCommentText}
+                commentsLimit={commentsLimit}
+                setCommentsLimit={setCommentsLimit}
+                handleLikeComment={handleLikeComment}
+                setEditCommentId={setEditCommentId}
+                setEditCommentText={setEditCommentText}
+                editCommentId={editCommentId}
+                editCommentText={editCommentText}
+                handleEditComment={handleEditComment}
+                setDeleteCommentId={setDeleteCommentId}
+              />
+            ))
+          ) : (
+            <p className="text-center text-gray-500">{t.noDiscussionsFound}</p>
+          )}
+          {filteredThreads.length > displayLimit && (
+            <div className="text-center mt-6">
+              <button
+                onClick={handleShowMore}
+                className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition-transform transform hover:scale-105"
+              >
+                {t.showMore}
+              </button>
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 }

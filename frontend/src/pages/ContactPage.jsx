@@ -37,69 +37,101 @@ function ContactPage() {
     };
 
     return (
-        <div className="flex flex-col items-center p-6 bg-gray-100 min-h-screen">
-            <div className="w-full max-w-lg p-8 bg-white shadow-lg rounded-lg">
-                <h1 className="text-3xl font-bold text-gray-800 text-center mb-4">
-                    {t.contactTitle}
-                </h1>
-                <p className="text-gray-600 text-center mb-8">
-                    {t.contactDesc}
-                </p>
-                {successMessage && (
-                    <div className="bg-green-100 text-green-700 p-4 rounded-lg mb-6">
-                        {successMessage}
-                    </div>
-                )}
-                <form onSubmit={handleSubmit} noValidate>
-                    <div className="mb-4">
-                        <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">
-                            {t.name}
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-2 border rounded-lg ${errors.name ? "border-red-500" : "border-gray-300"}`}
-                        />
-                        {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
-                            {t.emailAddress}
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-2 border rounded-lg ${errors.email ? "border-red-500" : "border-gray-300"}`}
-                        />
-                        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                    </div>
-                    <div className="mb-6">
-                        <label htmlFor="message" className="block text-gray-700 font-semibold mb-2">
-                            {t.message}
-                        </label>
-                        <textarea
-                            id="message"
-                            name="message"
-                            rows="5"
-                            value={formData.message}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-2 border rounded-lg ${errors.message ? "border-red-500" : "border-gray-300"}`}
-                        ></textarea>
-                        {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white font-bold py-3 rounded-lg hover:bg-blue-600 transition"
-                    >
-                        {t.sendMessage}
-                    </button>
-                </form>
+        <div className="bg-gray-50 min-h-screen">
+            {/* Hero Section */}
+            <div className="relative bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-20 px-6 text-center">
+                <div className="absolute inset-0 bg-black opacity-30"></div>
+                <div className="relative z-10">
+                    <h1 className="text-5xl font-extrabold tracking-tight mb-4">
+                        {t.contactTitle}
+                    </h1>
+                    <p className="text-xl max-w-3xl mx-auto">{t.contactDesc}</p>
+                </div>
+            </div>
+
+            {/* Contact Form Section */}
+            <div className="py-16 px-6">
+                <div className="max-w-2xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-2xl">
+                    {successMessage && (
+                        <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-8">
+                            {successMessage}
+                        </div>
+                    )}
+                    <form onSubmit={handleSubmit} noValidate className="space-y-6">
+                        <div>
+                            <label
+                                htmlFor="name"
+                                className="block text-lg font-semibold text-gray-800 mb-2"
+                            >
+                                {t.name}
+                            </label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                className={`w-full px-4 py-3 border rounded-lg transition-shadow duration-300 ${errors.name
+                                        ? "border-red-500 focus:ring-red-500"
+                                        : "border-gray-300 focus:ring-teal-500"
+                                    } focus:outline-none focus:ring-2`}
+                            />
+                            {errors.name && (
+                                <p className="text-red-600 text-sm mt-2">{errors.name}</p>
+                            )}
+                        </div>
+                        <div>
+                            <label
+                                htmlFor="email"
+                                className="block text-lg font-semibold text-gray-800 mb-2"
+                            >
+                                {t.emailAddress}
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                className={`w-full px-4 py-3 border rounded-lg transition-shadow duration-300 ${errors.email
+                                        ? "border-red-500 focus:ring-red-500"
+                                        : "border-gray-300 focus:ring-teal-500"
+                                    } focus:outline-none focus:ring-2`}
+                            />
+                            {errors.email && (
+                                <p className="text-red-600 text-sm mt-2">{errors.email}</p>
+                            )}
+                        </div>
+                        <div>
+                            <label
+                                htmlFor="message"
+                                className="block text-lg font-semibold text-gray-800 mb-2"
+                            >
+                                {t.message}
+                            </label>
+                            <textarea
+                                id="message"
+                                name="message"
+                                rows="6"
+                                value={formData.message}
+                                onChange={handleChange}
+                                className={`w-full px-4 py-3 border rounded-lg transition-shadow duration-300 ${errors.message
+                                        ? "border-red-500 focus:ring-red-500"
+                                        : "border-gray-300 focus:ring-teal-500"
+                                    } focus:outline-none focus:ring-2`}
+                            ></textarea>
+                            {errors.message && (
+                                <p className="text-red-600 text-sm mt-2">{errors.message}</p>
+                            )}
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full bg-teal-500 text-white font-bold py-3 rounded-lg hover:bg-teal-600 transition-transform duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-teal-300"
+                        >
+                            {t.sendMessage}
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     );

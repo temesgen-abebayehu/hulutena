@@ -2,25 +2,32 @@ import React from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { useLanguage } from "../../context/LanguageContext";
 
-const DiscussionForm = ({ newThread, handleInputChange, handleCreateThread, errorMessage }) => {
+const DiscussionForm = ({ newThread, handleInputChange, handleCreateThread, errorMessage, isLoggedIn = false, onRequireLogin }) => {
   const { t } = useLanguage();
 
   return (
     <div className="bg-white p-6 shadow-lg rounded-lg mb-12">
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t.startDiscussion}</h2>
+      {!isLoggedIn && (
+        <div className="mb-4 text-sm text-gray-700 bg-blue-50 border border-blue-200 rounded-md p-3">
+          {t.loginRequiredToCreateDiscussion}
+        </div>
+      )}
       <input
         type="text"
         name="title"
         value={newThread.title}
         onChange={handleInputChange}
         placeholder={t.discussionTitle}
-        className="w-full mb-4 p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+        disabled={!isLoggedIn}
+        className="w-full mb-4 p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
       />
       <select
         name="category"
         value={newThread.category}
         onChange={handleInputChange}
-        className="w-full mb-4 p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+        disabled={!isLoggedIn}
+        className="w-full mb-4 p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
       >
         <option value="">{t.selectCategory}</option>
         <option value="general">{t.general}</option>
@@ -41,10 +48,11 @@ const DiscussionForm = ({ newThread, handleInputChange, handleCreateThread, erro
         onChange={handleInputChange}
         placeholder={t.shareThoughts}
         rows="4"
-        className="w-full mb-4 p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+        disabled={!isLoggedIn}
+        className="w-full mb-4 p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
       />
       <button
-        onClick={handleCreateThread}
+        onClick={() => (isLoggedIn ? handleCreateThread() : onRequireLogin && onRequireLogin())}
         className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-700 flex items-center"
       >
         <FaPaperPlane className="mr-2" /> {t.createDiscussion}

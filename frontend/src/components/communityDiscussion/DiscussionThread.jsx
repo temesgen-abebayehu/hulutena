@@ -99,35 +99,32 @@ const DiscussionThread = ({
           </div>
           <h3 className="text-xl font-semibold text-blue-800 mb-2">{thread.title}</h3>
           <p className="text-gray-700 mb-4">{thread.content}</p>
-          {loggedInUser && (
-            <button
-              onClick={() => handleLikeThread(thread._id)}
-              className="flex items-center text-blue-800 hover:text-blue-500 mb-4"
-            >
-              <FaThumbsUp className="mr-2" />
-              {thread.likes?.length || 0} {t.likes}
-            </button>
-          )}
+          <button
+            onClick={() => (loggedInUser ? handleLikeThread(thread._id) : window.location.assign("/login"))}
+            className="flex items-center text-blue-800 hover:text-blue-500 mb-4"
+          >
+            <FaThumbsUp className="mr-2" />
+            {thread.likes?.length || 0} {t.likes}
+          </button>
 
           {/* Comments Section */}
           <div className="w-full pl-10 pt-9">
-            {loggedInUser && (
-              <div className="mt-4">
-                <input
-                  type="text"
-                  placeholder={t.addComment}
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
-                />
-                <button
-                  onClick={() => handleComment(thread._id)}
-                  className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-700 mt-2"
-                >
-                  {t.addComment}
-                </button>
-              </div>
-            )}
+            <div className="mt-4">
+              <input
+                type="text"
+                placeholder={t.addComment}
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                disabled={!loggedInUser}
+                className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              />
+              <button
+                onClick={() => (loggedInUser ? handleComment(thread._id) : window.location.assign("/login"))}
+                className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-700 mt-2"
+              >
+                {t.addComment}
+              </button>
+            </div>
 
             {/* Display Comments */}
             {thread.comments.slice(0, commentsLimit[thread._id] || 3).map((comment) => (

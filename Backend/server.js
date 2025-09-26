@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 connectDB();
 

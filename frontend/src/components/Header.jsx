@@ -1,6 +1,6 @@
-import { FaBars, FaUserCircle } from "react-icons/fa";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // For navigation
+import { FaBars } from "react-icons/fa";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom"; // For navigation
 import { useLanguage } from "../context/LanguageContext";
 import LanguageToggleButton from "./LanguageToggleButton";
 
@@ -8,6 +8,7 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate(); // Hook for navigation
+  const location = useLocation();
   const { t } = useLanguage();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -46,70 +47,76 @@ function Header() {
     setIsProfileOpen(false); // Close the profile menu
   };
 
+  // Hide on scroll
+  const [hidden, setHidden] = useState(false);
+  const lastY = useRef(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y > lastY.current && y > 80) setHidden(true);
+      else setHidden(false);
+      lastY.current = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const navItems = [
+    { href: "/", label: t.home },
+    { href: "/about", label: t.about },
+    { href: "/contact", label: t.contact },
+    { href: "/appointment", label: t.appointment },
+    { href: "/community", label: t.community },
+    { href: "/resources", label: t.resources },
+  ];
+
+  const isActive = (href) => location.pathname === href;
+
   return (
-    <header className="bg-slate-100 shadow-md sticky top-0 z-50">
-      <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
-        <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
-          <span className="text-slate-500">Hulu</span>
-          <span className="text-slate-700">Tena</span>
-        </h1>
+    <header className={`sticky top-0 z-50 backdrop-blur bg-white/80 border-b border-gray-100 transition-transform duration-300 ${hidden ? "-translate-y-full" : "translate-y-0"}`}>
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Brand */}
+        <a href="/" className="font-extrabold text-lg sm:text-2xl tracking-tight">
+          <span className="bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-500 bg-clip-text text-transparent">Hulu</span>
+          <span className="text-gray-900">Tena</span>
+        </a>
 
-        {/* Navigation Links */}
-        <ul className="hidden md:flex gap-4">
-          <li>
-            <a href="/" className="hover:underline">
-              {t.home}
+        {/* Navigation */}
+        <nav className="hidden md:flex items-center gap-2" aria-label="Primary navigation">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className={`px-3 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${isActive(item.href)
+                  ? "text-gray-900 bg-gray-100"
+                  : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                }`}
+              aria-current={isActive(item.href) ? "page" : undefined}
+            >
+              {item.label}
             </a>
-          </li>
-          <li>
-            <a href="/about" className="hover:underline">
-              {t.about}
-            </a>
-          </li>
-          <li>
-            <a href="/contact" className="hover:underline">
-              {t.contact}
-            </a>
-          </li>
-          <li>
-            <a href="/appointment" className="hover:underline">
-              {t.appointment}
-            </a>
-          </li>
-          <li>
-            <a href="/community" className="hover:underline">
-              {t.community}
-            </a>
-          </li>
-          <li>
-            <a href="/resources" className="hover:underline">
-              {t.resources}
-            </a>
-          </li>
-        </ul>
+          ))}
+        </nav>
 
-        {/* Profile and Auth Buttons */}
-        <div className="flex items-center gap-4">
+        {/* Actions */}
+        <div className="flex items-center gap-3">
           {user ? (
             <div className="relative">
-              <button onClick={toggleProfileMenu} className="flex items-center">
+              <button onClick={toggleProfileMenu} className="flex items-center focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full">
                 <img
                   src={profileImage || "/profile.jpg"}
                   alt="Profile"
-                  className="h-8 w-8 rounded-full object-cover"
+                  className="h-9 w-9 rounded-full object-cover ring-2 ring-white shadow"
                 />
               </button>
               {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                  <a
-                    href="/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-100">
+                  <a href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                     {t.profile}
                   </a>
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="block w-full text-left px-4 py-2 text-red-700 hover:bg-red-50"
                   >
                     {t.logout}
                   </button>
@@ -117,71 +124,43 @@ function Header() {
               )}
             </div>
           ) : (
-            <>
-              <a
-                href="/login"
-                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-              >
+            <div className="flex items-center gap-2">
+              <a href="/login" className="px-4 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700">
                 {t.login}
               </a>
-              <a
-                href="/register"
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-              >
+              <a href="/register" className="px-4 py-2 rounded-full bg-gray-900 text-white hover:bg-gray-800">
                 {t.register}
-              </a>
-            </>
-          )}
-          <LanguageToggleButton />
-        </div>
-
-        {/* Hamburger Menu for Mobile */}
-        <div className="md:hidden">
-          <button onClick={toggleMenu}>
-            <FaBars className="text-2xl" />
-          </button>
-          {isMenuOpen && (
-            <div className="absolute top-16 right-0 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-              <a
-                href="/"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                {t.home}
-              </a>
-              <a
-                href="/about"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                {t.about}
-              </a>
-              <a
-                href="/contact"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                {t.contact}
-              </a>
-              <a
-                href="/appointment"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                {t.appointment}
-              </a>
-              <a
-                href="/community"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                {t.community}
-              </a>
-              <a
-                href="/resources"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                {t.resources}
               </a>
             </div>
           )}
+          <LanguageToggleButton />
+          <button onClick={toggleMenu} className="md:hidden p-2 rounded-full hover:bg-gray-100" aria-label="Open menu">
+            <FaBars className="text-2xl" />
+          </button>
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="md:hidden border-t border-gray-100 bg-white/95 backdrop-blur">
+          <nav className="max-w-7xl mx-auto px-4 py-3 grid grid-cols-2 gap-2" aria-label="Mobile navigation">
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsMenuOpen(false)}
+                className={`px-3 py-2 rounded-lg ${isActive(item.href)
+                    ? "text-gray-900 bg-gray-100"
+                    : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                  }`}
+                aria-current={isActive(item.href) ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

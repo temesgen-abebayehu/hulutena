@@ -11,7 +11,8 @@ function EditProfile() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [languageInput, setLanguageInput] = useState("");
   const [specializationInput, setSpecializationInput] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // initial fetch state
+  const [saving, setSaving] = useState(false); // form submit state
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
@@ -23,18 +24,31 @@ function EditProfile() {
       try {
         const storedUser = localStorage.getItem("user");
         if (!storedUser) {
-          throw new Error("User not found in local storage.");
+          navigate(`/login?returnTo=/profile/edit`);
+          return;
         }
 
         const userId = JSON.parse(storedUser).currentUser._id;
-        const response = await fetch(`/api/users/${userId}`);
+        const response = await fetch(`/api/users/${userId}`, {
+          credentials: "include",
+        });
+        if (response.status === 401) {
+          navigate(`/login?returnTo=/profile/edit`);
+          return;
+        }
         if (!response.ok) {
           throw new Error("Failed to fetch user data.");
         }
 
         const data = await response.json();
-        setUser(data);
-        setInitialUserState(data); // Store the initial user state
+        // Ensure array fields exist
+        const normalized = {
+          ...data,
+          language: Array.isArray(data.language) ? data.language : [],
+          specialization: Array.isArray(data.specialization) ? data.specialization : [],
+        };
+        setUser(normalized);
+        setInitialUserState(normalized); // Store the initial user state
       } catch (err) {
         setError(err.message);
       } finally {
@@ -54,30 +68,38 @@ function EditProfile() {
     }));
   };
 
-  // Handle language input
-  const handleLanguageInput = (e) => {
-    if (e.key === "Enter" && languageInput.trim()) {
-      e.preventDefault();
-      const newLanguage = languageInput.trim();
-      setUser((prevUser) => ({
-        ...prevUser,
-        language: [...prevUser.language, newLanguage],
-      }));
-      setLanguageInput("");
-    }
+  // Add/remove languages
+  const handleLanguageAdd = () => {
+    if (!languageInput.trim()) return;
+    const newLanguage = languageInput.trim();
+    setUser((prev) => ({
+      ...prev,
+      language: [...(prev.language || []), newLanguage],
+    }));
+    setLanguageInput("");
+  };
+  const handleLanguageRemove = (index) => {
+    setUser((prev) => ({
+      ...prev,
+      language: (prev.language || []).filter((_, i) => i !== index),
+    }));
   };
 
-  // Handle specialization input
-  const handleSpecializationInput = (e) => {
-    if (e.key === "Enter" && specializationInput.trim()) {
-      e.preventDefault();
-      const newSpecialization = specializationInput.trim();
-      setUser((prevUser) => ({
-        ...prevUser,
-        specialization: [...prevUser.specialization, newSpecialization],
-      }));
-      setSpecializationInput("");
-    }
+  // Add/remove specialization
+  const handleSpecializationAdd = () => {
+    if (!specializationInput.trim()) return;
+    const newSpecialization = specializationInput.trim();
+    setUser((prev) => ({
+      ...prev,
+      specialization: [...(prev.specialization || []), newSpecialization],
+    }));
+    setSpecializationInput("");
+  };
+  const handleSpecializationRemove = (index) => {
+    setUser((prev) => ({
+      ...prev,
+      specialization: (prev.specialization || []).filter((_, i) => i !== index),
+    }));
   };
 
   // Remove a language
@@ -96,12 +118,7 @@ function EditProfile() {
     }));
   };
 
-  // Handle profile image upload
-  const handleImageUpload = (imageUrl) => {
-    setUploadingImage(true);
-    setUser((prevUser) => ({ ...prevUser, profileImage: imageUrl }));
-    setUploadingImage(false);
-  };
+  // Image updates are handled inside ProfileImageUpload via setUser
 
   // Validate form fields
   const validateForm = () => {
@@ -117,7 +134,7 @@ function EditProfile() {
     if (!validateForm()) return;
 
     try {
-      setLoading(true);
+      setSaving(true);
       setError("");
       setSuccessMessage("");
 
@@ -146,9 +163,14 @@ function EditProfile() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(fieldsToUpdate),
       });
 
+      if (updateResponse.status === 401) {
+        navigate(`/login?returnTo=/profile/edit`);
+        return;
+      }
       if (!updateResponse.ok) {
         throw new Error("Failed to update user data.");
       }
@@ -165,16 +187,20 @@ function EditProfile() {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
-  // Handle cancel
+  // Handle form submit and cancel
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await handleSave();
+  };
   const handleCancel = () => {
     navigate("/profile");
   };
 
-  // Loading state
+  // Loading state (initial fetch)
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -184,39 +210,56 @@ function EditProfile() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{t.editProfileTitle}</h1>
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-      {successMessage && <p className="text-green-500">{successMessage}</p>}
-      {!loading && !error && (
-        <div className="flex flex-col md:flex-row gap-8">
-          <ProfileImageUpload
-            user={user}
-            setUser={setUser}
-            uploadingImage={uploadingImage}
-            setUploadingImage={setUploadingImage}
-            t={t}
-          />
-          <EditForm
-            user={user}
-            handleChange={handleChange}
-            handleLanguageAdd={handleLanguageAdd}
-            handleLanguageRemove={handleLanguageRemove}
-            languageInput={languageInput}
-            setLanguageInput={setLanguageInput}
-            handleSpecializationAdd={handleSpecializationAdd}
-            handleSpecializationRemove={handleSpecializationRemove}
-            specializationInput={specializationInput}
-            setSpecializationInput={setSpecializationInput}
-            confirmPassword={confirmPassword}
-            setConfirmPassword={setConfirmPassword}
-            handleSubmit={handleSubmit}
-            handleCancel={handleCancel}
-            t={t}
-          />
+    <div>
+      <section className="bg-gradient-to-r from-sky-50 to-blue-50 border-b border-blue-100">
+        <div className="max-w-7xl mx-auto px-4 py-10">
+          <h1 className="text-3xl font-bold text-gray-900">{t.editProfileTitle}</h1>
+          <p className="text-gray-600 mt-2">Update your information and profile image.</p>
         </div>
-      )}
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {error && (
+          <div className="mb-4 rounded-md border border-red-200 bg-red-50 text-red-700 px-4 py-3">
+            {error}
+          </div>
+        )}
+        {successMessage && (
+          <div className="mb-4 rounded-md border border-green-200 bg-green-50 text-green-700 px-4 py-3">
+            {successMessage}
+          </div>
+        )}
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex flex-col md:flex-row gap-8">
+            <ProfileImageUpload
+              user={user}
+              setUser={setUser}
+              uploadingImage={uploadingImage}
+              setUploadingImage={setUploadingImage}
+              t={t}
+            />
+            <EditForm
+              user={user}
+              handleChange={handleChange}
+              handleLanguageAdd={handleLanguageAdd}
+              handleLanguageRemove={handleLanguageRemove}
+              languageInput={languageInput}
+              setLanguageInput={setLanguageInput}
+              handleSpecializationAdd={handleSpecializationAdd}
+              handleSpecializationRemove={handleSpecializationRemove}
+              specializationInput={specializationInput}
+              setSpecializationInput={setSpecializationInput}
+              confirmPassword={confirmPassword}
+              setConfirmPassword={setConfirmPassword}
+              handleSubmit={handleSubmit}
+              handleCancel={handleCancel}
+              t={t}
+              saving={saving}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

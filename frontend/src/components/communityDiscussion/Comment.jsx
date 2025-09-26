@@ -54,15 +54,13 @@ const Comment = ({
               - {moment(comment.createdAt).fromNow()}
             </p>
             <p>{comment.comment}</p>
-            {loggedInUser && (
-              <button
-                onClick={() => handleLikeComment(threadId, comment._id)}
-                className="flex text-blue-800 items-center hover:text-blue-500 my-5"
-              >
-                <FaThumbsUp className="mr-2" />
-                {comment.likes?.length || 0} {t.likes}
-              </button>
-            )}
+            <button
+              onClick={() => (loggedInUser ? handleLikeComment(threadId, comment._id) : window.location.assign("/login"))}
+              className="flex text-blue-800 items-center hover:text-blue-500 my-5"
+            >
+              <FaThumbsUp className="mr-2" />
+              {comment.likes?.length || 0} {t.likes}
+            </button>
           </>
         )}
       </div>

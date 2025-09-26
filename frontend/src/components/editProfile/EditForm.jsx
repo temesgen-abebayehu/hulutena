@@ -17,6 +17,7 @@ const EditForm = ({
   handleSubmit,
   handleCancel,
   t,
+  saving,
 }) => {
   return (
     <form onSubmit={handleSubmit} className="w-full md:w-2/3">
@@ -29,7 +30,33 @@ const EditForm = ({
           name="fullName"
           value={user.fullName || ""}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          placeholder="John Doe"
+          className="shadow-sm appearance-none border border-gray-200 rounded-lg w-full py-2.5 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 font-bold mb-2">
+          {t.contactAddressLabel}
+        </label>
+        <input
+          type="text"
+          name="address"
+          value={user.address || ""}
+          onChange={handleChange}
+          placeholder="Enter your address"
+          className="shadow-sm appearance-none border border-gray-200 rounded-lg w-full py-2.5 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 font-bold mb-2">
+          {t.dateOfBirth}
+        </label>
+        <input
+          type="date"
+          name="dateOfBirth"
+          value={user.dateOfBirth ? String(user.dateOfBirth).slice(0, 10) : ""}
+          onChange={handleChange}
+          className="shadow-sm appearance-none border border-gray-200 rounded-lg w-full py-2.5 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
       <div className="mb-4">
@@ -41,7 +68,8 @@ const EditForm = ({
           name="email"
           value={user.email || ""}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          placeholder="name@example.com"
+          className="shadow-sm appearance-none border border-gray-200 rounded-lg w-full py-2.5 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
       <div className="mb-4">
@@ -53,7 +81,8 @@ const EditForm = ({
           name="contactNumber"
           value={user.contactNumber || ""}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          placeholder="+251 900 000 000"
+          className="shadow-sm appearance-none border border-gray-200 rounded-lg w-full py-2.5 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
       <div className="mb-4">
@@ -64,12 +93,42 @@ const EditForm = ({
           name="gender"
           value={user.gender || ""}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="shadow-sm appearance-none border border-gray-200 rounded-lg w-full py-2.5 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="">{t.selectGender}</option>
           <option value="male">{t.male}</option>
           <option value="female">{t.female}</option>
         </select>
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 font-bold mb-2">
+          {t.availability}
+        </label>
+        <select
+          name="availability"
+          value={user.availability || ""}
+          onChange={handleChange}
+          className="shadow-sm appearance-none border border-gray-200 rounded-lg w-full py-2.5 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value="">{t.selectAvailability || "Select availability"}</option>
+          <option value="online">{t.onlineType}</option>
+          <option value="in-person">{t.inPerson}</option>
+          <option value="both">{t.both || "Both"}</option>
+        </select>
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 font-bold mb-2">
+          {t.experience}
+        </label>
+        <input
+          type="number"
+          name="experience"
+          min={0}
+          value={user.experience ?? ""}
+          onChange={handleChange}
+          placeholder="e.g. 5"
+          className="shadow-sm appearance-none border border-gray-200 rounded-lg w-full py-2.5 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
       </div>
       {user.role === "doctor" && (
         <>
@@ -82,27 +141,29 @@ const EditForm = ({
                 type="text"
                 value={languageInput}
                 onChange={(e) => setLanguageInput(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="e.g. Amharic"
+                className="shadow-sm appearance-none border border-gray-200 rounded-lg w-full py-2.5 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <button
                 type="button"
                 onClick={handleLanguageAdd}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2"
+                className="ml-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-60 text-white font-medium py-2.5 px-4 rounded-lg"
+                disabled={!languageInput}
               >
                 {t.add}
               </button>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
-              {user.languages?.map((lang, index) => (
+              {user.language?.map((lang, index) => (
                 <div
                   key={index}
-                  className="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700"
+                  className="bg-gray-100 border border-gray-200 rounded-full px-3 py-1 text-sm font-medium text-gray-800"
                 >
                   {lang}
                   <button
                     type="button"
                     onClick={() => handleLanguageRemove(index)}
-                    className="ml-2 text-red-500"
+                    className="ml-2 text-red-500 hover:text-red-600"
                   >
                     x
                   </button>
@@ -119,27 +180,29 @@ const EditForm = ({
                 type="text"
                 value={specializationInput}
                 onChange={(e) => setSpecializationInput(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="e.g. Cardiologist"
+                className="shadow-sm appearance-none border border-gray-200 rounded-lg w-full py-2.5 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <button
                 type="button"
                 onClick={handleSpecializationAdd}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2"
+                className="ml-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-60 text-white font-medium py-2.5 px-4 rounded-lg"
+                disabled={!specializationInput}
               >
                 {t.add}
               </button>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
-              {user.specializations?.map((spec, index) => (
+              {user.specialization?.map((spec, index) => (
                 <div
                   key={index}
-                  className="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700"
+                  className="bg-gray-100 border border-gray-200 rounded-full px-3 py-1 text-sm font-medium text-gray-800"
                 >
                   {spec}
                   <button
                     type="button"
                     onClick={() => handleSpecializationRemove(index)}
-                    className="ml-2 text-red-500"
+                    className="ml-2 text-red-500 hover:text-red-600"
                   >
                     x
                   </button>
@@ -157,7 +220,8 @@ const EditForm = ({
           type="password"
           name="password"
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          placeholder="••••••••"
+          className="shadow-sm appearance-none border border-gray-200 rounded-lg w-full py-2.5 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
       <div className="mb-4">
@@ -168,20 +232,22 @@ const EditForm = ({
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          placeholder="••••••••"
+          className="shadow-sm appearance-none border border-gray-200 rounded-lg w-full py-2.5 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
       <div className="flex items-center justify-between">
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          disabled={saving}
+          className="bg-blue-500 hover:bg-blue-600 disabled:opacity-60 text-white font-medium py-2.5 px-5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          {t.saveChanges}
+          {saving ? "Saving..." : t.saveChanges}
         </button>
         <button
           type="button"
           onClick={handleCancel}
-          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2.5 px-5 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
         >
           {t.cancel}
         </button>

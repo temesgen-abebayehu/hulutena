@@ -13,221 +13,150 @@ function HomePage() {
   const { t } = useLanguage();
 
   return (
-    <div>
-      {/* home first page */}
-      <div className="home-page text-slate-50">
-        <div className="bg-black bg-opacity-50 p-10 rounded-lg">
-          <h1 className="p-4 font-extrabold text-4xl md:text-5xl lg:text-6xl">
+    <div className="bg-gray-50">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        {/* Background image layer (decorative) */}
+        <div className="absolute inset-0">
+          <div
+            className="w-full h-full bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: 'url(/homeimage.jpeg)' }}
+            role="presentation"
+            aria-hidden="true"
+          />
+        </div>
+        {/* Gradient overlay for brand coloring and readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-indigo-800/75 to-teal-700/70" />
+        {/* Subtle highlight holographic pattern */}
+        <div
+          className="absolute inset-0 opacity-25 mix-blend-overlay"
+          style={{
+            backgroundImage:
+              'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.45), transparent 60%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.35), transparent 60%)'
+          }}
+        />
+        <div className="relative max-w-7xl mx-auto px-6 pt-28 pb-32 text-center text-white">
+          <h1 className="font-extrabold text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6 drop-shadow">
             {t.welcome}
           </h1>
-          <h1 className="p-4 font-extrabold text-3xl md:text-4xl lg:text-5xl">
-            {t.subtitle}
-          </h1>
-          <h1 className="p-4 font-extrabold text-3xl md:text-4xl lg:text-5xl">
-            {t.commitment}
-          </h1>
-          <a
-            href="/appointment"
-            className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg text-2xl md:text-3xl transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            {t.bookAppointment}
-          </a>
-        </div>
-      </div>
-      {/* our service */}
-      <div className="flex flex-row flex-wrap justify-center gap-x-20 gap-y-2  p-8">
-        <div className="p-4 w-full md:w-80 bg-slate-200 space-y-2">
-          <FaCalendarCheck size={40} className="text-blue-500  mx-auto" />
-          <h1 className="text-xl font-semibold">
-            {t.effortlessAppointments}
-          </h1>
-          <p>
-            {t.effortlessAppointmentsDesc}
-          </p>
-        </div>
-        <div className="p-4 w-full md:w-80 bg-slate-200 space-y-2">
-          <FaLanguage size={60} className="text-blue-500 mx-auto" />
-          <h1 className="text-xl font-semibold">
-            {t.multilingualSearch}
-          </h1>
-          <p>
-            {t.multilingualSearchDesc}
-          </p>
-        </div>
-        <div className="p-4 w-full md:w-80 bg-slate-200 space-y-2">
-          <FaInfoCircle size={40} className="text-blue-500 mx-auto" />
-          <h1 className="text-xl font-semibold">
-            {t.accessibleInfo}
-          </h1>
-          <p>
-            {t.accessibleInfoDesc}
-          </p>
-        </div>
-      </div>
-      {/* resource */}
-      <div className="flex flex-col items-center p-12 bg-gray-50 min-h-screen">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800 text-center mb-8">
-          {t.healthcareResources}
-        </h1>
-        <p className="text-lg text-gray-600 text-center max-w-3xl mb-12">
-          {t.resourcesDesc}
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
-          {/* Audio Resources */}
-          <div className="flex flex-col items-center p-6 bg-white shadow-lg rounded-lg">
-            <FaHeadphones className="text-4xl text-blue-500 mb-4" />
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-              {t.audioResources}
-            </h2>
-            <p className="text-gray-600 text-center mb-4">
-              {t.audioResourcesDesc}
-            </p>
-            <a
-              href="resources"
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-            >
-              {t.exploreAudio}
+          <p className="text-2xl md:text-3xl font-semibold mb-4 opacity-95">{t.subtitle}</p>
+          <p className="text-xl md:text-2xl font-medium mb-10 opacity-90">{t.commitment}</p>
+          <div className="flex flex-wrap justify-center gap-5">
+            <a href="/appointment" className="px-8 py-4 rounded-full bg-white text-blue-700 font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition transform">
+              {t.bookAppointment}
             </a>
-          </div>
-
-          {/* Video Resources */}
-          <div className="flex flex-col items-center p-6 bg-white shadow-lg rounded-lg">
-            <FaVideo className="text-4xl text-green-500 mb-4" />
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-              {t.videoResources}
-            </h2>
-            <p className="text-gray-600 text-center mb-4">
-              {t.videoResourcesDesc}
-            </p>
-            <a
-              href="resources"
-              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
-            >
-              {t.exploreVideos}
-            </a>
-          </div>
-
-          {/* Written Resources */}
-          <div className="flex flex-col items-center p-6 bg-white shadow-lg rounded-lg">
-            <FaBook className="text-4xl text-yellow-500 mb-4" />
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-              {t.writtenResources}
-            </h2>
-            <p className="text-gray-600 text-center mb-4">
-              {t.writtenResourcesDesc}
-            </p>
-            <a
-              href="resources"
-              className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition"
-            >
-              {t.exploreArticles}
+            <a href="/resources" className="px-8 py-4 rounded-full bg-blue-600/30 backdrop-blur text-white font-semibold border border-white/30 hover:bg-white/15 transition">
+              {t.resourcesTitle}
             </a>
           </div>
         </div>
-      </div>
-      {/* testimony */}
-      <div className="flex flex-col gap-y-12 bg-cyan-50 p-8 md:px-20 lg:px-32">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-center text-gray-800 mb-4">
-          {t.testimonials}
-        </h1>
-        <p className="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-8">
-          {t.testimonialsDesc}
-        </p>
+      </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div className="flex flex-col items-center space-y-4 rounded-lg p-6 bg-white shadow-lg">
-            <img
-              className="w-24 h-24 rounded-full object-cover"
-              src="/patient3.jpg"
-              alt="Patient testimonial 1"
-            />
-            <h2 className="text-xl font-semibold text-gray-800 text-center">
-              {t.lifesaver}
-            </h2>
-            <p className="text-gray-600 text-center">
-              {t.lifesaverDesc}
-            </p>
+      {/* Features */}
+      <section className="max-w-7xl mx-auto px-6 -mt-16 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[{
+            icon: <FaCalendarCheck className="text-4xl text-blue-600 mb-4" />,
+            title: t.effortlessAppointments,
+            desc: t.effortlessAppointmentsDesc
+          }, {
+            icon: <FaLanguage className="text-5xl text-indigo-600 mb-4" />,
+            title: t.multilingualSearch,
+            desc: t.multilingualSearchDesc
+          }, {
+            icon: <FaInfoCircle className="text-4xl text-teal-600 mb-4" />,
+            title: t.accessibleInfo,
+            desc: t.accessibleInfoDesc
+          }].map((f, i) => (
+            <div key={i} className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition p-8 border border-gray-100 relative overflow-hidden">
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-5 transition bg-gradient-to-br from-blue-600 via-indigo-600 to-teal-500" />
+              {f.icon}
+              <h3 className="text-xl font-bold text-gray-800 mb-3">{f.title}</h3>
+              <p className="text-gray-600 leading-relaxed text-sm md:text-base">{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Resources Teaser */}
+      <section className="max-w-7xl mx-auto px-6 py-24">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-4xl font-extrabold text-gray-800 tracking-tight mb-4">{t.healthcareResources}</h2>
+          <p className="text-lg text-gray-600">{t.resourcesDesc}</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {[{
+            icon: <FaHeadphones className="text-5xl text-blue-600 mb-6" />, title: t.audioResources, desc: t.audioResourcesDesc, cta: t.exploreAudio, color: 'blue'
+          }, {
+            icon: <FaVideo className="text-5xl text-green-600 mb-6" />, title: t.videoResources, desc: t.videoResourcesDesc, cta: t.exploreVideos, color: 'green'
+          }, {
+            icon: <FaBook className="text-5xl text-yellow-500 mb-6" />, title: t.writtenResources, desc: t.writtenResourcesDesc, cta: t.exploreArticles, color: 'yellow'
+          }].map((r, i) => (
+            <div key={i} className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition p-8 flex flex-col items-center text-center border border-gray-100 group">
+              {r.icon}
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">{r.title}</h3>
+              <p className="text-gray-600 mb-6 text-sm md:text-base">{r.desc}</p>
+              <a href="/resources" className="px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow hover:shadow-lg hover:scale-105 transition">{r.cta}</a>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="bg-gradient-to-b from-cyan-50 to-white py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-4xl font-extrabold text-gray-800 mb-4">{t.testimonials}</h2>
+            <p className="text-lg text-gray-600">{t.testimonialsDesc}</p>
           </div>
-
-          <div className="flex flex-col items-center space-y-4 rounded-lg p-6 bg-white shadow-lg">
-            <img
-              className="w-24 h-24 rounded-full object-cover"
-              src="/patient1.jpg"
-              alt="Patient testimonial 2"
-            />
-            <h2 className="text-xl font-semibold text-gray-800 text-center">
-              {t.understandingHealth}
-            </h2>
-            <p className="text-gray-600 text-center">
-              {t.understandingHealthDesc}
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center space-y-4 rounded-lg p-6 bg-white shadow-lg">
-            <img
-              className="w-24 h-24 rounded-full object-cover"
-              src="/patient2.jpg"
-              alt="Patient testimonial 3"
-            />
-            <h2 className="text-xl font-semibold text-gray-800 text-center">
-              {t.breakingBarriers}
-            </h2>
-            <p className="text-gray-600 text-center">
-              {t.breakingBarriersDesc}
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {[{
+              img: '/patient3.jpg', title: t.lifesaver, desc: t.lifesaverDesc
+            }, {
+              img: '/patient1.jpg', title: t.understandingHealth, desc: t.understandingHealthDesc
+            }, {
+              img: '/patient2.jpg', title: t.breakingBarriers, desc: t.breakingBarriersDesc
+            }].map((ts, i) => (
+              <div key={i} className="relative bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition flex flex-col items-center text-center border border-gray-100">
+                <img src={ts.img} alt="Testimonial" className="w-24 h-24 rounded-full object-cover mb-5 shadow" />
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">{ts.title}</h3>
+                <p className="text-gray-600 text-sm md:text-base leading-relaxed">{ts.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="space-y-8  p-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-700">
-          {t.joinCommunity}
-        </h1>
-        <p className="font-medium">
-          {t.joinCommunityDesc}
-        </p>
-        <div className="flex flex-row flex-wrap gap-x-20 gap-y-2  p-4">
-          <div className="p-4 w-full md:w-80 bg-slate-200 space-y-2 border-4 border-gray-400">
-            <h1 className="text-xl font-semibold">{t.downloadApp}</h1>
-            <p>
-              {t.downloadAppDesc}
-            </p>
-            <a
-              href="#"
-              className="text-blue-800 font-medium hover:underline hover:text-blue-600"
-            >
-              {t.downloadApp}
-            </a>
+      {/* Community CTA */}
+      <section className="relative overflow-hidden py-24">
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-blue-600 to-teal-500" />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, rgba(255,255,255,.5), transparent 60%), radial-gradient(circle at 70% 50%, rgba(255,255,255,.4), transparent 60%)' }} />
+        <div className="relative max-w-7xl mx-auto px-6 text-white">
+          {/* Heading block centered */}
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-4xl font-extrabold tracking-tight mb-6">{t.joinCommunity}</h2>
+            <p className="text-lg opacity-95 leading-relaxed">{t.joinCommunityDesc}</p>
           </div>
-          <div className="p-4 w-full md:w-80 bg-slate-200 space-y-2 border-4 border-gray-400">
-            <h1 className="text-xl font-semibold">{t.exploreFeatures}</h1>
-            <p>
-              {t.exploreFeaturesDesc}
-            </p>
-            <a
-              href="resources"
-              className="text-blue-800 font-medium hover:underline hover:text-blue-600"
-            >
-              {t.resources}
-            </a>
-          </div>
-          <div className="p-4 w-full md:w-80 bg-slate-200 space-y-2 border-4 border-gray-400">
-            <h1 className="text-xl font-semibold">
-              {t.connectProfessionals}
-            </h1>
-            <p>
-              {t.connectProfessionalsDesc}
-            </p>
-            <a
-              href="/appointment"
-              className="text-blue-800 font-medium hover:underline hover:text-blue-600"
-            >
-              {t.makeAppointment}
-            </a>
+          {/* Full-width responsive card grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {[{
+              title: t.downloadApp, desc: t.downloadAppDesc, href: '#'
+            }, {
+              title: t.exploreFeatures, desc: t.exploreFeaturesDesc, href: '/resources'
+            }, {
+              title: t.connectProfessionals, desc: t.connectProfessionalsDesc, href: '/appointment'
+            }].map((c, i) => (
+              <div key={i} className="flex flex-col bg-white/10 backdrop-blur rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition shadow-sm hover:shadow-md min-h-[260px]">
+                <h3 className="text-2xl font-semibold mb-4">{c.title}</h3>
+                <p className="text-sm md:text-base mb-6 leading-relaxed opacity-90 flex-1">{c.desc}</p>
+                <a href={c.href} className="inline-block text-sm font-semibold px-6 py-3 rounded-full bg-white text-blue-700 shadow hover:shadow-lg hover:scale-105 transition">
+                  {c.title}
+                </a>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
