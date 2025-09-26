@@ -1,5 +1,5 @@
 import Payment from "../models/Payment.model.js";
-import Appointment from '../models/appointment.model.js';
+import Appointment from '../models/Appointment.model.js';
 
 export const processPayment = async (req, res) => {
     const { appointmentId, bankName, bankAccount, receipt } = req.body;
