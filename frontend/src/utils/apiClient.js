@@ -1,5 +1,9 @@
-const PROD_URL = "https://hulutena.onrender.com";
-const BASE_URL = PROD_URL ? `${PROD_URL}/api` : "/api";
+// Check if the app is running in production (Vercel sets this via Vite)
+const isProduction = import.meta.env.PROD;
+
+const BASE_URL = isProduction
+    ? "https://hulutena.onrender.com/api"
+    : "/api"; // Use proxy in development
 
 /**
  * A centralized API client that abstracts away the fetch logic,
@@ -11,19 +15,19 @@ const BASE_URL = PROD_URL ? `${PROD_URL}/api` : "/api";
  * @returns {Promise<Response>} The response from the fetch call.
  */
 const apiClient = (path, options = {}) => {
-  const url = `${BASE_URL}${path}`;
+    const url = `${BASE_URL}${path}`;
 
-  const defaultOptions = {
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-    // Always include credentials for authentication (cookies)
-    credentials: "include",
-    ...options,
-  };
+    const defaultOptions = {
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+        // Always include credentials for authentication (cookies)
+        credentials: "include",
+        ...options,
+    };
 
-  return fetch(url, defaultOptions);
+    return fetch(url, defaultOptions);
 };
 
 export default apiClient;
