@@ -6,10 +6,13 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: process.env.VITE_API_URL || "http://localhost:3000",
+        target: "https://hulutena.onrender.com",
         changeOrigin: true,
         secure: false,
       },
     },
   },
 });
+
+// local server = http://localhost:3000
+// deployed server = https://hulutena.onrender.com
